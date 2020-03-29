@@ -1,0 +1,60 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug service default-v1",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/google-app-engine/default-v1/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src/google-app-engine/default-v1",
+            "presentation": {
+                "hidden": false,
+                "group": "Debug GAE services",
+                "order": 2
+            }
+        },
+        {
+            "name": "Debug service rest-api-v1",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/google-app-engine/rest-api-v1/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src/google-app-engine/rest-api-v1",
+            "presentation": {
+                "hidden": false,
+                "group": "Debug GAE services",
+                "order": 3
+            }
+        },
+        {
+            "name": "Debug service web-gui-v1",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/google-app-engine/web-gui-v1/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src/google-app-engine/web-gui-v1",
+            "presentation": {
+                "hidden": false,
+                "group": "Debug GAE services",
+                "order": 4
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug all services",
+            "configurations": [
+                "Debug service default-v1", "Debug service rest-api-v1", "Debug service web-gui-v1"
+            ],
+            "presentation": {
+                "hidden": false,
+                "group": "Debug GAE services",
+                "order": 1
+            }
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+dispatch:
+- url: "*/api/v1/*"
+  service: rest-api-v1
+- url: "*/ui/*"
+  service: web-gui-v1
