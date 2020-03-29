@@ -1,0 +1,11 @@
+{
+	"test-snippet": {
+		"scope": "python",
+		"prefix": "api",
+		"body": [
+			"def api_call():",
+			"	${1:body}"
+		],
+		"description": "API Method"
+	}
+}

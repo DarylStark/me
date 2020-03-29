@@ -4,11 +4,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Deploy to Google App Engine (testing, no version)",
+            "label": "Deploy to Google App Engine (testing, version v1)",
             "type": "shell",
             "command": "tasks/deploy-to-google-app-engine.sh",
             "args": [
-                "me-dstark-nl-test"
+                "me-dstark-nl-test",
+                "v1"
             ],
             "group": "build",
             "presentation": {
