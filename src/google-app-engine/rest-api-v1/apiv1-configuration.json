@@ -1,0 +1,60 @@
+{
+  "development": {
+    "service": {
+      "base_url": "api/v1"
+    },
+    "database": {
+      "server": "104.155.95.1",
+      "username": "me_dstark_nl_dev",
+      "password": "ZsVsQ5yYuhzv4%iZ7dJ8uyS@m2lQIwxc",
+      "database": "me_dstark_nl_dev",
+      "google_instance": "",
+      "use_socket": false
+    },
+    "sqlalchemy": {
+      "echo": true,
+      "pool_pre_ping": true,
+      "pool_recycle": 10,
+      "pool_size": 10,
+      "pool_overflow": 20
+    },
+    "flask": {
+      "host": "0.0.0.0",
+      "port": 8001,
+      "debug": true,
+      "use_reloader": false
+    },
+    "errors": {
+      "show_exceptions": true
+    }
+  },
+  "production": {
+    "service": {
+      "base_url": "api/v1"
+    },
+    "database": {
+      "server": "",
+      "username": "me_dstark_nl_prd",
+      "password": "udbZ0z2&QMZNch7Mx4EQ$4JgQsazC!3#",
+      "database": "me_dstark_nl_prd",
+      "google_instance": "dstark-nl:europe-west1:sql-apps-dstark-nl",
+      "use_socket": true
+    },
+    "sqlalchemy": {
+      "echo": false,
+      "pool_pre_ping": true,
+      "pool_recycle": 10,
+      "pool_size": 10,
+      "pool_overflow": 20
+    },
+    "flask": {
+      "host": "0.0.0.0",
+      "port": 80,
+      "debug": false,
+      "use_reloader": false
+    },
+    "errors": {
+      "show_exceptions": false
+    }
+  }
+}

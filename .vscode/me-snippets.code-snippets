@@ -1,11 +1,12 @@
 {
 	"test-snippet": {
 		"scope": "python",
-		"prefix": "api",
+		"prefix": "api_exception",
 		"body": [
-			"def api_call():",
-			"	${1:body}"
+			"class MeRESTAPiv1${1:Exception name}Error(${2|MeRESTAPIv1CriticalError,MeRESTAPIv1PermissionDeniedException,MeRESTAPIv1PageNotFoundError,MeRESTAPIv1ServerErrorError|}):",
+			"    \"\"\" ${3:Error description} \"\"\"",
+			"    pass"
 		],
-		"description": "API Method"
+		"description": "MeRESTAPIv1 - Exception"
 	}
 }
