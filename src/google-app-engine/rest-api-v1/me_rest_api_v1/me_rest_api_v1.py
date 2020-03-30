@@ -21,14 +21,12 @@ class MeRESTAPIv1:
     # Class attributes for Flask;
     # - The 'flask_app' is a class attribute that will be used as the main object for Flask. All
     #   Flask requests will be using this.
-    # - The 'registered_urls' will be a dictionary. The keys are going to be regular expressions
-    #   that can match a specific URL to a specific class. Within this class, a method will be
-    #   mapped to every specific URL and will check if there is a matching regex. If there is, the
-    #   class associated with the regex will be called to show the correct page. To register a class
-    #   with a regex to this, the class should use the decorator Me.register_url.
+    # - The 'registered_groups' will be a dictionary. The keys are going to be API group names
+    #   that can match a specific URL to a specific class. Within this class, methods will be
+    #   created for the specific API groups that are going to be used
     
     flask_app = flask.Flask(__name__)
-    registered_urls = {}
+    registered_groups = {}
 
     # Class attributes;
     # - The 'configfile' is the file contains all the configuration for the application. It defaults
@@ -143,90 +141,133 @@ class MeRESTAPIv1:
         return cls.flask_app.run(**cls.get_configuration('flask'))
     
     @flask_app.route('/', defaults = { 'path': '' }, methods = [ 'GET', 'POST' ])
-    @flask_app.route('/<path:path>', methods=['GET', 'POST'])
-    def show_page(path):
+    @flask_app.route('/<path:path>', methods = ['GET', 'POST'])
+    def api_endpoint(path):
         """ Show the correct page based on registered classes expressions """
         
         # Because we use services in Google App Engine with a dispatch.yaml file, we still have the
         # route from the dispatcher in the URL. In the configuration file, this URL is set and we
         # can use it to strip it off
         base_url = re.escape(MeRESTAPIv1.get_configuration('service', 'base_url'))
-        url = re.findall('^' + base_url + '(/.+|/)', path)
-
-        # Check if we found something
-        if len(url) == 1:
-            # We search the registered groups to see if we can find a group with a regex that
-            # matches this URL.
-            matched_objects = list()
-            for key, item in MeRESTAPIv1.registered_urls.items():
-                if item['regex'].match(url[0]):
-                    matched_objects.append({ 'name': key, 'item': item })
-            
-            # Check how many objects we found that match the url. If we have none, the page was not
-            # found. If we find one, we have the page and can execute it. If we find more then one,
-            # there is a ambigious regular expression and we have to present an error
-            if len(matched_objects) == 0:
-                # No page found
-                raise MeRESTAPiv1APIGroupNotFoundError('Path "{path}" couldn\'t be found'.format(path = path))
-            elif len(matched_objects) > 1:
-                # Too many groups found
-                raise MeRESTAPiv1APIGroupAmbigiousError('Ambigious groups found for "{path}": {groups}"'.format(
-                    path = path,
-                    groups = ', '.join([ '"{name}"'.format(name = x['name']) for x in matched_objects ])
-                ))
-            else:
-                # Found just one group; perfect! We create an instance of the group and start the
-                # 'page' method for it. We return the value of the start-method to Flask.
-                group_instance = matched_objects[0]['item']['cls']()
-                return group_instance.page(path)
         
-        # Method is still running, so appearently the page string isn't prefixed with the base_url
-        raise MeRESTAPiv1WrongBaseURLError('Path "{path}" is not prefixed with "{prefix}"'.format(
-            path = path,
-            prefix = base_url
-        ))
+        try:
+            # Check if the URL startes with the base URL. If it doesn't, something went terrible
+            # wrong and we should raise an 'Page not found' error
+            if not path.startswith(base_url):
+                raise MeRESTAPiv1WrongBaseURLError('The path "{path}" does not start with the correct base URL "{base_url}"'.format(
+                    path = path,
+                    base_url = base_url
+                ))
+            
+            # Get the API group and the API endpoint
+            regex = '^{base_url}/([0-9a-zA-Z_+-]+)/([0-9a-zA-Z_+-]+)$'.format(
+                base_url = base_url
+            )
+            api_parts = re.findall(regex, path)
+
+            if len(api_parts) == 1:
+                # Get the API group and the endpoint
+                group, endpoint = api_parts[0]
+                
+                # Now that we have the group, check if it exists
+                if group in MeRESTAPIv1.registered_groups.keys():
+                    try:
+                        # Group exists, get the endpoints
+                        endpoints = MeRESTAPIv1.registered_groups[group]['endpoints']
+
+                        # Find the endpoint
+                        if endpoint in endpoints.keys():
+                            return endpoints[endpoint]['method']()
+                        else:
+                            raise MeRESTAPiv1APIEndpointNotFoundError('The API endpoint "{endpoint}" for group "{group}" does not exists'.format(
+                                endpoint = endpoint,
+                                group = group
+                            ))
+                    except KeyError as e:
+                        raise MeRESTAPIv1EndpointRegistrationError(e)
+                else:
+                    # Didn't exist. Give an error
+                    raise MeRESTAPiv1APIGroupNotFoundError('The API group "{group}" is not a valid group'.format(
+                        group = group
+                    ))
+            else:
+                raise MeRESTAPiv1InvalidAPIEndpointError('Path "{path}" is not a valid API endpoint'.format(
+                    path = path
+                ))
+        except KeyboardInterrupt:
+            # TODO: Decent Error Pages for the different type of Exceptions
+            return 'ERROR', 500
     
     @classmethod
-    def register_url(cls, regex, name, description = None):
-        """ Decorator to register a URL to this static class. To register a URL, a class has to use
-            this method as decorator. The decorator should be called with a regex that can match
-            every URL that it should be used for and a unique name. """
+    def register_group(cls, name, description):
+        """ Decorator to register a API-group to this static class. To register a API, a class has
+            to use this method as decorator. The decorator should be called with a name for the API
+            group that is used in the API URL. The API group itself should contain a dict called
+            'registered_endpoints' with the endpoints of the API.
+            
+            Example:
+            - If the API call is for the URL '/api/v1/users/user' the following fields are defined:
+
+                '/api/v1/' is de base_url as defined in the configuration file
+                'users' is the API group
+                'user'  is the API endpoint within that group. This endpoint gets registered with
+                        the decorator register_endpoint
+            
+            By using this method to register a class as a API group, the API can be self
+            documenting. This way, documentation for the complete API is not needed.
+        """
         
         def decorator(class_):
-            """ The real decorator method; will check if the regex is valid and register the class
-                within this static class """
+            """ The real decorator method; will register the class (if the name is not already in
+                use """
         
-            # First, we check if the regex is valid. We do this trying to compile it. If it fails,
-            # we know the regex is valid. AFAIK there is no other/better way of doing this
-            try:
-                compiled_regex = re.compile(regex)
-            except re.error as Err:
-                # Regex is not correct; raise an error
-                raise MeRESTAPiv1RegistrationRegExInvalidError(Err)
+            # Check if the API group already exists. If it isn't, we create it
+            if not name in cls.registered_groups.keys():
+                cls.registered_groups[group] = {
+                    'description': description,
+                    'endpoints': dict()
+                }
             else:
-                # If the regex was valid, no error is raised. We need to check if this name is
-                # unique. If it isn't; thrown an error
-                if name in cls.registered_urls.keys():
-                    raise MeRESTAPiv1RegistrationAmbigiousNameError('There is already a registered url with name "{name}"'.format(
-                        name = name
-                    ))
+                # Add the description
+                cls.registered_groups[name]['description'] = description
 
-                # We can now register the URL. We register URLs by their name. Within the dict for
-                # this key we register the given compiled regular expression and the class that is
-                # given.
-                cls.registered_urls[name] = {
-                    'regex': compiled_regex,
-                    'regex_text': regex,
-                    'cls': class_
+            # After we register the group, we can return the class. If we don't do that, the class
+            # will be unusable for other uses then this; it will simply stop existing in the
+            # original form.
+            return class_
+        
+        # Return the decorator
+        return decorator
+
+    @classmethod
+    def register_endpoint(cls, group, name, description):
+        """ Decorator for API endpoints to register themselves for the application """
+
+        def decorator(method):
+            """ In the decorator, we register the endpoint in the class """
+
+            # Check if the group already exists and create it if it doesn't
+            if not group in cls.registered_groups.keys():
+                cls.registered_groups[group] = {
+                    'description': None,
+                    'endpoints': dict()
                 }
 
-                # After we register the class, we can return the class. If we don't do that, the
-                # class will be unusable for other uses then this; it will simply stop existing in
-                # the original form.
-                return class_
-            
-            # Return the method
-            return class_
+            # If the endpoint already exists, we raise an error
+            if name in cls.registered_groups[group]['endpoints'].keys():
+                raise MeRESTAPIv1EndpointAmbigiousNameError('The endpoint "{endpoint}" already exists in group "{group}"'.format(
+                    endpoint = name,
+                    group = group
+                ))
+
+            # Add the endpoint to the group
+            cls.registered_groups[group]['endpoints'][name] = {
+                'method': method,
+                'description': description
+            }
+
+            # We return the method so it can be used
+            return method
         
         # Return the decorator
         return decorator

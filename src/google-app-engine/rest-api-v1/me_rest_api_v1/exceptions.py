@@ -16,15 +16,15 @@ class MeRESTAPIv1CriticalError(MeRESTAPIv1Error):
     """ Exception that should result in complete termination of the application """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1PermissionDeniedException(MeRESTAPIv1CriticalError):
+class MeRESTAPIv1PermissionDeniedException(MeRESTAPIv1Error):
     """ Base exception for 403-errors """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1PageNotFoundError(MeRESTAPIv1CriticalError):
+class MeRESTAPIv1PageNotFoundError(MeRESTAPIv1Error):
     """ Base exception for 404-errors """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1ServerError(MeRESTAPIv1CriticalError):
+class MeRESTAPIv1ServerError(MeRESTAPIv1Error):
     """ Base exception for 500-errors """
     pass
 #---------------------------------------------------------------------------------------------------
@@ -35,13 +35,9 @@ class MeRESTAPiv1ConfigFileError(MeRESTAPIv1CriticalError):
         a valid configfile, or the file doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1RegistrationRegExInvalidError(MeRESTAPIv1CriticalError):
-    """ Exception when the application tries to register a API group with a invalid regex """
-    pass
-#---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1RegistrationAmbigiousNameError(MeRESTAPIv1CriticalError):
-    """ Exception when the application tries to register a API group with a name that already is
-        registered """
+class MeRESTAPIv1EndpointAmbigiousNameError(MeRESTAPIv1CriticalError):
+    """ Exception when the application tries to register a API endpoint with a name that already is
+        registered for this specific group """
     pass
 #---------------------------------------------------------------------------------------------------
 # PageNotFoundErrors: errors that happen when a page or resource is requested that doesn't exists
@@ -50,13 +46,21 @@ class MeRESTAPiv1WrongBaseURLError(MeRESTAPIv1PageNotFoundError):
     """ Error when the user opens a URL that doesn't start with the right base_url """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPiv1InvalidAPIEndpointError(MeRESTAPIv1PageNotFoundError):
+    """ Error when the user specifies a invalid enpoint """
+    pass
+#---------------------------------------------------------------------------------------------------
 class MeRESTAPiv1APIGroupNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error for when the user tries to open an API group that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPiv1APIEndpointNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error for when the user tries to open an API endpoint that doesn't exist """
+    pass
+#---------------------------------------------------------------------------------------------------
 # Server Errors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1APIGroupAmbigiousError(MeRESTAPIv1ServerError):
-    """ When the API notices a URL can be matched with two or more registered groups """
+class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
+    """ Error for when a endpoint-object is not valid """
     pass
 #---------------------------------------------------------------------------------------------------

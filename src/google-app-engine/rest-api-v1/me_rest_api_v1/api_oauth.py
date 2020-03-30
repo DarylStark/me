@@ -8,10 +8,11 @@
 # Imports
 from me_rest_api_v1 import MeRESTAPIv1
 #---------------------------------------------------------------------------------------------------
-@MeRESTAPIv1.register_url(regex = '/oauth/.+', name = 'oauth', description = 'OAuth authentication')
+@MeRESTAPIv1.register_group(name = 'oauth', description = 'OAuth authentication')
 class APIOAuth:
     """ API class for 'oauth'. Can be used to authenticate """
 
-    def page(self, url):
-        return 'OAuth'
+    @MeRESTAPIv1.register_endpoint(group = 'oauth', name = 'validate', description = 'Validate API keys')
+    def validate(*args, **kwargs):
+        return 'API validator'
 #---------------------------------------------------------------------------------------------------
