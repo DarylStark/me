@@ -5,10 +5,10 @@
     },
     "database": {
       "server": "104.155.95.1",
-      "username": "me_dstark_nl_dev",
+      "username": "me_dstark_nl_dv",
       "password": "ZsVsQ5yYuhzv4%iZ7dJ8uyS@m2lQIwxc",
       "database": "me_dstark_nl_dev",
-      "google_instance": "",
+      "sql_instance": "",
       "use_socket": false
     },
     "sqlalchemy": {
@@ -33,11 +33,11 @@
       "base_url": "api/v1"
     },
     "database": {
-      "server": "",
+      "server": "104.155.95.1",
       "username": "me_dstark_nl_prd",
-      "password": "udbZ0z2&QMZNch7Mx4EQ$4JgQsazC!3#",
+      "password": "PrSEjsTrh5rR2zOir0Ba6eB6u8f70e2V",
       "database": "me_dstark_nl_prd",
-      "google_instance": "dstark-nl:europe-west1:sql-apps-dstark-nl",
+      "sql_instance": "dstark-nl:europe-west1:sql-apps-dstark-nl",
       "use_socket": true
     },
     "sqlalchemy": {
