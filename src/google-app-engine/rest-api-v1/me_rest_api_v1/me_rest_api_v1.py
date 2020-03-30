@@ -53,9 +53,9 @@ class MeRESTAPIv1:
             with open(cls.configfile, 'r') as cfgfile:
                 cls.config = json.load(cfgfile)
         except FileNotFoundError:
-            raise MeRESTAPiv1ConfigFileError('File "{file}" doesn\'t exist'.format(file = cls.configfile))
+            raise MeRESTAPIv1ConfigFileError('File "{file}" doesn\'t exist'.format(file = cls.configfile))
         except json.decoder.JSONDecodeError:
-            raise MeRESTAPiv1ConfigFileError('File "{file}" is not a valid JSON file'.format(file = cls.configfile))
+            raise MeRESTAPIv1ConfigFileError('File "{file}" is not a valid JSON file'.format(file = cls.configfile))
 
     @classmethod
     def set_environment(cls, environment):
@@ -98,12 +98,12 @@ class MeRESTAPIv1:
                     return cls.config[cls.environment][group][setting]
                 else:
                     # If the setting doesn't exist, raise an error
-                    raise MeRESTAPiv1ConfigFileError('Configuration group "{group}" does not contain a setting "{setting}"'.format(group = group, setting = setting))
+                    raise MeRESTAPIv1ConfigFileError('Configuration group "{group}" does not contain a setting "{setting}"'.format(group = group, setting = setting))
             else:
                 # If no setting is given, we return the complete dict for the group
                 return cls.config[cls.environment][group]
         else:
-            raise MeRESTAPiv1ConfigFileError('Configuration group "{group}" does not exist'.format(group = group))
+            raise MeRESTAPIv1ConfigFileError('Configuration group "{group}" does not exist'.format(group = group))
     
     @classmethod
     def initiate(cls):
@@ -154,7 +154,7 @@ class MeRESTAPIv1:
             # Check if the URL startes with the base URL. If it doesn't, something went terrible
             # wrong and we should raise an 'Page not found' error
             if not path.startswith(base_url):
-                raise MeRESTAPiv1WrongBaseURLError('The path "{path}" does not start with the correct base URL "{base_url}"'.format(
+                raise MeRESTAPIv1WrongBaseURLError('The path "{path}" does not start with the correct base URL "{base_url}"'.format(
                     path = path,
                     base_url = base_url
                 ))
@@ -179,7 +179,7 @@ class MeRESTAPIv1:
                         if endpoint in endpoints.keys():
                             return endpoints[endpoint]['method']()
                         else:
-                            raise MeRESTAPiv1APIEndpointNotFoundError('The API endpoint "{endpoint}" for group "{group}" does not exists'.format(
+                            raise MeRESTAPIv1APIEndpointNotFoundError('The API endpoint "{endpoint}" for group "{group}" does not exists'.format(
                                 endpoint = endpoint,
                                 group = group
                             ))
@@ -187,11 +187,11 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1EndpointRegistrationError(e)
                 else:
                     # Didn't exist. Give an error
-                    raise MeRESTAPiv1APIGroupNotFoundError('The API group "{group}" is not a valid group'.format(
+                    raise MeRESTAPIv1APIGroupNotFoundError('The API group "{group}" is not a valid group'.format(
                         group = group
                     ))
             else:
-                raise MeRESTAPiv1InvalidAPIEndpointError('Path "{path}" is not a valid API endpoint'.format(
+                raise MeRESTAPIv1InvalidAPIEndpointError('Path "{path}" is not a valid API endpoint'.format(
                     path = path
                 ))
         except KeyboardInterrupt:

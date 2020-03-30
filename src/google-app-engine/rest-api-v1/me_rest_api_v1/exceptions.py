@@ -30,7 +30,7 @@ class MeRESTAPIv1ServerError(MeRESTAPIv1Error):
 #---------------------------------------------------------------------------------------------------
 # Critical errors; errors that should stop the complete application
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1ConfigFileError(MeRESTAPIv1CriticalError):
+class MeRESTAPIv1ConfigFileError(MeRESTAPIv1CriticalError):
     """ Error that happends when something goes wrong with the configfile. The file is either not
         a valid configfile, or the file doesn't exist """
     pass
@@ -42,19 +42,19 @@ class MeRESTAPIv1EndpointAmbigiousNameError(MeRESTAPIv1CriticalError):
 #---------------------------------------------------------------------------------------------------
 # PageNotFoundErrors: errors that happen when a page or resource is requested that doesn't exists
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1WrongBaseURLError(MeRESTAPIv1PageNotFoundError):
+class MeRESTAPIv1WrongBaseURLError(MeRESTAPIv1PageNotFoundError):
     """ Error when the user opens a URL that doesn't start with the right base_url """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1InvalidAPIEndpointError(MeRESTAPIv1PageNotFoundError):
+class MeRESTAPIv1InvalidAPIEndpointError(MeRESTAPIv1PageNotFoundError):
     """ Error when the user specifies a invalid enpoint """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1APIGroupNotFoundError(MeRESTAPIv1PageNotFoundError):
+class MeRESTAPIv1APIGroupNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error for when the user tries to open an API group that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPiv1APIEndpointNotFoundError(MeRESTAPIv1PageNotFoundError):
+class MeRESTAPIv1APIEndpointNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error for when the user tries to open an API endpoint that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------

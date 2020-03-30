@@ -3,7 +3,7 @@
 		"scope": "python",
 		"prefix": "api_exception",
 		"body": [
-			"class MeRESTAPiv1${1:Exception name}Error(${2|MeRESTAPIv1CriticalError,MeRESTAPIv1PermissionDeniedException,MeRESTAPIv1PageNotFoundError,MeRESTAPIv1ServerErrorError|}):",
+			"class MeRESTAPIv1${1:Exception name}Error(${2|MeRESTAPIv1CriticalError,MeRESTAPIv1PermissionDeniedException,MeRESTAPIv1PageNotFoundError,MeRESTAPIv1ServerError|}):",
 			"    \"\"\" ${3:Error description} \"\"\"",
 			"    pass"
 		],
