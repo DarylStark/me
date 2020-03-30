@@ -10,19 +10,8 @@ service: rest-api-v1
 #--------------------------------------------------------------------------------------------------
 # Configuration that specifies how the service should be started and in what environment
 #--------------------------------------------------------------------------------------------------
-runtime: python
-env: flex
+runtime: python37
+instance_class: F1
+env: standard
 entrypoint: gunicorn -b :$PORT main:app
-runtime_config:
-  python_version: 3.6
-#--------------------------------------------------------------------------------------------------
-# Scaling configuration. We set this to manual so we can have control over it ourselves
-#--------------------------------------------------------------------------------------------------
-manual_scaling:
-  instances: 1
-#--------------------------------------------------------------------------------------------------
-# Settings needed to connect to other Google Cloud services
-#--------------------------------------------------------------------------------------------------
-beta_settings:
-  cloud_sql_instances: dstark-nl:europe-west1:sql-apps-dstark-nl
 #--------------------------------------------------------------------------------------------------

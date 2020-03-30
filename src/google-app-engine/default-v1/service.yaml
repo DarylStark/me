@@ -1,10 +1,17 @@
+#--------------------------------------------------------------------------------------------------
+# Google App Engine Server: default-v1
+# service.yaml
+#
+# This file determines how the Google App Engine service should be started, in what environment
+# and runtime it should be used, the scaling and other options that are applicable to the Google
+# App Engine environment.
+#--------------------------------------------------------------------------------------------------
 service: default
-runtime: python
-env: flex
+#--------------------------------------------------------------------------------------------------
+# Configuration that specifies how the service should be started and in what environment
+#--------------------------------------------------------------------------------------------------
+runtime: python37
+instance_class: F1
+env: standard
 entrypoint: gunicorn -b :$PORT main:app
-
-runtime_config:
-  python_version: 3
-
-manual_scaling:
-  instances: 1
+#--------------------------------------------------------------------------------------------------

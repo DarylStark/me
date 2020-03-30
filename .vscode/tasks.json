@@ -9,7 +9,7 @@
             "command": "tasks/deploy-to-google-app-engine.sh",
             "args": [
                 "me-dstark-nl-test",
-                "v1"
+                "v1-testing"
             ],
             "group": "build",
             "presentation": {
