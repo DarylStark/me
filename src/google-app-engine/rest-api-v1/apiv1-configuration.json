@@ -5,7 +5,7 @@
     },
     "database": {
       "server": "104.155.95.1",
-      "username": "me_dstark_nl_dv",
+      "username": "me_dstark_nl_dev",
       "password": "ZsVsQ5yYuhzv4%iZ7dJ8uyS@m2lQIwxc",
       "database": "me_dstark_nl_dev",
       "sql_instance": "",
