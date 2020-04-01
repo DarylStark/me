@@ -18,7 +18,8 @@ class APIOAuth:
         description = 'Validate API key',
         permissions = {
             'GET': 'oauth.validate'
-        }
+        },
+        user_token_needed = False
     )
     def validate(*args, **kwargs):
         return 'API validator'

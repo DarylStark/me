@@ -241,7 +241,7 @@ class MeRESTAPIv1:
         return decorator
 
     @classmethod
-    def register_endpoint(cls, group, name, description, permissions = None, user_key_needed = True):
+    def register_endpoint(cls, group, name, description, permissions = None, user_token_needed = True):
         """ Decorator for API endpoints to register themselves for the application. The endpoint can
             specify what permissions are needed for the specific HTTP methods for this response. The
             permissions attribute is a dict. The keys are the specific HTTP methods that can be used
@@ -253,8 +253,8 @@ class MeRESTAPIv1:
             execute the HTTP method GET for this endpoint, and the users.create permissions are
             needed for the POST method for this endpoint.
 
-            If 'user_key_needed' is set to False, this endpoint can be performed without a user-key.
-            This should be used as less as possible.
+            If 'user_token_needed' is set to False, this endpoint can be performed without a
+            user-key.
         """
 
         # If no permissions are needed, we create an empty dict for it so we don't get any
@@ -299,25 +299,57 @@ class MeRESTAPIv1:
                 # pass the API token; via HTTP headers, or via the URL. If both are given, we give
                 # an error since we do not allow that. We check for both the Application Token and
                 # the user token, but only one of them is allowed. If a application token is given
-                # and the user_key_needed is True, we raise permission denied error. If a
+                # and the user_token_needed is True, we raise permission denied error. If a
                 # application and user token are given, we also raise a permission denied error. If
-                # a user key is given and user_key_needed if False, we also give an permission
+                # a user key is given and user_token_needed if False, we also give an permission
                 # denied. This way, we can make sure authentication can be done savely.
                 client_token_header = request.headers.get(cls.get_configuration('api', 'http_header_client_token'))
                 user_token_header = request.headers.get(cls.get_configuration('api', 'http_header_user_token'))
                 client_token_url = request.args.get(cls.get_configuration('api', 'http_url_client_token'))
                 user_token_url = request.args.get(cls.get_configuration('api', 'http_url_user_token'))
 
-                # TODO: Check if the tokens comply with the standard
+                client_token = [ token for token in [ client_token_header, client_token_url ] if not token is None ]
+                user_token = [ token for token in [ user_token_header, user_token_url ] if not token is None ]
+
+                if len(client_token) > 1: 
+                    raise MeRESTAPIv1EndpointTooManyClientTokensError('Too many client tokens tokens given. You\'re only allowed to supply a token via HTTP headers or via URL, not both!')
+                elif len(client_token) == 1:
+                    client_token = client_token[0]
+                else:
+                    client_token = None
+        
+                if len(user_token) > 1:
+                    raise MeRESTAPIv1EndpointTooManyUserTokensError('Too many user tokens tokens given. You\'re only allowed to supply a token via HTTP headers or via URL, not both!')
+                elif len(user_token) == 1:
+                    user_token = user_token[0]
+                else:
+                    user_token = None
+
+                # If 'user_token_needed' is set to True, we have to check if we got one user key only
+                if user_token_needed:
+                    if user_token is None or not client_token is None:
+                        raise MeRESTAPIv1EndpointNoUserTokenGivenError('For endpoint "{endpoint}" in group "{group}" is only a user token accepted'.format(
+                            method = request.method.upper(),
+                            endpoint = name,
+                            group = group
+                        ))
+                else:
+                    if not user_token is None or client_token is None:
+                        raise MeRESTAPIv1EndpointNoClientTokenGivenError('For endpoint "{endpoint}" in group "{group}" is only a client token accepted'.format(
+                            method = request.method.upper(),
+                            endpoint = name,
+                            group = group
+                        ))
 
                 # --- Authentication ---------------------------------------------------------------
 
-                # TODO: Check if the application- and user-tokens exist and are not disabled
+                # We have a token. Now we can check if the token is valid. 
 
                 # --- Authorization ----------------------------------------------------------------
 
-                # --- Run the real endpoint --------------------------------------------------------
+                # TODO: Check if the application *and* the user are authorized to do this
 
+                # --- Run the real endpoint --------------------------------------------------------
                 # Return the method as it was
                 return method(*args, **kwargs)
             

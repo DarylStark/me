@@ -21,7 +21,8 @@ class APIUsers:
             'POST': 'users.add',
             'PATCH': 'users.update',
             'DELETE': 'users.delete'
-        }
+        },
+        user_token_needed = True
     )
     def user(*args, **kwargs):
         return 'User objects'

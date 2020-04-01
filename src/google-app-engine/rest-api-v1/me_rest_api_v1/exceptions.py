@@ -65,6 +65,22 @@ class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError)
     """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointTooManyClientTokensError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user supplies two client tokens """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointTooManyUserTokensError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user supplies to user tokens """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointNoUserTokenGivenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to execute a endpoint without a user key while this is required """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointNoClientTokenGivenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to execute a endpoint with a client key while this is required """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
