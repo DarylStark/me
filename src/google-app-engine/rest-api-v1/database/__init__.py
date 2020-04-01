@@ -13,7 +13,10 @@ from database.database import Database
 from database.database_session import DatabaseSession
 
 # Tables
-#from database.note_revision import NoteRevision
-#from database.note import Note
 from database.user import User
+from database.api_permission import APIPermission
+from database.api_client_token import APIClientToken
+from database.api_client_permission import APIClientPermission
+from database.api_user_token import APIUserToken
+from database.api_user_permission import APIUserPermission
 #---------------------------------------------------------------------------------------------------

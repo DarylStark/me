@@ -11,6 +11,7 @@ import sqlalchemy
 from sqlalchemy import Column, Integer, DateTime, String, Boolean, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Database
+import datetime
 #---------------------------------------------------------------------------------------------------
 class User(Database.base_class):
     """ Table for users """
@@ -27,8 +28,12 @@ class User(Database.base_class):
 
     # Database columns for this table
     id =            Column(Integer, primary_key = True)
+    created =       Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
     fullname =      Column(String(128), nullable = False)
     username =      Column(String(128), nullable = False)
     password =      Column(String(128), nullable = False)
     password_salt = Column(String(128), nullable = False)
+
+    # One-to-many relationship mappings
+    user_api_tokens = relationship("APIUserToken")
 #---------------------------------------------------------------------------------------------------
