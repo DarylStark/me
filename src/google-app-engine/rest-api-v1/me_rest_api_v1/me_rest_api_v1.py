@@ -14,6 +14,7 @@ from database import Database
 import flask
 import json
 import re
+from flask import request
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1:
     """ Main class for the REST API. Should be used as a static class """
@@ -240,8 +241,26 @@ class MeRESTAPIv1:
         return decorator
 
     @classmethod
-    def register_endpoint(cls, group, name, description):
-        """ Decorator for API endpoints to register themselves for the application """
+    def register_endpoint(cls, group, name, description, permissions = None, user_key_needed = True):
+        """ Decorator for API endpoints to register themselves for the application. The endpoint can
+            specify what permissions are needed for the specific HTTP methods for this response. The
+            permissions attribute is a dict. The keys are the specific HTTP methods that can be used
+            and the values for the keys are the permissions needed for that HTTP method. Example:
+
+            { 'GET': 'users.list', 'POST': 'users.create' }
+
+            This would mean that that users.list permissions is needed for the client in able to 
+            execute the HTTP method GET for this endpoint, and the users.create permissions are
+            needed for the POST method for this endpoint.
+
+            If 'user_key_needed' is set to False, this endpoint can be performed without a user-key.
+            This should be used as less as possible.
+        """
+
+        # If no permissions are needed, we create an empty dict for it so we don't get any
+        # TypeErrors later on
+        if permissions is None:
+            permissions = dict()
 
         def decorator(method):
             """ In the decorator, we register the endpoint in the class """
@@ -259,15 +278,57 @@ class MeRESTAPIv1:
                     endpoint = name,
                     group = group
                 ))
+            
+            # Create a endpoint method that we use to replace the method that is being decorated
+            def endpoint(*args, **kwargs):
+                """ The new endpoint; checks if the permissions are correct for the client and the
+                    user, and if the correct methods are used """
+                
+                # --- Check the method -------------------------------------------------------------
+                # First, we check if the HTTP method that is being used by the client is allowed. We
+                # check that by checking it against the given keys in the permissions dictionary.
+                if not request.method.lower() in [ method.lower() for method in permissions.keys() ]:
+                    raise MeRESTAPIv1EndpointMethodNotAllowedError('The method "{method}" is not allowed for endpoint "{endpoint}" in group "{group}"'.format(
+                        method = request.method.upper(),
+                        endpoint = name,
+                        group = group
+                    ))
+                
+                # --- API Key check ----------------------------------------------------------------
+                # Then, we have to retrieve the API tokens given. There are two ways for clients to
+                # pass the API token; via HTTP headers, or via the URL. If both are given, we give
+                # an error since we do not allow that. We check for both the Application Token and
+                # the user token, but only one of them is allowed. If a application token is given
+                # and the user_key_needed is True, we raise permission denied error. If a
+                # application and user token are given, we also raise a permission denied error. If
+                # a user key is given and user_key_needed if False, we also give an permission
+                # denied. This way, we can make sure authentication can be done savely.
+                client_token_header = request.headers.get(cls.get_configuration('api', 'http_header_client_token'))
+                user_token_header = request.headers.get(cls.get_configuration('api', 'http_header_user_token'))
+                client_token_url = request.args.get(cls.get_configuration('api', 'http_url_client_token'))
+                user_token_url = request.args.get(cls.get_configuration('api', 'http_url_user_token'))
 
+                # TODO: Check if the tokens comply with the standard
+
+                # --- Authentication ---------------------------------------------------------------
+
+                # TODO: Check if the application- and user-tokens exist and are not disabled
+
+                # --- Authorization ----------------------------------------------------------------
+
+                # --- Run the real endpoint --------------------------------------------------------
+
+                # Return the method as it was
+                return method(*args, **kwargs)
+            
             # Add the endpoint to the group
             cls.registered_groups[group]['endpoints'][name] = {
-                'method': method,
+                'method': endpoint,
                 'description': description
             }
 
             # We return the method so it can be used
-            return method
+            return endpoint
         
         # Return the decorator
         return decorator

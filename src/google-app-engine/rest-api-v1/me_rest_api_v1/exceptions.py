@@ -16,7 +16,7 @@ class MeRESTAPIv1CriticalError(MeRESTAPIv1Error):
     """ Exception that should result in complete termination of the application """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1PermissionDeniedException(MeRESTAPIv1Error):
+class MeRESTAPIv1PermissionDeniedError(MeRESTAPIv1Error):
     """ Base exception for 403-errors """
     pass
 #---------------------------------------------------------------------------------------------------
@@ -58,7 +58,14 @@ class MeRESTAPIv1APIEndpointNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error for when the user tries to open an API endpoint that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
-# Server Errors: errors that happen on the server and that are not the users fault
+# PermissionDeniedErrors: errors that happen on the server and that are not the users fault
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user tries to use a HTTP method that is not allowed for the specific endpoint
+    """
+    pass
+#---------------------------------------------------------------------------------------------------
+# ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
     """ Error for when a endpoint-object is not valid """

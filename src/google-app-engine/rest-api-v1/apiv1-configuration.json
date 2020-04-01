@@ -3,6 +3,12 @@
     "service": {
       "base_url": "api/v1"
     },
+    "api": {
+      "http_header_client_token": "X-Me-Auth-Client",
+      "http_header_user_token": "X-Me-Auth-User",
+      "http_url_client_token": "api_client_token",
+      "http_url_user_token": "api_user_token"
+    },
     "database": {
       "server": "104.155.95.1",
       "username": "me_dstark_nl_dev",

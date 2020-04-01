@@ -12,7 +12,14 @@ from me_rest_api_v1 import MeRESTAPIv1
 class APIOAuth:
     """ API class for 'oauth'. Can be used to authenticate """
 
-    @MeRESTAPIv1.register_endpoint(group = 'oauth', name = 'validate', description = 'Validate API keys')
+    @MeRESTAPIv1.register_endpoint(
+        group = 'oauth',
+        name = 'validate',
+        description = 'Validate API key',
+        permissions = {
+            'GET': 'oauth.validate'
+        }
+    )
     def validate(*args, **kwargs):
         return 'API validator'
 #---------------------------------------------------------------------------------------------------
