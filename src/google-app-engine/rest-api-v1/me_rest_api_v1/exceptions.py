@@ -81,6 +81,30 @@ class MeRESTAPIv1EndpointNoClientTokenGivenError(MeRESTAPIv1PermissionDeniedErro
     """ Error when a user tries to execute a endpoint with a client key while this is required """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointNoValidClientTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a non-existing client token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointDisabledClientTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a disabled client token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointExpiredClientTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a expired client token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointNoValidUserTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a non-existing user token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointDisabledUserTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a disabled user token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointExpiredUserTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when the user specifies a expired user token """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):

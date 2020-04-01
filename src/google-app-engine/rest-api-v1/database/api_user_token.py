@@ -41,4 +41,7 @@ class APIUserToken(Database.base_class):
 
     # One-to-many relationship mappings
     users_permissions = relationship("APIUserPermission")
+
+    # Many-to-one relationship mappings
+    client = relationship("APIClientToken")
 #---------------------------------------------------------------------------------------------------

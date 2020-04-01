@@ -11,10 +11,15 @@
 # Imports
 from me_rest_api_v1.exceptions import *
 from database import Database
+from database import DatabaseSession
+from database import APIUserToken
+from database import APIClientToken
+from sqlalchemy import and_
+from flask import request
 import flask
 import json
 import re
-from flask import request
+import datetime
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1:
     """ Main class for the REST API. Should be used as a static class """
@@ -343,7 +348,53 @@ class MeRESTAPIv1:
 
                 # --- Authentication ---------------------------------------------------------------
 
-                # We have a token. Now we can check if the token is valid. 
+                with DatabaseSession() as session:
+                    # We have a token. Now we can check if the token is valid.
+                    if user_token_needed:
+                        # Get the user token
+                        tokens = session.query(APIUserToken).filter(APIUserToken.token == user_token)
+
+                        # Check if we have a token, if the token isn't disabled and if it isn't
+                        # expired
+                        if tokens.count() == 1:
+                            token = tokens.first()
+                            client_token = token.client.token
+                            if token.enabled:
+                                if not token.expiration is None:
+                                    if token.expiration < datetime.datetime.utcnow():
+                                        raise MeRESTAPIv1EndpointExpiredUserTokenError('The user token "{token}" is expired'.format(
+                                            token = user_token
+                                        ))
+                            else:
+                                raise MeRESTAPIv1EndpointDisabledUserTokenError('The user token "{token}" is disabled'.format(
+                                    token = user_token
+                                ))
+                        else:
+                            raise MeRESTAPIv1EndpointNoValidUserTokenError('The user token "{token}" is not found'.format(
+                                token = user_token
+                            ))
+
+                    # Get the client token
+                    tokens = session.query(APIClientToken).filter(APIClientToken.token == client_token)
+                    
+                    # Check if we have a token, if the token isn't disabled and if it isn't
+                    # expired
+                    if tokens.count() == 1:
+                        token = tokens.first()
+                        if token.enabled:
+                            if not token.expiration is None:
+                                if token.expiration < datetime.datetime.utcnow():
+                                    raise MeRESTAPIv1EndpointExpiredClientTokenError('The client token "{token}" is expired'.format(
+                                        token = client_token
+                                    ))
+                        else:
+                            raise MeRESTAPIv1EndpointDisabledClientTokenError('The client token "{token}" is disabled'.format(
+                                token = client_token
+                            ))
+                    else:
+                        raise MeRESTAPIv1EndpointNoValidClientTokenError('The client token "{token}" is not found'.format(
+                            token = client_token
+                        ))
 
                 # --- Authorization ----------------------------------------------------------------
 
