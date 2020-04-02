@@ -7,7 +7,8 @@
       "http_header_client_token": "X-Me-Auth-Client",
       "http_header_user_token": "X-Me-Auth-User",
       "http_url_client_token": "api_client_token",
-      "http_url_user_token": "api_user_token"
+      "http_url_user_token": "api_user_token",
+      "max_items_per_page": 25
     },
     "database": {
       "server": "104.155.95.1",
@@ -42,7 +43,8 @@
       "http_header_client_token": "X-Me-Auth-Client",
       "http_header_user_token": "X-Me-Auth-User",
       "http_url_client_token": "api_client_token",
-      "http_url_user_token": "api_user_token"
+      "http_url_user_token": "api_user_token",
+      "max_items_per_page": 25
     },
     "database": {
       "server": "104.155.95.1",
