@@ -10,10 +10,13 @@
 #---------------------------------------------------------------------------------------------------
 # Imports
 from me_rest_api_v1.exceptions import *
+from me_rest_api_v1 import APIResponse
+from me_rest_api_v1 import MeJSONEncoder
 from database import Database
 from database import DatabaseSession
 from database import APIUserToken
 from database import APIClientToken
+from time import time
 from sqlalchemy import and_
 from flask import request
 import flask
@@ -288,6 +291,9 @@ class MeRESTAPIv1:
             def endpoint(*args, **kwargs):
                 """ The new endpoint; checks if the permissions are correct for the client and the
                     user, and if the correct methods are used """
+
+                # Get the starting time of the endpoint so we can calculate the runtime afterwards
+                starttime = time()
                 
                 # --- Check the method -------------------------------------------------------------
                 # First, we check if the HTTP method that is being used by the client is allowed. We
@@ -472,8 +478,66 @@ class MeRESTAPIv1:
                         ))
 
                 # --- Run the real endpoint --------------------------------------------------------
-                # Return the method as it was
-                return method(*args, **kwargs)
+                # Now that we are authenticated and authorized, we can run the method, retrieve the
+                # resulting data and parse it for a good API result
+                return_object = method(*args, **kwargs)
+
+                # Check if the return value is correct. If it isn't, we raise an 500 error
+                if not type(return_object) is APIResponse:
+                    raise MeRESTAPIv1EndpointWrongReturnTypeError('Endpoint "{endpoint}" in group "{group}" returned a "{wrong_type}" instead of a"{good_type}"'.format(
+                        endpoint = name,
+                        group = group,
+                        wrong_type = type(data),
+                        good_type = APIResponse
+                    ))
+                
+                # Set the starttime. The endtime will be calculated when the result gets parsed to
+                # present to the client
+                return_object.starttime = starttime
+
+                # Set the API characteristics
+                return_object.api_group = group
+                return_object.api_endpoint = name
+
+                # If this response is a dataset, we might have to do some paging
+                if return_object.response_type == APIResponse.TYPE_DATASET:
+                    if return_object.paginate:
+                        # If a page is set, we use that. Otherwise, we take the default value of 1
+                        page = 1
+                        if 'page' in request.args.keys():
+                            try:
+                                page = int(request.args['page'])
+                            except ValueError:
+                                raise MeRESTAPIv1EndpointPageWrongTypeError('The attribute "page" should be of type "{good_type}", not "{bad_type}"'.format(
+                                    good_type = int,
+                                    bad_type = type(request.args['page'])
+                                ))
+
+                        # Get the max items per page
+                        items_per_page = cls.get_configuration('api', 'max_items_per_page')
+                        if 'limit' in request.args.keys():
+                            try:
+                                items_per_page = int(request.args['limit'])
+                            except ValueError:
+                                raise MeRESTAPIv1EndpointLimitWrongTypeError('The attribute "limit" should be of type "{good_type}", not "{bad_type}"'.format(
+                                    good_type = int,
+                                    bad_type = type(request.args['limit'])
+                                ))
+
+                        # Complete the return object
+                        return_object.items_per_page = items_per_page
+                        return_object.page = page
+
+                # --- Return the result ------------------------------------------------------------
+                # Return the given result. If the user specified 'pretty' in the URL, we print the
+                # JSON in a neet formatted way
+                json_options = dict()
+                if 'pretty' in request.args.keys():
+                    json_options = {
+                        'indent': 4,
+                        'sort_keys': True
+                    }
+                return flask.Response(json.dumps(return_object.response, cls = MeJSONEncoder, **json_options), mimetype = 'application/json')
             
             # Add the endpoint to the group
             cls.registered_groups[group]['endpoints'][name] = {

@@ -58,6 +58,18 @@ class MeRESTAPIv1APIEndpointNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error for when the user tries to open an API endpoint that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointPageWrongTypeError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a endpoint get a page that isn't a integer """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointLimitWrongTypeError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a endpoint get a page that isn't a integer """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointInvalidPageError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a endpoint get a invalid page """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
@@ -121,5 +133,21 @@ class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointPermissionInvalidError(MeRESTAPIv1ServerError):
     """ Error that happens when a endpoint has a invalid permission value """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointWrongReturnTypeError(MeRESTAPIv1ServerError):
+    """ Error when a endpoint returns a wrong return type """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointWrongResponseTypeError(MeRESTAPIv1ServerError):
+    """ Error when a endpoint returns a wrong respsone type """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointDataNotAListError(MeRESTAPIv1ServerError):
+    """ Error when a endpoint returns data that isn't a list """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointDataNotABoolError(MeRESTAPIv1ServerError):
+    """ Error when a endpoint returns data that isn't a boolean """
     pass
 #---------------------------------------------------------------------------------------------------

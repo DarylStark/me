@@ -7,6 +7,10 @@
 #---------------------------------------------------------------------------------------------------
 # Imports
 from me_rest_api_v1 import MeRESTAPIv1
+from me_rest_api_v1 import APIResponse
+from database import DatabaseSession
+from database import User
+from flask import request
 #---------------------------------------------------------------------------------------------------
 @MeRESTAPIv1.register_group(name = 'users', description = 'User management')
 class APIUsers:
@@ -24,6 +28,12 @@ class APIUsers:
         },
         user_token_needed = True
     )
-    def user(*args, **kwargs):
-        return 'User objects'
+    def user():
+        if request.method.upper() == 'GET':
+            response = APIResponse(APIResponse.TYPE_DATASET)
+            with DatabaseSession() as session:
+                q = session.query(User)
+                response.data = q.all()
+        
+        return response
 #---------------------------------------------------------------------------------------------------

@@ -6,6 +6,12 @@
     package can be used as a package
 """
 #---------------------------------------------------------------------------------------------------
+# JSON encoder
+from me_rest_api_v1.me_json_encoder import MeJSONEncoder
+
+# API response
+from me_rest_api_v1.api_response import APIResponse
+
 # Main class: MeRESTAPIv1
 from me_rest_api_v1.me_rest_api_v1 import MeRESTAPIv1
 
