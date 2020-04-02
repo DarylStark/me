@@ -15,7 +15,7 @@ class APIUsers:
     @MeRESTAPIv1.register_endpoint(
         group = 'users',
         name = 'user',
-        description = 'Endpoint to retrieve, update or delete users',
+        description = 'Endpoint to create, retrieve, update or delete users',
         permissions = {
             'POST': 'users.create',
             'GET': 'users.retrieve',
