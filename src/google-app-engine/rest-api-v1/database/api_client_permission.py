@@ -33,4 +33,7 @@ class APIClientPermission(Database.base_class):
     client_token =  Column(ForeignKey("api_client_tokens.id"), nullable = False)
     permission =    Column(ForeignKey("api_permissions.id"), nullable = False)
     granted =       Column(Boolean, nullable = False)
+
+    # Many-to-one relationship mappings
+    permission_object = relationship("APIPermission")
 #---------------------------------------------------------------------------------------------------

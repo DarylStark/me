@@ -105,9 +105,21 @@ class MeRESTAPIv1EndpointExpiredUserTokenError(MeRESTAPIv1PermissionDeniedError)
     """ Error when the user specifies a expired user token """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointClientNotAuthorizedError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a client token isn't authorized for a specific endpoint """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointUserNotAuthorizedError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user token isn't authorized for a specific endpoint """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
     """ Error for when a endpoint-object is not valid """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1EndpointPermissionInvalidError(MeRESTAPIv1ServerError):
+    """ Error that happens when a endpoint has a invalid permission value """
     pass
 #---------------------------------------------------------------------------------------------------

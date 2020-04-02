@@ -147,7 +147,7 @@ class MeRESTAPIv1:
         return cls.flask_app.run(**cls.get_configuration('flask'))
     
     @flask_app.route('/', defaults = { 'path': '' }, methods = [ 'GET', 'POST' ])
-    @flask_app.route('/<path:path>', methods = ['GET', 'POST'])
+    @flask_app.route('/<path:path>', methods = ['GET', 'POST', 'PATCH', 'DELETE'])
     def api_endpoint(path):
         """ Show the correct page based on registered classes expressions """
         
@@ -292,7 +292,7 @@ class MeRESTAPIv1:
                 # --- Check the method -------------------------------------------------------------
                 # First, we check if the HTTP method that is being used by the client is allowed. We
                 # check that by checking it against the given keys in the permissions dictionary.
-                if not request.method.lower() in [ method.lower() for method in permissions.keys() ]:
+                if not request.method.upper() in [ method.upper() for method in permissions.keys() ]:
                     raise MeRESTAPIv1EndpointMethodNotAllowedError('The method "{method}" is not allowed for endpoint "{endpoint}" in group "{group}"'.format(
                         method = request.method.upper(),
                         endpoint = name,
@@ -348,6 +348,9 @@ class MeRESTAPIv1:
 
                 # --- Authentication ---------------------------------------------------------------
 
+                user_token_object = None
+                client_token_object = None
+
                 with DatabaseSession() as session:
                     # We have a token. Now we can check if the token is valid.
                     if user_token_needed:
@@ -357,11 +360,11 @@ class MeRESTAPIv1:
                         # Check if we have a token, if the token isn't disabled and if it isn't
                         # expired
                         if tokens.count() == 1:
-                            token = tokens.first()
-                            client_token = token.client.token
-                            if token.enabled:
-                                if not token.expiration is None:
-                                    if token.expiration < datetime.datetime.utcnow():
+                            user_token_object = tokens.first()
+                            client_token = user_token_object.client.token
+                            if user_token_object.enabled:
+                                if not user_token_object.expiration is None:
+                                    if user_token_object.expiration < datetime.datetime.utcnow():
                                         raise MeRESTAPIv1EndpointExpiredUserTokenError('The user token "{token}" is expired'.format(
                                             token = user_token
                                         ))
@@ -380,10 +383,10 @@ class MeRESTAPIv1:
                     # Check if we have a token, if the token isn't disabled and if it isn't
                     # expired
                     if tokens.count() == 1:
-                        token = tokens.first()
-                        if token.enabled:
-                            if not token.expiration is None:
-                                if token.expiration < datetime.datetime.utcnow():
+                        client_token_object = tokens.first()
+                        if client_token_object.enabled:
+                            if not client_token_object.expiration is None:
+                                if client_token_object.expiration < datetime.datetime.utcnow():
                                     raise MeRESTAPIv1EndpointExpiredClientTokenError('The client token "{token}" is expired'.format(
                                         token = client_token
                                     ))
@@ -396,9 +399,77 @@ class MeRESTAPIv1:
                             token = client_token
                         ))
 
-                # --- Authorization ----------------------------------------------------------------
+                    # --- Authorization ------------------------------------------------------------
 
-                # TODO: Check if the application *and* the user are authorized to do this
+                    # Check if the application *and* the user are authorized to do this. To do this,
+                    # we get the permission objects from the token-objects, but only the ones that
+                    # are requested for this endpoint. We first split the requested permission in a
+                    # section and a subject. But before doing that, we have to get the correct
+                    # requested permission for this HTTP method
+                    endpoint_permission = None
+                    for methods, permission in permissions.items():
+                        if methods.upper() == request.method.upper():
+                            endpoint_permission = permission
+                            break
+                    
+                    # Split the endpoint and check if it is in the correct format
+                    permissions_splitted = re.findall('^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$', endpoint_permission)
+                    if len(permissions_splitted) == 1:
+                        if len(permissions_splitted[0]) == 2:
+                            section = permissions_splitted[0][0]
+                            subject = permissions_splitted[0][1]
+                        else:
+                            raise MeRESTAPIv1EndpointPermissionInvalidError('Permission "{permission}" is not a valid permission string'.format(
+                                permission = endpoint_permission
+                            ))
+                    else:
+                        raise MeRESTAPIv1EndpointPermissionInvalidError('Permission "{permission}" is not a valid permission string'.format(
+                            permission = endpoint_permission
+                        ))
+
+                    # We set both permissions default to False
+                    client_permitted = False
+                    user_permitted = False
+
+                    # Get the client permissions
+                    client_permissions = [
+                        permission
+                        for permission in client_token_object.client_permissions
+                        if permission.granted == True and permission.permission_object.section == section and permission.permission_object.subject == subject
+                    ]
+
+                    # If we have found something, we can surely say this user is allowed to run this
+                    # endpoint
+                    if len(client_permissions) == 1:
+                        client_permitted = True
+
+                    # Get the user permissions
+                    if user_token_needed:
+                        user_permissions = [
+                            permission
+                            for permission in user_token_object.user_permissions
+                            if permission.granted == True and permission.permission_object.section == section and permission.permission_object.subject == subject
+                        ]
+
+                        # If we have found something, we can surely say this user is allowed to run
+                        # this endpoint
+                        if len(user_permissions) == 1:
+                            user_permitted = True
+                    else:
+                        # If we don't have a user_token_object, there is none because this API
+                        # doesnt require a user token. We can just assume it is correct then
+                        user_permitted = True
+                    
+                    # Check if one of them is False. If it is, we have to raise an authorization
+                    # error
+                    if not client_permitted:
+                        raise MeRESTAPIv1EndpointClientNotAuthorizedError('The client is not authorized for "{permission}" permissions'.format(
+                            permission = endpoint_permission
+                        ))
+                    elif not user_permissions:
+                        raise MeRESTAPIv1EndpointUserNotAuthorizedError('The user is not authorized for "{permission}" permissions'.format(
+                            permission = endpoint_permission
+                        ))
 
                 # --- Run the real endpoint --------------------------------------------------------
                 # Return the method as it was

@@ -17,8 +17,8 @@ class APIUsers:
         name = 'user',
         description = 'Endpoint to retrieve, update or delete users',
         permissions = {
+            'POST': 'users.create',
             'GET': 'users.retrieve',
-            'POST': 'users.add',
             'PATCH': 'users.update',
             'DELETE': 'users.delete'
         },

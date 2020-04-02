@@ -40,7 +40,7 @@ class APIUserToken(Database.base_class):
     description =   Column(String(64), nullable = True)
 
     # One-to-many relationship mappings
-    users_permissions = relationship("APIUserPermission")
+    user_permissions = relationship("APIUserPermission")
 
     # Many-to-one relationship mappings
     client = relationship("APIClientToken")
