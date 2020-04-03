@@ -159,7 +159,7 @@ class APIResponse:
         # return type
         if self.response_type == self.TYPE_DONE:
             if type(self.data) is bool:
-                response_dict['progress'] = self.data
+                response_dict['success'] = self.data
             else:
                 raise MeRESTAPIv1EndpointDataNotABoolError('Data is of type "{bad_type} and not of type "{good_type}"'.format(
                     bad_type = type(self.data),
