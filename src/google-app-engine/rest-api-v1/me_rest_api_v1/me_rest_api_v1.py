@@ -163,7 +163,7 @@ class MeRESTAPIv1:
                 'indent': 4,
                 'sort_keys': True
             }
-        return flask.Response(json.dumps(error_object.response, cls = MeJSONEncoder, **json_options), mimetype = 'application/json', status = 403)
+        return flask.Response(json.dumps(error_object.response, cls = MeJSONEncoder, **json_options), mimetype = 'application/json', status = error_code)
 
     @classmethod
     def start(cls):
@@ -172,7 +172,7 @@ class MeRESTAPIv1:
         # Start Flask with the configuration that is red in
         return cls.flask_app.run(**cls.get_configuration('flask'))
     
-    @flask_app.route('/', defaults = { 'path': '' }, methods = [ 'GET', 'POST' ])
+    @flask_app.route('/', defaults = { 'path': '' }, methods = ['GET', 'POST', 'PATCH', 'DELETE'])
     @flask_app.route('/<path:path>', methods = ['GET', 'POST', 'PATCH', 'DELETE'])
     def api_endpoint(path):
         """ Show the correct page based on registered classes expressions """
@@ -316,7 +316,7 @@ class MeRESTAPIv1:
                 ))
             
             # Create a endpoint method that we use to replace the method that is being decorated
-            def endpoint(*args, **kwargs):
+            def endpoint():
                 """ The new endpoint; checks if the permissions are correct for the client and the
                     user, and if the correct methods are used """
 
@@ -500,7 +500,7 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1EndpointClientNotAuthorizedError('The client is not authorized for "{permission}" permissions'.format(
                             permission = endpoint_permission
                         ))
-                    elif not user_permissions:
+                    elif not user_permitted:
                         raise MeRESTAPIv1EndpointUserNotAuthorizedError('The user is not authorized for "{permission}" permissions'.format(
                             permission = endpoint_permission
                         ))
@@ -508,14 +508,19 @@ class MeRESTAPIv1:
                 # --- Run the real endpoint --------------------------------------------------------
                 # Now that we are authenticated and authorized, we can run the method, retrieve the
                 # resulting data and parse it for a good API result
-                return_object = method(*args, **kwargs)
+                tokens = { 'user_token': None, 'client_token': None }
+                if user_token_object:
+                    tokens['user_token'] = user_token_object.token
+                if client_token_object:
+                    tokens['client_token'] = client_token_object.token
+                return_object = method(**tokens)
 
                 # Check if the return value is correct. If it isn't, we raise an 500 error
                 if not type(return_object) is APIResponse:
                     raise MeRESTAPIv1EndpointWrongReturnTypeError('Endpoint "{endpoint}" in group "{group}" returned a "{wrong_type}" instead of a"{good_type}"'.format(
                         endpoint = name,
                         group = group,
-                        wrong_type = type(data),
+                        wrong_type = type(return_object),
                         good_type = APIResponse
                     ))
                 

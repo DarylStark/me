@@ -90,9 +90,9 @@ class APIResponse:
             
             if self.error_show:
                 # If we need to show exceptions, we add some values
-                error_object['traceback'] = self.error_traceback
-                error_object['exception'] = self.error_exception
-                error_object['description'] = self.error_description
+                error_object['error']['traceback'] = self.error_traceback
+                error_object['error']['exception'] = self.error_exception
+                error_object['error']['description'] = self.error_description
             
             # Return the object
             return error_object

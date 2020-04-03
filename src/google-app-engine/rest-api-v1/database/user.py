@@ -8,9 +8,10 @@
 #---------------------------------------------------------------------------------------------------
 # Imports
 import sqlalchemy
-from sqlalchemy import Column, Integer, DateTime, String, Boolean, UniqueConstraint, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, String, Boolean, UniqueConstraint, ForeignKey, LargeBinary
 from sqlalchemy.orm import relationship
 from database import Database
+from passlib.hash import argon2
 import datetime
 #---------------------------------------------------------------------------------------------------
 class User(Database.base_class):
@@ -22,8 +23,7 @@ class User(Database.base_class):
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('fullname'),
-        UniqueConstraint('username'),
-        UniqueConstraint('password_salt')
+        UniqueConstraint('username')
     )
 
     # Database columns for this table
@@ -31,12 +31,20 @@ class User(Database.base_class):
     created =       Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
     fullname =      Column(String(128), nullable = False)
     username =      Column(String(128), nullable = False)
-    password =      Column(String(128), nullable = False)
-    password_salt = Column(String(128), nullable = False)
+    password =      Column(String(512), nullable = False)
+    secret =        Column(String(256), nullable = True)
 
     # One-to-many relationship mappings
     user_api_tokens = relationship("APIUserToken")
 
     # Fields that need to be hidden from the API
-    api_hide_fields = [ 'password', 'password_salt' ]
+    api_hide_fields = [ 'password' ]
+
+    def set_password(self, password):
+        """ Method to set the password for this user """
+        self.password = argon2.hash(password)
+    
+    def verify_password(self, password):
+        """ Checks the password and returns True if the given password is correct """
+        return argon2.verify(password, self.password)
 #---------------------------------------------------------------------------------------------------

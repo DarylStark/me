@@ -20,5 +20,5 @@ from me_rest_api_v1.exceptions import *
 
 # API pages
 from me_rest_api_v1.api_users import APIUsers
-from me_rest_api_v1.api_oauth import APIOAuth
+from me_rest_api_v1.api_aaa import APIAAA
 #---------------------------------------------------------------------------------------------------

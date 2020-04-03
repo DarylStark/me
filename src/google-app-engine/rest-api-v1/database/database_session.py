@@ -11,9 +11,12 @@ from database import Database
 class DatabaseSession:
     """ Class for database session. Can and should be used as context manager """
 
-    def __init__(self, commit_on_end = False):
-        """ The initiator creates an empty session to use with this object """
-        self.session = Database.session()
+    def __init__(self, commit_on_end = False, expire_on_commit = True):
+        """ The initiator creates an empty session to use with this object. When 'expire_on_commit'
+            is set, all objects that were added during this session are expired after the session is
+            commited """
+
+        self.session = Database.session(expire_on_commit = expire_on_commit)
         self.commit_on_end = commit_on_end
     
     def close(self):
@@ -43,4 +46,8 @@ class DatabaseSession:
         
         # Close the session
         self.close()
+
+        # If 'type' is None, there was no error so we can return True. Otherwise, False is returned
+        # and the exception is passed through
+        return type is None
 #---------------------------------------------------------------------------------------------------

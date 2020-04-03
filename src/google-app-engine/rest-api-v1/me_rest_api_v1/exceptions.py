@@ -125,6 +125,18 @@ class MeRESTAPIv1EndpointUserNotAuthorizedError(MeRESTAPIv1PermissionDeniedError
     """ Error when a user token isn't authorized for a specific endpoint """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAARetrieveUserTokenNoDataError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to retrieve a user token without providing (correct) information """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAARetrieveUserTokenUserNotFoundError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to retrieve a user token with a wrong username """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAARetrieveUserTokenPasswordWrongError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to retrieve a user token with a wrong password """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
