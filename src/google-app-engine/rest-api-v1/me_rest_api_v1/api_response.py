@@ -17,6 +17,7 @@ class APIResponse:
     TYPE_DATASET = 1    # For APIs that return lists of data
     TYPE_RECORD = 2     # For APIs that create or modify data and return the new or modified object
     TYPE_DONE = 3       # For APIs that respond when something is done, like remving a object
+    TYPE_ERROR = 4      # For APIs that respond in error
 
     def __init__(self, response_type = None):
         """ The initiator sets default values """
@@ -45,16 +46,61 @@ class APIResponse:
         self.last_page = None
         self.item_count = None
         self.all_item_count = None
+
+        # For error objects, we have different variables
+        self.error_code = None
+        self.error_path = None
+        self.error_text = 'Undefined error'
+        self.error_traceback = None
+        self.error_exception = None
+        self.error_description = None
+        self.error_show = False
     
     @property
     def response(self):
         """ Property to return the object itself as a dict """
 
         # Check if a valid type is set
-        if not self.response_type in (APIResponse.TYPE_DATASET, APIResponse.TYPE_RECORD, APIResponse.TYPE_DONE):
+        if not self.response_type in (APIResponse.TYPE_DATASET, APIResponse.TYPE_RECORD, APIResponse.TYPE_DONE, APIResponse.TYPE_ERROR):
             raise MeRESTAPIv1EndpointWrongResponseTypeError('Response type {response_type} is not valid'.format(
-                response_type = return_object.response_type
+                response_type = self.response_type
             ))
+        
+        # If this is an error, we can create a simple dict and return it
+        if self.response_type == APIResponse.TYPE_ERROR:
+            # Define error texts
+            error_texts = {
+                '403': 'Not authorized for this resource',
+                '404': 'Resource not found',
+                '500': 'Server error'
+            }
+
+            # Find the correct error text
+            if str(self.error_code) in error_texts:
+                self.error_text = error_texts[str(self.error_code)]
+            
+            # Create a error-dict
+            error_object = {
+                'error': {
+                    'code': self.error_code,
+                    'text': self.error_text,
+                    'path': self.error_path
+                }
+            }
+            
+            if self.error_show:
+                # If we need to show exceptions, we add some values
+                error_object['traceback'] = self.error_traceback
+                error_object['exception'] = self.error_exception
+                error_object['description'] = self.error_description
+            
+            # Return the object
+            return error_object
+        
+        # Calculate the runtime
+        runtime = 0
+        if self.starttime:
+            runtime = round(time() - self.starttime, 3)
 
         # Create the default response dictionary
         response_dict = {
@@ -64,7 +110,7 @@ class APIResponse:
             },
             'response': {
                 'type': self.response_type,
-                'runtime': round(time() - self.starttime, 3)
+                'runtime': runtime
             }
         }
 

@@ -23,6 +23,7 @@ import flask
 import json
 import re
 import datetime
+import traceback
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1:
     """ Main class for the REST API. Should be used as a static class """
@@ -142,6 +143,28 @@ class MeRESTAPIv1:
             **cls.get_configuration(group = 'sqlalchemy')
         )
     
+    @staticmethod
+    def get_error_response(error, error_code, path):
+        """ Return a APIResponse-object for a error """
+
+        # Create a error response object
+        error_object = APIResponse(APIResponse.TYPE_ERROR)
+        error_object.error_path = path
+        error_object.error_code = error_code
+        error_object.error_traceback = traceback.format_exception(etype = type(error), value = error, tb = error.__traceback__)
+        error_object.error_exception = error.__class__.__name__
+        error_object.error_description = str(error)
+        error_object.error_show = MeRESTAPIv1.get_configuration('errors', 'show_exceptions')
+
+        # Return the created error object
+        json_options = dict()
+        if 'pretty' in request.args.keys():
+            json_options = {
+                'indent': 4,
+                'sort_keys': True
+            }
+        return flask.Response(json.dumps(error_object.response, cls = MeJSONEncoder, **json_options), mimetype = 'application/json', status = 403)
+
     @classmethod
     def start(cls):
         """ The start method start the actual application """
@@ -203,9 +226,14 @@ class MeRESTAPIv1:
                 raise MeRESTAPIv1InvalidAPIEndpointError('Path "{path}" is not a valid API endpoint'.format(
                     path = path
                 ))
-        except KeyboardInterrupt:
-            # TODO: Decent Error Pages for the different type of Exceptions
-            return 'ERROR', 500
+        except MeRESTAPIv1PermissionDeniedError as error:
+            return MeRESTAPIv1.get_error_response(error, 403, path)
+        except MeRESTAPIv1PageNotFoundError as error:
+            return MeRESTAPIv1.get_error_response(error, 404, path)
+        except MeRESTAPIv1ServerError as error:
+            return MeRESTAPIv1.get_error_response(error, 500, path)
+        except Exception as error:
+            return MeRESTAPIv1.get_error_response(error, 501, path)
     
     @classmethod
     def register_group(cls, name, description):
