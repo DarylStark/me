@@ -41,8 +41,7 @@ class APISystem:
         process = {
             'pid': pid,
             'used_memory': process.memory_info().rss,
-            'cpu_percentage': process.cpu_percent(),
-            'username': process.username()
+            'cpu_percentage': process.cpu_percent()
         }
 
         # Get information about the application
