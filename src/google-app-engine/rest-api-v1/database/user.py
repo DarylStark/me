@@ -36,4 +36,7 @@ class User(Database.base_class):
 
     # One-to-many relationship mappings
     user_api_tokens = relationship("APIUserToken")
+
+    # Fields that need to be hidden from the API
+    api_hide_fields = [ 'password', 'password_salt' ]
 #---------------------------------------------------------------------------------------------------

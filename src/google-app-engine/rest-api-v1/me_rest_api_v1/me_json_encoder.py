@@ -16,11 +16,18 @@ class MeJSONEncoder(JSONEncoder):
     @staticmethod
     def convert_to_sa_dict(obj):
         """ Method to convert a SQLalchemy to a Python dict """
+
+        # Get the fields that we should hide
+        try:
+            fields_to_hide = obj.api_hide_fields
+        except AttributeError:
+            fields_to_hide = list()
+
         # Get the columns
         columns = [ column.name for column in type(obj).__table__.columns ]
 
         # Then we create a dict with the only the column items
-        column_dict = { key: value for key, value in obj.__dict__.items() if key in columns }
+        column_dict = { key: value for key, value in obj.__dict__.items() if key in columns and not key in fields_to_hide }
 
         # And we return that dict
         return column_dict
