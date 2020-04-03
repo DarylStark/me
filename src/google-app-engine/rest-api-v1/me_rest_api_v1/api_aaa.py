@@ -39,6 +39,10 @@ class APIAAA:
             and is not usable anymore. The amount of time for this is hardcoded into the application
             and cannot be changed. It is possible, however, to refresh the token with the
             'refresh_user_token' API endpoint.
+
+            The body of the request should be a JSON object with the following keys:
+            - 'username': the username of the user
+            - 'password': the password of the user
         """
         
         # Create an empty response object
@@ -120,10 +124,35 @@ class APIAAA:
         name = 'refresh_user_token',
         description = 'Refersh a user token',
         permissions = {
-            'POST': 'aaa.refresh_user_token'
+            'PATCH': 'aaa.refresh_user_token'
         },
         user_token_needed = True
     )
     def refresh_user_token(*args, **kwargs):
-        return None
+        """ Endpoint for users to refresh their user token. This can be used by webclients to
+            refresh the user token before it expires. If the token has no expirationdate prior to
+            this endpoint, a expirationdate will be set.
+
+            The request doesn't need a body. The API will use the provided User Token to update it.
+        """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_RECORD)
+
+        # Get the APIUserToken-object and update the expire time
+        with DatabaseSession(commit_on_end = True, expire_on_commit = False) as session:
+            # Get the APIUserToken
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
+            # Update the expiration-date
+            expirationdate = None
+            expire_hours = MeRESTAPIv1.get_configuration('api', 'retrieved_user_key_refresh_lifetime')
+            if expire_hours > 0:
+                expirationdate = datetime.datetime.utcnow() + datetime.timedelta(hours = expire_hours)
+            user_token_object.expiration = expirationdate
+
+            # Set the token in the response
+            response.data = user_token_object
+
+        return response
 #---------------------------------------------------------------------------------------------------
