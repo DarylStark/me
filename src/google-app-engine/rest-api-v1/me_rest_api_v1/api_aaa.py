@@ -122,7 +122,7 @@ class APIAAA:
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',
         name = 'refresh_user_token',
-        description = 'Refersh a user token',
+        description = 'Refresh a user token',
         permissions = {
             'PATCH': 'aaa.refresh_user_token'
         },
@@ -154,5 +154,41 @@ class APIAAA:
             # Set the token in the response
             response.data = user_token_object
 
+        return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'remove_user_token',
+        description = 'Remove a user token',
+        permissions = {
+            'DELETE': 'aaa.remove_user_token'
+        },
+        user_token_needed = True
+    )
+    def remove_user_token(*args, **kwargs):
+        """ Endpoint for users to reomove their user token. Can be used by clients to 'logoff' a
+            user.
+
+            The request doesn't need a body. The API will use the provided User Token to update it.
+        """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DONE)
+        response.data = False
+
+        # Get the APIUserToken-object and update the expire time
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the UserToken
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
+            # Delete all permission connected to this UserToken
+            for permission in user_token_object.user_permissions:
+                session.delete(permission)
+            
+            # Delete the UserToken
+            session.delete(user_token_object)
+        
+        # Set the response to True and return it
+        response.data = True
         return response
 #---------------------------------------------------------------------------------------------------
