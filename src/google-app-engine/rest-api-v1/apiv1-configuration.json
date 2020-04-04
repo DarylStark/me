@@ -81,7 +81,7 @@
       "show_exceptions": false
     },
     "logging": {
-      "level": "DEBUG",
+      "level": "ERROR",
       "style": "{",
       "datefmt": "%Y-%m-%d :: %Z[%z] :: %H:%I:%S",
       "format": "{asctime} :: PID: {process} :: {name} :: {levelname} :: {message}"
