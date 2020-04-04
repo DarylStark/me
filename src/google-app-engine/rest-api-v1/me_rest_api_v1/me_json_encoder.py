@@ -29,6 +29,11 @@ class MeJSONEncoder(JSONEncoder):
         # Then we create a dict with the only the column items
         column_dict = { key: value for key, value in obj.__dict__.items() if key in columns and not key in fields_to_hide }
 
+        # Check if a '__objectname__' is given and add it to the outgoing dict
+        column_dict['_type'] = ''
+        if '__objecttype__' in obj.__dir__():
+            column_dict['_type'] = obj.__objecttype__
+
         # And we return that dict
         return column_dict
 

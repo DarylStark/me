@@ -23,6 +23,9 @@ class APIClientPermission(Database.base_class):
     # Mandatory argument for Database objects within SQLAlchemy
     __tablename__ = 'api_client_permissions'
 
+    # The object-type for the output of the API
+    __objecttype__ = 'api_client_permissions'
+
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('client_token', 'permission'),

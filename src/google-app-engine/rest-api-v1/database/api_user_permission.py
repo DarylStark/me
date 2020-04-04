@@ -23,6 +23,9 @@ class APIUserPermission(Database.base_class):
     # Mandatory argument for Database objects within SQLAlchemy
     __tablename__ = 'api_user_permissions'
 
+    # The object-type for the output of the API
+    __objecttype__ = 'api_user_permission'
+
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('user_token', 'permission'),

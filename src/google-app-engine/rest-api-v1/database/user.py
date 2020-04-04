@@ -20,6 +20,9 @@ class User(Database.base_class):
     # Mandatory argument for Database objects within SQLAlchemy
     __tablename__ = 'users'
 
+    # The object-type for the output of the API
+    __objecttype__ = 'user'
+
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('fullname'),
