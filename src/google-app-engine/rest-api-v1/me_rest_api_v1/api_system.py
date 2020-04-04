@@ -46,7 +46,8 @@ class APISystem:
 
         # Get information about the application
         application = {
-            'environment': MeRESTAPIv1.environment
+            'environment': MeRESTAPIv1.environment,
+            'starttime': MeRESTAPIv1.starttime
         }
 
         # Get information about the database

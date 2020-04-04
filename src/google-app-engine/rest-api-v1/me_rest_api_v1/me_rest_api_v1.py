@@ -44,10 +44,13 @@ class MeRESTAPIv1:
     # - The 'config' will be the dict that contains the actual config.
     # - The 'environment' tells the class what environment we are in. The environment has to match a
     #   JSON key configuration file
+    # - The 'starttime' is the starttime of the application (in UTC). This is set so we can see when
+    #   the instance was started. The user can retrieve this using the REST API.
 
     configfile = 'apiv1-configuration.json'
     config = None
     environment = None
+    starttime = datetime.datetime.utcnow()
 
     # Methods to make sure this class is used as it is suppoes to be
     def __new__(cls):
