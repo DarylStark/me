@@ -13,12 +13,12 @@ MeRESTAPIv1.load_config()
 # Then, we can set the environment
 MeRESTAPIv1.set_environment('development')
 
-# Configure the logging module
-logging.basicConfig(**MeRESTAPIv1.get_configuration('logging'))
-
 # We check if the '__name__' variable contains the string '__main__'. If it does, we are running
 # this as a script and therefor on the development server.
 if __name__ == '__main__':
+    # Configure the logging module
+    logging.basicConfig(**MeRESTAPIv1.get_configuration('logging'))
+
     # Next, we can initiate the application. What this does, is creating a database connection
     # and making sure all needed tables exsist
     MeRESTAPIv1.initiate()
@@ -30,6 +30,9 @@ else:
     # We are not running on the development server. Let's set the enviroment to 'production' so the
     # application can use the correct values.
     MeRESTAPIv1.set_environment('production')
+
+    # Configure the logging module
+    logging.basicConfig(**MeRESTAPIv1.get_configuration('logging'))
 
     # Initiate the application
     MeRESTAPIv1.initiate()
