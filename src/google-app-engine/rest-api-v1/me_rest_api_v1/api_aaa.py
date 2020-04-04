@@ -195,7 +195,7 @@ class APIAAA:
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',
         name = 'list_client_permissions',
-        description = 'Retrieve a client permissions',
+        description = 'Retrieve a clients permissions',
         permissions = {
             'GET': 'aaa.list_client_permissions'
         },
@@ -216,6 +216,37 @@ class APIAAA:
             
             # Get the permissions objects
             permission_objects = [ permission.permission_object for permission in client_token_object.client_permissions if permission.granted ]
+        
+        # Set the return data
+        response.data = permission_objects
+
+        # Return the object
+        return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'list_user_permissions',
+        description = 'Retrieve a users permissions',
+        permissions = {
+            'GET': 'aaa.list_user_permissions'
+        },
+        user_token_needed = True
+    )
+    def list_user_permissions(*args, **kwargs):
+        """ Endpoint for users to retrieve its permissions. This endpoint will list all
+            permissions that are enabled for this user """
+        
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DATASET)
+        
+        # Get all permissions from the database
+        with DatabaseSession() as session:
+            # Find the user token
+            user_token = kwargs['user_token']
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+            
+            # Get the permissions objects
+            permission_objects = [ permission.permission_object for permission in user_token_object.user_permissions if permission.granted ]
         
         # Set the return data
         response.data = permission_objects
