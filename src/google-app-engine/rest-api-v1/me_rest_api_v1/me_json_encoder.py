@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    me - me_json_encoder.py
+    me_rest_api_v1 - me_json_encoder.py
 
     JSON encoder for the Me-application
 """

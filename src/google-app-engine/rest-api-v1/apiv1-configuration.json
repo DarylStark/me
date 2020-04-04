@@ -21,7 +21,7 @@
       "use_socket": false
     },
     "sqlalchemy": {
-      "echo": true,
+      "echo": "debug",
       "pool_pre_ping": true,
       "pool_recycle": 10,
       "pool_size": 10,
@@ -35,6 +35,12 @@
     },
     "errors": {
       "show_exceptions": true
+    },
+    "logging": {
+      "level": "DEBUG",
+      "style": "{",
+      "datefmt": "%Y-%m-%d :: %Z[%z] :: %H:%I:%S",
+      "format": "{asctime} :: PID: {process} :: {name} :: {levelname} :: {message}"
     }
   },
   "production": {
@@ -73,6 +79,12 @@
     },
     "errors": {
       "show_exceptions": false
+    },
+    "logging": {
+      "level": "DEBUG",
+      "style": "{",
+      "datefmt": "%Y-%m-%d :: %Z[%z] :: %H:%I:%S",
+      "format": "{asctime} :: PID: {process} :: {name} :: {levelname} :: {message}"
     }
   }
 }

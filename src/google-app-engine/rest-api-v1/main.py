@@ -5,12 +5,16 @@
 #---------------------------------------------------------------------------------------------------
 # Imports
 from me_rest_api_v1 import MeRESTAPIv1
+import logging
 #---------------------------------------------------------------------------------------------------
 # First, we make sure the configuration gets loaded
 MeRESTAPIv1.load_config()
 
 # Then, we can set the environment
 MeRESTAPIv1.set_environment('development')
+
+# Configure the logging module
+logging.basicConfig(**MeRESTAPIv1.get_configuration('logging'))
 
 # We check if the '__name__' variable contains the string '__main__'. If it does, we are running
 # this as a script and therefor on the development server.

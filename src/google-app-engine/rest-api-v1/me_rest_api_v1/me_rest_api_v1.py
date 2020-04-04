@@ -24,6 +24,7 @@ import json
 import re
 import datetime
 import traceback
+import logging
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1:
     """ Main class for the REST API. Should be used as a static class """
@@ -51,6 +52,10 @@ class MeRESTAPIv1:
     config = None
     environment = None
     starttime = datetime.datetime.utcnow()
+
+    # We create a logger for application-level logging. This logger is meant to log application
+    # events, not accounting details for API clients.
+    logger = logging.getLogger('MeRESTAPIv1')
 
     # Methods to make sure this class is used as it is suppoes to be
     def __new__(cls):
@@ -128,6 +133,9 @@ class MeRESTAPIv1:
         if cls.config is None:
             cls.load_config()
         
+        # Configure the logger
+        cls.logger.info('Logging started')
+        
         # Get the database configuration
         sql_settings = cls.get_configuration(group = 'database')
 
@@ -141,10 +149,12 @@ class MeRESTAPIv1:
             connection_string = 'mysql+pymysql://{username}:{password}@{server}/{database}'
         
         # Create a database connection. This will also add any tables that need to be added.
+        cls.logger.info('Connecting to the database')
         Database.connect(
             connection_string.format(**sql_settings),
             **cls.get_configuration(group = 'sqlalchemy')
         )
+        cls.logger.info('Connected to database')
     
     @staticmethod
     def get_error_response(error, error_code, path):
@@ -166,11 +176,19 @@ class MeRESTAPIv1:
                 'indent': 4,
                 'sort_keys': True
             }
+        
+        # If this error is something else then a 403 or 404 error, we have to log it
+        if error_code >= 500:
+            MeRESTAPIv1.logger.error(f'Error {error_code} during request for "{path}": "{error.__class__.__name__}"\n', exc_info = True)
+
+        # Return the new Flask Response
         return flask.Response(json.dumps(error_object.response, cls = MeJSONEncoder, **json_options), mimetype = 'application/json', status = error_code)
 
     @classmethod
     def start(cls):
         """ The start method start the actual application """
+
+        cls.logger.info('Starting application')
 
         # Start Flask with the configuration that is red in
         return cls.flask_app.run(**cls.get_configuration('flask'))
@@ -184,6 +202,8 @@ class MeRESTAPIv1:
         # route from the dispatcher in the URL. In the configuration file, this URL is set and we
         # can use it to strip it off
         base_url = re.escape(MeRESTAPIv1.get_configuration('service', 'base_url'))
+
+        MeRESTAPIv1.logger.debug(f'New request for "{path}"')
         
         try:
             # Check if the URL startes with the base URL. If it doesn't, something went terrible
@@ -203,6 +223,7 @@ class MeRESTAPIv1:
             if len(api_parts) == 1:
                 # Get the API group and the endpoint
                 group, endpoint = api_parts[0]
+                MeRESTAPIv1.logger.debug(f'API parts are "{api_parts[0]}"')
                 
                 # Now that we have the group, check if it exists
                 if group in MeRESTAPIv1.registered_groups.keys():
@@ -212,6 +233,7 @@ class MeRESTAPIv1:
 
                         # Find the endpoint
                         if endpoint in endpoints.keys():
+                            MeRESTAPIv1.logger.debug(f'Found endpoint "{endpoint}". Method: "{endpoints[endpoint]["method"]}"')
                             return endpoints[endpoint]['method']()
                         else:
                             raise MeRESTAPIv1APIEndpointNotFoundError('The API endpoint "{endpoint}" for group "{group}" does not exists'.format(
@@ -260,7 +282,7 @@ class MeRESTAPIv1:
         def decorator(class_):
             """ The real decorator method; will register the class (if the name is not already in
                 use """
-        
+            
             # Check if the API group already exists. If it isn't, we create it
             if not name in cls.registered_groups.keys():
                 cls.registered_groups[group] = {
@@ -268,6 +290,7 @@ class MeRESTAPIv1:
                     'endpoints': dict()
                 }
             else:
+                MeRESTAPIv1.logger.debug(f'API group "{name}" was already registered')
                 # Add the description
                 cls.registered_groups[name]['description'] = description
 
@@ -304,6 +327,8 @@ class MeRESTAPIv1:
         def decorator(method):
             """ In the decorator, we register the endpoint in the class """
 
+            MeRESTAPIv1.logger.debug(f'Registering endpoint "{name}" in API group "{group}"')
+
             # Check if the group already exists and create it if it doesn't
             if not group in cls.registered_groups.keys():
                 cls.registered_groups[group] = {
@@ -325,6 +350,8 @@ class MeRESTAPIv1:
 
                 # Get the starting time of the endpoint so we can calculate the runtime afterwards
                 starttime = time()
+
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" started with HTTP method "{request.method.upper()}"')
                 
                 # --- Check the method -------------------------------------------------------------
                 # First, we check if the HTTP method that is being used by the client is allowed. We
@@ -382,6 +409,8 @@ class MeRESTAPIv1:
                             endpoint = name,
                             group = group
                         ))
+                
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" received client token "{client_token}" and user token "{user_token}"')
 
                 # --- Authentication ---------------------------------------------------------------
 
@@ -435,6 +464,8 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1EndpointNoValidClientTokenError('The client token "{token}" is not found'.format(
                             token = client_token
                         ))
+
+                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authenticated')
 
                     # --- Authorization ------------------------------------------------------------
 
@@ -507,6 +538,8 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1EndpointUserNotAuthorizedError('The user is not authorized for "{permission}" permissions'.format(
                             permission = endpoint_permission
                         ))
+                
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorized')
 
                 # --- Run the real endpoint --------------------------------------------------------
                 # Now that we are authenticated and authorized, we can run the method, retrieve the
