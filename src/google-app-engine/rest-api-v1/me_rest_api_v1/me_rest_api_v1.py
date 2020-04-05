@@ -16,6 +16,8 @@ from database import Database
 from database import DatabaseSession
 from database import APIUserToken
 from database import APIClientToken
+from database import APIClientLogEntry
+from database import APIUserLogEntry
 from time import time
 from sqlalchemy import and_
 from flask import request
@@ -354,6 +356,9 @@ class MeRESTAPIv1:
                 MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" started with HTTP method "{request.method.upper()}"')
                 
                 # --- Check the method -------------------------------------------------------------
+
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" checking method')
+
                 # First, we check if the HTTP method that is being used by the client is allowed. We
                 # check that by checking it against the given keys in the permissions dictionary.
                 if not request.method.upper() in [ method.upper() for method in permissions.keys() ]:
@@ -363,7 +368,12 @@ class MeRESTAPIv1:
                         group = group
                     ))
                 
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" was using correct method')
+                
                 # --- API Key check ----------------------------------------------------------------
+
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" checking values')
+
                 # Then, we have to retrieve the API tokens given. There are two ways for clients to
                 # pass the API token; via HTTP headers, or via the URL. If both are given, we give
                 # an error since we do not allow that. We check for both the Application Token and
@@ -410,14 +420,16 @@ class MeRESTAPIv1:
                             group = group
                         ))
                 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" received client token "{client_token}" and user token "{user_token}"')
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" was using correct values')
 
                 # --- Authentication ---------------------------------------------------------------
+
+                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authenticating')
 
                 user_token_object = None
                 client_token_object = None
 
-                with DatabaseSession() as session:
+                with DatabaseSession(commit_on_end = True) as session:
                     # We have a token. Now we can check if the token is valid.
                     if user_token_needed:
                         # Get the user token
@@ -468,6 +480,8 @@ class MeRESTAPIv1:
                     MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authenticated')
 
                     # --- Authorization ------------------------------------------------------------
+
+                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorizing')
 
                     # Check if the application *and* the user are authorized to do this. To do this,
                     # we get the permission objects from the token-objects, but only the ones that
@@ -539,16 +553,56 @@ class MeRESTAPIv1:
                             permission = endpoint_permission
                         ))
                 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorized')
+                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorized')
+
+                    # --- Accounting ---------------------------------------------------------------
+
+                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" accounting')
+
+                    # For accounting, we log the actions a client and a user do in to a database
+                    # table that is designed for that specific purpose. We log the request, the
+                    # data that was attached and the arguments that were given. This way, we can
+                    # monitor applications and find rogue applications before they do something bad
+                    # to the system.
+
+                    # First, we get the permissions for the token. We already got this before, so we
+                    # can just reuse them
+                    client_permission_id = client_permissions[0].permission
+                    
+                    # Create the logentry
+                    client_log_entry = APIClientLogEntry(
+                        client = client_token_object.id,
+                        method = request.method.upper(),
+                        api_group = group,
+                        api_endpoint = name,
+                        permission = client_permission_id
+                    )
+
+                    # Add the logentry
+                    session.add(client_log_entry)
+
+                    # Then we do the same for the user token; first we get the permission
+                    if user_token_needed:
+                        user_permission_id = user_permissions[0].permission
+                    
+                        # Then we create a logentry
+                        user_log_entry = APIUserLogEntry(
+                            user = user_token_object.id,
+                            method = request.method.upper(),
+                            api_group = group,
+                            api_endpoint = name,
+                            permission = user_permission_id
+                        )
+
+                        # Add the logentry
+                        session.add(user_log_entry)
+
+                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" accounted')
 
                 # --- Run the real endpoint --------------------------------------------------------
                 # Now that we are authenticated and authorized, we can run the method, retrieve the
                 # resulting data and parse it for a good API result
-                tokens = { 'user_token': None, 'client_token': None }
-                if user_token_object:
-                    tokens['user_token'] = user_token_object.token
-                if client_token_object:
-                    tokens['client_token'] = client_token_object.token
+                tokens = { 'user_token': user_token, 'client_token': client_token }
                 return_object = method(**tokens)
 
                 # Check if the return value is correct. If it isn't, we raise an 500 error
