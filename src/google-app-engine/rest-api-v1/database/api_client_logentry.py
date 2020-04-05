@@ -25,6 +25,7 @@ class APIClientLogEntry(Database.base_class):
     # Database columns for this table
     id =                    Column(Integer, primary_key = True)
     datetime =              Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
+    address =               Column(String(48), nullable = False)
     client =                Column(ForeignKey("api_client_tokens.id"), nullable = False)
     method =                Column(String(16), nullable = False)
     api_group =             Column(String(32), nullable = False)

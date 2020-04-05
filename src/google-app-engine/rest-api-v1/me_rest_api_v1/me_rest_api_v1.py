@@ -205,7 +205,10 @@ class MeRESTAPIv1:
         # can use it to strip it off
         base_url = re.escape(MeRESTAPIv1.get_configuration('service', 'base_url'))
 
-        MeRESTAPIv1.logger.debug(f'New request for "{path}"')
+        # Get the remote address
+        remote_address = request.remote_addr
+
+        MeRESTAPIv1.logger.debug(f'{remote_address} :: New request for "{path}"')
         
         try:
             # Check if the URL startes with the base URL. If it doesn't, something went terrible
@@ -225,7 +228,7 @@ class MeRESTAPIv1:
             if len(api_parts) == 1:
                 # Get the API group and the endpoint
                 group, endpoint = api_parts[0]
-                MeRESTAPIv1.logger.debug(f'API parts are "{api_parts[0]}"')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: API parts are "{api_parts[0]}"')
                 
                 # Now that we have the group, check if it exists
                 if group in MeRESTAPIv1.registered_groups.keys():
@@ -235,7 +238,7 @@ class MeRESTAPIv1:
 
                         # Find the endpoint
                         if endpoint in endpoints.keys():
-                            MeRESTAPIv1.logger.debug(f'Found endpoint "{endpoint}". Method: "{endpoints[endpoint]["method"]}"')
+                            MeRESTAPIv1.logger.debug(f'{remote_address} :: Found endpoint "{endpoint}". Method: "{endpoints[endpoint]["method"]}"')
                             return endpoints[endpoint]['method']()
                         else:
                             raise MeRESTAPIv1APIEndpointNotFoundError('The API endpoint "{endpoint}" for group "{group}" does not exists'.format(
@@ -353,11 +356,14 @@ class MeRESTAPIv1:
                 # Get the starting time of the endpoint so we can calculate the runtime afterwards
                 starttime = time()
 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" started with HTTP method "{request.method.upper()}"')
+                # Get the remote address
+                remote_address = request.remote_addr
+
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" started with HTTP method "{request.method.upper()}"')
                 
                 # --- Check the method -------------------------------------------------------------
 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" checking method')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" checking method')
 
                 # First, we check if the HTTP method that is being used by the client is allowed. We
                 # check that by checking it against the given keys in the permissions dictionary.
@@ -368,11 +374,11 @@ class MeRESTAPIv1:
                         group = group
                     ))
                 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" was using correct method')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" was using correct method')
                 
                 # --- API Key check ----------------------------------------------------------------
 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" checking values')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" checking values')
 
                 # Then, we have to retrieve the API tokens given. There are two ways for clients to
                 # pass the API token; via HTTP headers, or via the URL. If both are given, we give
@@ -420,11 +426,11 @@ class MeRESTAPIv1:
                             group = group
                         ))
                 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" was using correct values')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" was using correct values')
 
                 # --- Authentication ---------------------------------------------------------------
 
-                MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authenticating')
+                MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" authenticating')
 
                 user_token_object = None
                 client_token_object = None
@@ -477,11 +483,11 @@ class MeRESTAPIv1:
                             token = client_token
                         ))
 
-                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authenticated')
+                    MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" authenticated')
 
                     # --- Authorization ------------------------------------------------------------
 
-                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorizing')
+                    MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" authorizing')
 
                     # Check if the application *and* the user are authorized to do this. To do this,
                     # we get the permission objects from the token-objects, but only the ones that
@@ -553,11 +559,11 @@ class MeRESTAPIv1:
                             permission = endpoint_permission
                         ))
                 
-                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" authorized')
+                    MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" authorized')
 
                     # --- Accounting ---------------------------------------------------------------
 
-                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" accounting')
+                    MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" accounting')
 
                     # For accounting, we log the actions a client and a user do in to a database
                     # table that is designed for that specific purpose. We log the request, the
@@ -572,6 +578,7 @@ class MeRESTAPIv1:
                     # Create the logentry
                     client_log_entry = APIClientLogEntry(
                         client = client_token_object.id,
+                        address = remote_address,
                         method = request.method.upper(),
                         api_group = group,
                         api_endpoint = name,
@@ -588,6 +595,7 @@ class MeRESTAPIv1:
                         # Then we create a logentry
                         user_log_entry = APIUserLogEntry(
                             user = user_token_object.id,
+                            address = remote_address,
                             method = request.method.upper(),
                             api_group = group,
                             api_endpoint = name,
@@ -597,7 +605,7 @@ class MeRESTAPIv1:
                         # Add the logentry
                         session.add(user_log_entry)
 
-                    MeRESTAPIv1.logger.debug(f'Endpoint "{group}/{name}" accounted')
+                    MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" accounted')
 
                 # --- Run the real endpoint --------------------------------------------------------
                 # Now that we are authenticated and authorized, we can run the method, retrieve the
