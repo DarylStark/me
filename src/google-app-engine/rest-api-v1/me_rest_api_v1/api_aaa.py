@@ -16,6 +16,7 @@ from database import APIUserToken
 from database import APIClientToken
 from database import APIUserPermission
 import datetime
+import pyotp
 #---------------------------------------------------------------------------------------------------
 @MeRESTAPIv1.register_group(name = 'aaa', description = 'Authentication and authorization')
 class APIAAA:
@@ -71,14 +72,19 @@ class APIAAA:
             # Get the user object
             user = users.first()
 
-            # Check if a secret is filled in. If it is, we require two-factor authentication.
-            if user.secret:
-                # TODO: Implement this
-                pass
+            # Check if a secret is filled in. If it is, we require two-factor authentication. To
+            # signal this to the client, we return a response with '2nd-factor-required'. The client
+            # can then ask the user for the 2nd factor.
+            if user.secret and not '2nd_factor' in json_data.keys():
+                response.data = {
+                    '_type': '2nd_factor',
+                    '2nd_factor_required': True
+                }
+                return response
 
             # Check if the given password is correct
             if not user.verify_password(json_data['password']):
-                raise MeRESTAPIv1AAARetrieveUserTokenPasswordWrongError(f'The password for user "{json_data["password"]}" is not correct')
+                raise MeRESTAPIv1AAARetrieveUserTokenPasswordWrongError(f'The password for user "{json_data["username"]}" is not correct')
 
             # Find the client token
             client_token = kwargs['client_token']
@@ -90,6 +96,13 @@ class APIAAA:
             expire_hours = MeRESTAPIv1.get_configuration('api', 'retrieved_user_key_lifetime')
             if expire_hours > 0:
                 expirationdate = datetime.datetime.utcnow() + datetime.timedelta(hours = expire_hours)
+            
+            # If a 2nd factor was required and the key is given, we can check if it is correct
+            if user.secret and '2nd_factor' in json_data.keys():
+                factor = json_data['2nd_factor']
+                if factor != pyotp.TOTP(user.secret).now():
+                    # Second factor was wrong. Give an error for the user
+                    raise MeRESTAPIv1AAARetrieveUserTokenFactorWrongError(f'The 2nd factor for user "{json_data["username"]}" is not correct')
 
             # Everything is correct! Let's create a UserToken object
             new_user_token = APIUserToken()
