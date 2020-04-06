@@ -566,10 +566,8 @@ class MeRESTAPIv1:
                     MeRESTAPIv1.logger.debug(f'{remote_address} :: Endpoint "{group}/{name}" accounting')
 
                     # For accounting, we log the actions a client and a user do in to a database
-                    # table that is designed for that specific purpose. We log the request, the
-                    # data that was attached and the arguments that were given. This way, we can
-                    # monitor applications and find rogue applications before they do something bad
-                    # to the system.
+                    # table that is designed for that specific purpose. We log the request for the
+                    # client and for the user.
 
                     # First, we get the permissions for the token. We already got this before, so we
                     # can just reuse them
@@ -594,7 +592,9 @@ class MeRESTAPIv1:
                     
                         # Then we create a logentry
                         user_log_entry = APIUserLogEntry(
-                            user = user_token_object.id,
+                            user = user_token_object.user,
+                            client = client_token_object.id,
+                            token = user_token_object.token,
                             address = remote_address,
                             method = request.method.upper(),
                             api_group = group,

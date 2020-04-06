@@ -26,7 +26,9 @@ class APIUserLogEntry(Database.base_class):
     id =                    Column(Integer, primary_key = True)
     datetime =              Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
     address =               Column(String(48), nullable = False)
-    user =                  Column(ForeignKey("api_user_tokens.id"), nullable = False)
+    client =                Column(ForeignKey("api_client_tokens.id"), nullable = False)
+    user =                  Column(ForeignKey("users.id"), nullable = False)
+    token =                 Column(String(64), nullable = False)
     method =                Column(String(16), nullable = False)
     api_group =             Column(String(32), nullable = False)
     api_endpoint =          Column(String(32), nullable = False)
@@ -34,5 +36,6 @@ class APIUserLogEntry(Database.base_class):
 
     # Many-to-one relationship mappings
     permission_object = relationship("APIPermission")
-    api_user_object = relationship("APIUserToken")
+    api_user_object = relationship("User")
+    api_client_token_object = relationship("APIClientToken")
 #---------------------------------------------------------------------------------------------------
