@@ -169,6 +169,8 @@ class MeWebGUIv1:
                 # We have the page the user wants. Let's start the correct method
                 if re.match('^login/?', requested_page):
                     return MeWebGUIv1.page_login()
+                elif re.match('^js/.+$', requested_page) or re.match('^css/.+$', requested_page):
+                    return MeWebGUIv1.static_page(requested_page)
                 else:
                     # TODO: Implement
                     return 'Unknown page. Redirect or something?'
@@ -176,9 +178,9 @@ class MeWebGUIv1:
                 # TODO: Redirect the user or something?
                 MeWebGUIv1.logger.debug('User didn\'t specify a page')
                 return 'Redirect should be done'
-        except MeWebGUIv1PageNotFoundError:
+        except MeWebGUIv1PageNotFoundError as e:
             # TODO: Custom error pages
-            return '404', 404
+            return str(e), 404
         except Exception as e:
             # TODO: Custom error pages
             raise e
@@ -217,6 +219,34 @@ class MeWebGUIv1:
             return content
         except FileNotFoundError:
             raise MeWebGUIStaticFileNotFoundError(f'The file "{full_filename}" cannot be found')
+    
+    @classmethod
+    def static_page(cls, requested_page):
+        """ Method to return static JavaScript and CSS files """
+
+        # Get the requested file
+        requested_file = re.findall('^(js|css)/([^\/]+)$', requested_page)
+
+        # Check if the file matches
+        if len(requested_file) == 1:
+            # Get the correct filetype
+            if requested_file[0][0] == 'js':
+                filetype = 'javascript'
+            elif requested_file[0][0] == 'css':
+                filetype = 'css'
+            else:
+                raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
+
+            # Get the static file
+            try:
+                static_file = cls.get_static_file(filetype, requested_file[0][1])
+            except MeWebGUIStaticFileNotFoundError:
+                raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
+
+            # Return the static file
+            return static_file
+        else:
+            raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
     
     @classmethod
     def page_login(cls):

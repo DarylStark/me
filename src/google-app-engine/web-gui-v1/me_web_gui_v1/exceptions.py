@@ -41,6 +41,10 @@ class MeWebGUIv1WrongBaseURLError(MeWebGUIv1PageNotFoundError):
     """ Error when the user opens a URL that doesn't start with the right base_url """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeWebGUIStaticPageNotFoundError(MeWebGUIv1PageNotFoundError):
+    """ Error when the user opens a static page that doesn't exist """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1StaticFileTypeError(MeWebGUIv1ServerError):
