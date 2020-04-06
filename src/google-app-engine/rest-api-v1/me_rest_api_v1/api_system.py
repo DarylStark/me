@@ -51,13 +51,7 @@ class APISystem:
         }
 
         # Get information about the database
-        # TODO: Make a property in the Database class for this instead of using the hidden variable
-        database = {
-            'pool_size': Database._engine.pool.size(),
-            'checked_in': Database._engine.pool.checkedin(),
-            'overflow': Database._engine.pool.overflow(),
-            'checked_out': Database._engine.pool.checkedout()
-        }
+        database = Database.get_pool_statistics()
 
         # Set the object in the response
         response.data = {

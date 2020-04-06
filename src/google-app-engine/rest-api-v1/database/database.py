@@ -64,4 +64,16 @@ class Database():
             cls.session.configure(bind = cls._engine)
         except sqlalchemy.exc.OperationalError:
             raise DatabaseConnectionError('Couldn\'t connect to database')
+    
+    @classmethod
+    def get_pool_statistics(cls):
+        """ Method that returns pool statistics, like the pool size, the amount of checked-in
+            connections, the overflow and the checked out connections """
+        
+        return {
+            'pool_size': cls._engine.pool.size(),
+            'checked_in': cls._engine.pool.checkedin(),
+            'overflow': cls._engine.pool.overflow(),
+            'checked_out': cls._engine.pool.checkedout()
+        }
 #---------------------------------------------------------------------------------------------------
