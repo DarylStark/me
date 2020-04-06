@@ -211,6 +211,13 @@ class MeWebGUIv1:
             with open(full_filename) as static_file:
                 content = static_file.read()
             
+            # Replace everything in the content that should be replaced
+            replacements = {
+                '{base_url}': MeWebGUIv1.get_configuration('service', 'base_url')
+            }
+            for key, item in replacements.items():
+                content = content.replace(key, item)
+            
             # If needed, put it in the cache
             if static_config['cache']:
                 cls.static_file_cache[full_filename] = content
