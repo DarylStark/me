@@ -3,6 +3,14 @@
     "service": {
       "base_url": "ui"
     },
+    "static_files": {
+      "cache": false,
+      "locations": {
+        "html": "static/html",
+        "javascript": "static/javascript",
+        "css": "static/css"
+      }
+    },
     "flask": {
       "host": "0.0.0.0",
       "port": 8002,
@@ -22,6 +30,14 @@
   "production": {
     "service": {
       "base_url": "ui"
+    },
+    "static_files": {
+      "cache": true,
+      "locations": {
+        "html": "static/html",
+        "javascript": "static/javascript",
+        "css": "static/css"
+      }
     },
     "flask": {
       "host": "0.0.0.0",

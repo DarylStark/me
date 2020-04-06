@@ -15,6 +15,7 @@ import flask
 import logging
 import datetime
 import json
+import re
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1:
     """ Main class for the Web GUI. Should be used as a static class """
@@ -32,11 +33,14 @@ class MeWebGUIv1:
     # - The 'environment' tells the class what environment we are in. The environment has to match a
     #   JSON key configuration file
     # - The 'starttime' is the starttime of the application (in UTC)
+    # - The 'static_file_cache' is a dict that will contain static-files in a cache. This way, the
+    #   files have to be retrieved from disk just one time.
 
     configfile = 'webv1-configuration.json'
     config = None
     environment = None
     starttime = datetime.datetime.utcnow()
+    static_file_cache = dict()
 
     # We create a logger for application-level logging. This logger is meant to log application
     # events, not accounting details for API clients.
@@ -134,5 +138,91 @@ class MeWebGUIv1:
     @flask_app.route('/<path:path>', methods = ['GET', 'POST', 'PATCH', 'DELETE'])
     def api_endpoint(path):
         """ Show the correct page for the GUI """
-        pass
+        # Because we use services in Google App Engine with a dispatch.yaml file, we still have the
+        # route from the dispatcher in the URL. In the configuration file, this URL is set and we
+        # can use it to strip it off
+        base_url = re.escape(MeWebGUIv1.get_configuration('service', 'base_url'))
+
+        # Get the remote address
+        remote_address = request.remote_addr
+
+        MeWebGUIv1.logger.debug(f'{remote_address} :: New request for "{path}"')
+
+        try:
+            # Check if the URL startes with the base URL. If it doesn't, something went terrible
+            # wrong and we should raise an 'Page not found' error
+            if not path.startswith(base_url):
+                raise MeWebGUIv1WrongBaseURLError('The path "{path}" does not start with the correct base URL "{base_url}"'.format(
+                    path = path,
+                    base_url = base_url
+                ))
+            
+            # Get the requested page
+            regex = '^{base_url}/(.+)$'.format(
+                base_url = base_url
+            )
+            page = re.findall(regex, path)
+            if len(page) == 1:
+                requested_page = page[0]
+                MeWebGUIv1.logger.debug(f'{remote_address} :: Requested page is "{requested_page}"')
+                
+                # We have the page the user wants. Let's start the correct method
+                if re.match('^login/?', requested_page):
+                    return MeWebGUIv1.page_login()
+                else:
+                    # TODO: Implement
+                    return 'Unknown page. Redirect or something?'
+            else:
+                # TODO: Redirect the user or something?
+                MeWebGUIv1.logger.debug('User didn\'t specify a page')
+                return 'Redirect should be done'
+
+        except Exception as e:
+            # TODO: Custom error pages
+            raise e
+    
+    @classmethod
+    def get_static_file(cls, filetype, filename):
+        """ Method to load a static file from IO and save it in the cache. The filetype specifies
+            what kind of file it is; HTML, JavaScript or CSS """
+
+        # Get the configuration for static files
+        static_config = MeWebGUIv1.get_configuration('static_files')
+
+        # Check if the filetype is correct
+        if not filetype in static_config['locations'].keys():
+            raise MeWebGUIv1StaticFileTypeError(f'The filetype "{filetype}" is not found')
+
+        # Compile a string with the filename to retrieve
+        full_filename = static_config['locations'][filetype] + '/' + filename
+
+        # Check if this file is in cache, if needed
+        if static_config['cache']:
+            if full_filename in cls.static_file_cache.keys():
+                # Found it in cache, return it immidiatly
+                return cls.static_file_cache[full_filename]
+
+        try:
+            # Open the file, read its contents and return it
+            with open(full_filename) as static_file:
+                content = static_file.read()
+            
+            # If needed, put it in the cache
+            if static_config['cache']:
+                cls.static_file_cache[full_filename] = content
+            
+            # Return the content
+            return content
+        except FileNotFoundError:
+            raise MeWebGUIStaticFileNotFoundError(f'The file "{full_filename}" cannot be found')
+    
+    @classmethod
+    def page_login(cls):
+        """ The method that returns the login-form to the user """
+
+        # Get the login page static file
+        login_page = cls.get_static_file('html', 'login.html')
+
+        # Return the login_page
+        return login_page
 #---------------------------------------------------------------------------------------------------

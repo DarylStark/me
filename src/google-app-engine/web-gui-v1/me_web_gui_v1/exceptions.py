@@ -35,3 +35,19 @@ class MeWebGUIv1ConfigFileError(MeWebGUIv1CriticalError):
         a valid configfile, or the file doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+# PageNotFoundErrors: errors that happen when a page or resource is requested that doesn't exists
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1WrongBaseURLError(MeWebGUIv1PageNotFoundError):
+    """ Error when the user opens a URL that doesn't start with the right base_url """
+    pass
+#---------------------------------------------------------------------------------------------------
+# ServerErrors: errors that happen on the server and that are not the users fault
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1StaticFileTypeError(MeWebGUIv1ServerError):
+    """ Error when a static file type is not correct """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIStaticFileNotFoundError(MeWebGUIv1ServerError):
+    """ Error when a static file is not found """
+    pass
+#---------------------------------------------------------------------------------------------------
