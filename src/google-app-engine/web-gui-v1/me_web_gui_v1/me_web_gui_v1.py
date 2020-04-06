@@ -176,7 +176,9 @@ class MeWebGUIv1:
                 # TODO: Redirect the user or something?
                 MeWebGUIv1.logger.debug('User didn\'t specify a page')
                 return 'Redirect should be done'
-
+        except MeWebGUIv1PageNotFoundError:
+            # TODO: Custom error pages
+            return '404', 404
         except Exception as e:
             # TODO: Custom error pages
             raise e
