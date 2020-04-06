@@ -13,6 +13,7 @@ from sqlalchemy.orm import relationship
 from database import Database
 from passlib.hash import argon2
 import datetime
+import pyotp
 #---------------------------------------------------------------------------------------------------
 class User(Database.base_class):
     """ Table for users """
@@ -50,4 +51,10 @@ class User(Database.base_class):
     def verify_password(self, password):
         """ Checks the password and returns True if the given password is correct """
         return argon2.verify(password, self.password)
+    
+    def generate_secret(self):
+        """ Method to generate a random secret for this object. The secret gets returned so the
+            client can present this to the user """
+        self.secret = pyotp.random_base32()
+        return self.secret
 #---------------------------------------------------------------------------------------------------
