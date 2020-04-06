@@ -11,7 +11,16 @@ service: rest-api-v1
 # Configuration that specifies how the service should be started and in what environment
 #--------------------------------------------------------------------------------------------------
 runtime: python37
-instance_class: F1
 env: standard
 entrypoint: gunicorn -b :$PORT main:app
+#--------------------------------------------------------------------------------------------------
+# Configuration for the performance of the application. We chose 'basic_scaling' so we can decide
+# the maximum number of instances and the idle_timeout. The idle_timeout specifies when a service
+# should be closed after the last request. By default, this is 5minutes, but that seems a little
+# soon.
+#--------------------------------------------------------------------------------------------------
+instance_class: B1
+basic_scaling:
+  max_instances: 2
+  idle_timeout: 15m
 #--------------------------------------------------------------------------------------------------
