@@ -11,6 +11,7 @@
 # Imports
 from me_web_gui_v1.exceptions import *
 from flask import request
+from flask import Response
 import flask
 import logging
 import datetime
@@ -239,8 +240,10 @@ class MeWebGUIv1:
             # Get the correct filetype
             if requested_file[0][0] == 'js':
                 filetype = 'javascript'
+                mimetype = 'text/javascript'
             elif requested_file[0][0] == 'css':
                 filetype = 'css'
+                mimetype = 'text/css'
             else:
                 raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
 
@@ -251,7 +254,7 @@ class MeWebGUIv1:
                 raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
 
             # Return the static file
-            return static_file
+            return Response(static_file, mimetype = mimetype)
         else:
             raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
     
