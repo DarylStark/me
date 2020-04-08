@@ -1,12 +1,13 @@
 body {
   background-color: #f5f5f5;
+  font-size: 1.05em;
 }
 body > .grid {
   height: 100%;
   margin: 0px !important;
 }
 .column {
-  max-width: 550px;
+  max-width: 700px;
   margin: 10px;
 }
 .column .card {
@@ -20,15 +21,25 @@ body > .grid {
   border-radius: 0 !important;
 }
 .column .card h3 {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
   font-weight: normal;
   padding: 16px;
-  background-color: #000000;
+  background-color: #2185d0;
   margin: 0px;
 }
 .column .card form {
-  padding: 16px;
+  padding: 32px 40px 32px 40px;
+  font-size: 1.05em;
 }
 .column .card form button {
   border-radius: 0;
+  margin-top: 30px;
+  font-size: 1.05em;
+  background-color: #2185d0 !important;
+}
+@media screen and (max-width: 600px) {
+  .column .card form {
+    padding: 16px 20px 16px 20px;
+  }
 }
