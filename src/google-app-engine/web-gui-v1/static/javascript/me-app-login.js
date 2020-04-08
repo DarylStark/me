@@ -18,11 +18,7 @@ var loginform = new Vue({
     },
     methods: {
         focus: function(field) {
-            if (field == 'username') {
-                this.$refs.username.focus();
-            } else if (field == 'password') {
-                this.$refs.password.focus();
-            }
+            this.$refs[field].focus();
         },
         login: function(form) {
             // Make sure the form 'block's the needed fields
