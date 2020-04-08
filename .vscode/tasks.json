@@ -18,7 +18,25 @@
                 "panel": "dedicated"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Compile CSS file for login",
+            "type": "shell",
+            "command": "lessc",
+            "args": [
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/me-app-login.less",
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-app-login.css"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
         }
-
     ]
 }

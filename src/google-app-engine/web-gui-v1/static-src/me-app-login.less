@@ -1,0 +1,51 @@
+//**************************************************************************************************
+// CSS for the login-page
+//**************************************************************************************************
+// Imports
+@import "me-theme-light.less";
+//**************************************************************************************************
+body {
+    background-color: @bg-page;
+}
+
+// The grid in the body will get a height of 100% so the vertical alignment will also be centered.
+// The '>'-sign means to only apply it to direct descendants of 'body'.
+body > .grid {
+    height: 100%;
+    margin: 0px !important;         // Needed so mobile isn't scrolling
+}
+
+.column {
+    max-width: 550px;
+    margin: 10px;
+
+    .card {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        text-align: left;
+        border-radius: 0;
+
+        // Remove the border radius from the first child so we get a square
+        > :first-child {
+            border-radius: 0 !important;
+        }
+
+        h3 {
+            font-family: @ft-headings, sans-serif;
+            font-weight: normal;
+            padding: 16px;
+            background-color: #000000;      // TODO: Move to variable
+            margin: 0px;
+        }
+
+        form {
+            padding: 16px;
+
+            button {
+                border-radius: 0;
+            }
+        }
+    }
+}
+//**************************************************************************************************

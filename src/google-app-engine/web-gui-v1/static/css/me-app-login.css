@@ -1,1 +1,34 @@
-/* Here comes CSS */
+body {
+  background-color: #f5f5f5;
+}
+body > .grid {
+  height: 100%;
+  margin: 0px !important;
+}
+.column {
+  max-width: 550px;
+  margin: 10px;
+}
+.column .card {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  text-align: left;
+  border-radius: 0;
+}
+.column .card > :first-child {
+  border-radius: 0 !important;
+}
+.column .card h3 {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: normal;
+  padding: 16px;
+  background-color: #000000;
+  margin: 0px;
+}
+.column .card form {
+  padding: 16px;
+}
+.column .card form button {
+  border-radius: 0;
+}
