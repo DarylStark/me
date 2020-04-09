@@ -3,16 +3,14 @@
   <div id='me-loginform'>
     <me-grid>
       <me-grid-column>
-        <div class='ui raised card' id='login'>
-            <me-h1 inverted>{{ texts.header }}</me-h1>
-
-            <form class='ui form' v-on:submit.prevent='login'>
-                <me-input v-bind:label='texts.field_username' ref='username' id='username' icon='user' v-bind:placeholder='texts.field_username_placeholder' v-bind:disabled="status_waiting"></me-input>
-                <me-input v-bind:label='texts.field_password' ref='password' id='password' icon='lock' v-bind:placeholder='texts.field_password_placeholder' v-bind:disabled="status_waiting" type='password'></me-input>
-                <button class='fluid ui primary button' v-bind:class='{ loading: status_waiting }'>{{ texts.button_login }}</button>
-            </form>
-
-        </div>
+        <me-card raised>
+          <me-h1 inverted>{{ texts.header }}</me-h1>
+          <form class='ui form' v-on:submit.prevent='login'>
+              <me-input v-bind:label='texts.field_username' ref='username' id='username' icon='user' v-bind:placeholder='texts.field_username_placeholder' v-bind:disabled="status_waiting"></me-input>
+              <me-input v-bind:label='texts.field_password' ref='password' id='password' icon='lock' v-bind:placeholder='texts.field_password_placeholder' v-bind:disabled="status_waiting" type='password'></me-input>
+              <button class='fluid ui primary button' v-bind:class='{ loading: status_waiting }'>{{ texts.button_login }}</button>
+          </form>
+        </me-card>
       </me-grid-column>
     </me-grid>
   </div>
@@ -22,6 +20,7 @@
 // Import the needed components
 import me_grid from './components/me-grid'
 import me_grid_column from './components/me-grid-column'
+import me_card from './components/me-card'
 import me_h1 from './components/me-h1'
 import me_input from './components/me-input'
 
@@ -30,6 +29,7 @@ export default {
   components: {
     'me-grid': me_grid,
     'me-grid-column': me_grid_column,
+    'me-card': me_card,
     'me-h1': me_h1,
     'me-input': me_input,
   },
