@@ -24,8 +24,8 @@
             "type": "shell",
             "command": "lessc",
             "args": [
-                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/less/me-app-login.less",
-                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-app-login.css"
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/less/me-loginform.less",
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-loginform.css"
             ],
             "group": "build",
             "presentation": {
