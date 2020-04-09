@@ -24,7 +24,7 @@
             "type": "shell",
             "command": "lessc",
             "args": [
-                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/me-app-login.less",
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/Less/me-app-login.less",
                 "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-app-login.css"
             ],
             "group": {
