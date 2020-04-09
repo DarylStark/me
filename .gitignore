@@ -11,4 +11,7 @@ env*
 
 # Exclude VIM swap files
 *swp
+
+# Exclude the node-modules
+node_modules
 #---------------------------------------------------------------------------------------------------
