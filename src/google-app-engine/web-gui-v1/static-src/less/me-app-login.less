@@ -1,0 +1,71 @@
+//**************************************************************************************************
+// CSS for the login-page
+//**************************************************************************************************
+// Imports
+@import "me-theme-light.less";
+//**************************************************************************************************
+body {
+    background-color: @bg-page;
+    font-size: @text-size;
+}
+
+// Styles for the loginform
+
+#me-loginform {
+    height: 100%;
+    
+    // The grid will be 100% height so the content will be vertically centered
+    > .grid {
+        height: 100%;
+        margin: 0px !important;         // Needed so mobile isn't scrolling
+    }
+
+    // The 'column' specifies the width of the element
+    .column {
+        max-width: 700px;
+        margin: 10px;
+
+        .card {
+            width: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            text-align: left;
+            border-radius: 0;
+
+            // Remove the border radius from the first child so we get a square
+            > :first-child {
+                border-radius: 0 !important;
+            }
+
+            h1 {
+                font-family: @h1-font-family;
+                font-size: @h1-font-size;
+                font-weight: @h1-font-weight;
+                padding: 16px;
+                background-color: @header-bg;
+                margin: 0px;
+            }
+
+            form {
+                padding: 32px 40px 32px 40px;
+                font-size: @text-size;
+
+                button {
+                    border-radius: 0;
+                    margin-top: 30px;
+                    font-size: @text-size;
+                    background-color: @header-bg !important;
+                }
+            }
+
+            // If this is a mobile phone, we set smaller paddings on the form so more will fit on the
+            // screen
+            @media screen and (max-width: @max-size-mobile) {
+                form {
+                    padding: 16px 20px 16px 20px;
+                }
+            }
+        }
+    }
+}
+//**************************************************************************************************

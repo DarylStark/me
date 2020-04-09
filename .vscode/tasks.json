@@ -20,21 +20,102 @@
             "problemMatcher": []
         },
         {
-            "label": "Compile CSS file for login",
+            "label": "Compile Less file for login",
             "type": "shell",
             "command": "lessc",
             "args": [
-                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/Less/me-app-login.less",
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/less/me-app-login.less",
                 "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-app-login.css"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "presentation": {
                 "reveal": "always",
                 "focus": true,
                 "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile Vue file for the login",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build-login"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/vue/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile Vue file for the dashboard",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build-dashboard"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/vue/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile front-end components",
+            "dependsOn": ["Compile Less file for login", "Compile Vue file for the login", "Compile Vue file for the dashboard"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Vue development server for the login form",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "dev-login"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/vue/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Vue development server for the dashboard",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "dev-dashboard"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/vue/"
             },
             "problemMatcher": []
         }
