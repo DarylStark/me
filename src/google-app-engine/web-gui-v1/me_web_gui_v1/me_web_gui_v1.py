@@ -328,5 +328,5 @@ class MeWebGUIv1:
             return_object = { 'user_token': response_json['object']['token'] }
 
         # Return the result to the Web UI
-        return return_object, 200
+        return flask.Response(json.dumps(return_object), mimetype = 'application/json')
 #---------------------------------------------------------------------------------------------------
