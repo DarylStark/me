@@ -12,6 +12,6 @@ env*
 # Exclude VIM swap files
 *swp
 
-# The 'source less' files for the CSS files
-static-source
+# The source files for the frond-end (NPM modules and such)
+static-src
 #---------------------------------------------------------------------------------------------------
