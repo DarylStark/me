@@ -304,8 +304,8 @@ class MeWebGUIv1:
         }
 
         # If the user supplied a 2nd-token, we can add it to the data
-        if '2nd_factor' in json_data.keys():
-            api_data['2nd_factor'] = json_data['2nd_factor']
+        if 'second_factor' in json_data.keys():
+            api_data['2nd_factor'] = json_data['second_factor']
 
         # Do the actual POST request to the api
         api_return = requests.post(url = api_url, json = api_data, headers = {
