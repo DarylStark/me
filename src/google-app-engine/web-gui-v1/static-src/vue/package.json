@@ -12,6 +12,7 @@
     "build-dashboard": "cross-env NODE_ENV=production-dashboard webpack --progress --hide-modules"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "vue": "^2.5.11"
   },
   "browserslist": [

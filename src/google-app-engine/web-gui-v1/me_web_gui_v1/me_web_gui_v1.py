@@ -17,6 +17,7 @@ import logging
 import datetime
 import json
 import re
+import requests
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1:
     """ Main class for the Web GUI. Should be used as a static class """
@@ -135,8 +136,8 @@ class MeWebGUIv1:
         # Start Flask with the configuration that is red in
         return cls.flask_app.run(**cls.get_configuration('flask'))
     
-    @flask_app.route('/', defaults = { 'path': '' }, methods = ['GET', 'POST', 'PATCH', 'DELETE'])
-    @flask_app.route('/<path:path>', methods = ['GET', 'POST', 'PATCH', 'DELETE'])
+    @flask_app.route('/', defaults = { 'path': '' }, methods = ['GET', 'POST'])
+    @flask_app.route('/<path:path>', methods = ['GET', 'POST'])
     def api_endpoint(path):
         """ Show the correct page for the GUI """
         # Because we use services in Google App Engine with a dispatch.yaml file, we still have the
@@ -172,6 +173,8 @@ class MeWebGUIv1:
                     return MeWebGUIv1.page_login()
                 elif re.match('^js/.+$', requested_page) or re.match('^css/.+$', requested_page):
                     return MeWebGUIv1.static_page(requested_page)
+                elif re.match('^client/login', requested_page):
+                    return MeWebGUIv1.client_login()
                 else:
                     # TODO: Implement
                     return 'Unknown page. Redirect or something?'
@@ -182,9 +185,12 @@ class MeWebGUIv1:
         except MeWebGUIv1PageNotFoundError as e:
             # TODO: Custom error pages
             return str(e), 404
+        except MeWebGUIv1PermissionDeniedError as e:
+            # TODO: Custom error pages
+            return str(e), 403
         except Exception as e:
             # TODO: Custom error pages
-            raise e
+            return str(e), 500
     
     @classmethod
     def get_static_file(cls, filetype, filename):
@@ -267,4 +273,60 @@ class MeWebGUIv1:
 
         # Return the login_page
         return login_page
+    
+    @classmethod
+    def client_login(cls):
+        """ This method is run when the user sends a POST to /client/login. The method checks tries
+            to get a user_token from the API for this session and returns it. We do this in a
+            Python method instead of in JavaScript so the client is not obligated to make his
+            client token publically available """
+        
+        # Get the given username and password
+        json_data = request.json
+
+        # Check if the needed values are given
+        if not 'username' in json_data.keys() or not 'password' in json_data.keys():
+            raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password not specified in request')
+
+        # Check if the values are filled in
+        if json_data['username'] in (None, '') or json_data['password'] in (None, ''):
+            raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password were empty in request')
+            
+        # Alright, we have the correct values. Let's retrieve a user token. To do this, we first
+        # have to gather some information about the API;
+        api_options = cls.get_configuration('api')
+        api_url = f'{api_options["base_url"]}/aaa/retrieve_user_token_with_credentials'
+
+        # Create the data for the API
+        api_data = {
+            'username': json_data['username'],
+            'password': json_data['password']
+        }
+
+        # If the user supplied a 2nd-token, we can add it to the data
+        if '2nd_factor' in json_data.keys():
+            api_data['2nd_factor'] = json_data['2nd_factor']
+
+        # Do the actual POST request to the api
+        api_return = requests.post(url = api_url, json = api_data, headers = {
+            'X-Me-Auth-Client': api_options['api_token']
+        })
+
+        # Check the response code.
+        if api_return.status_code == 403:
+            raise MeWebGUIv1LoginFailedError('Login failed; credentials are wrong')
+        elif api_return.status_code != 200:
+            raise MeWebGUIv1LoginAPIResponseError(f'API responded with code {api_return.status_code} and data: {api_return.json()}')
+
+        # Looks like everything went fine. Check the response
+        response_json = api_return.json()
+        if response_json['object']['_type'] == '2nd_factor':
+            # User needs to supply a second factor
+            return_object = { '2nd_factor_required': True }
+        elif response_json['object']['_type'] == 'api_user_token':
+            # We have a valid user token. Let's use it!
+            return_object = { 'user_token': response_json['object']['token'] }
+
+        # Return the result to the Web UI
+        return return_object, 200
 #---------------------------------------------------------------------------------------------------

@@ -25,6 +25,10 @@
       "style": "{",
       "datefmt": "%Y-%m-%d :: %Z[%z] :: %H:%I:%S",
       "format": "{asctime} :: PID: {process} :: {name} :: {levelname} :: {message}"
+    },
+    "api": {
+      "base_url": "http://localhost:2610/api/v1",
+      "api_token": "nwlnk4lqxsh97knqdxclh8ngahn3tsn4"
     }
   },
   "production": {
@@ -53,6 +57,10 @@
       "style": "{",
       "datefmt": "%Y-%m-%d :: %Z[%z] :: %H:%I:%S",
       "format": "{asctime} :: PID: {process} :: {name} :: {levelname} :: {message}"
+    },
+    "api": {
+      "base_url": "https://me-dstark-nl-test.appspot.com/api/v1",
+      "api_token": "6xedum3h1jx8en8ogvemgs2qeo93d44y"
     }
   }
 }

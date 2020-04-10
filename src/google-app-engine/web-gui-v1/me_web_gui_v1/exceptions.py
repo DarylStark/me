@@ -45,6 +45,16 @@ class MeWebGUIStaticPageNotFoundError(MeWebGUIv1PageNotFoundError):
     """ Error when the user opens a static page that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+# PermissionDeniedErrors: errors that happen when a user is not authorized to open a specific page
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError(MeWebGUIv1PermissionDeniedError):
+    """ Error when the user tries to login without a username or password """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1LoginFailedError(MeWebGUIv1PermissionDeniedError):
+    """ Error when the user tries to login with a wrong username or password """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1StaticFileTypeError(MeWebGUIv1ServerError):
@@ -53,5 +63,9 @@ class MeWebGUIv1StaticFileTypeError(MeWebGUIv1ServerError):
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIStaticFileNotFoundError(MeWebGUIv1ServerError):
     """ Error when a static file is not found """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1LoginAPIResponseError(MeWebGUIv1ServerError):
+    """ Error when the API responds with something else then '200' """
     pass
 #---------------------------------------------------------------------------------------------------

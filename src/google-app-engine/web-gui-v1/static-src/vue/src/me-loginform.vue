@@ -23,6 +23,7 @@ import me_grid_column from './components/me-grid-column'
 import me_card from './components/me-card'
 import me_h1 from './components/me-h1'
 import me_input from './components/me-input'
+import axios from 'axios'
 
 // Export the form
 export default {
@@ -53,14 +54,42 @@ export default {
       this.$refs[field].focus();
     },
     login: function(form) {
-      // Method to log the user in
-      console.log(this.$refs.username.value);
-      console.log(this.$refs.password.value);
+      // Method to login the user
 
       // Make sure the form 'block's the needed fields
       this.status_waiting = true;
-      // TODO: Do the API-request to authenticate
-    }
+
+      // Create a variable that can be used as 'this' in the callback of the Axios request
+      var vue_this = this;
+
+      // Send the POST to the login-backend
+      axios.post('/ui/client/login', {
+        username: this.$refs.username.value,
+        password: this.$refs.password.value
+      }).then(function(response) {
+        vue_this.login_success(response);
+      }).catch(function(error) {
+        vue_this.login_failed(error);
+      });
+    },
+    login_failed: function(error) {
+      // Method that gets run when the logging in fails
+
+      // Make sure the form isn't blocked anymore
+        this.status_waiting = false;
+
+        console.log('Error: ');
+        console.log(error);
+    },
+    login_success: function(data) {
+      // Method that gets run when the logging in was a success
+
+      // Make sure the form isn't blocked anymore
+        this.status_waiting = false;
+
+        console.log('Success: ' + data);
+        console.log(data);
+    },
   },
   mounted: function() {
     this.$refs.username.focus();
