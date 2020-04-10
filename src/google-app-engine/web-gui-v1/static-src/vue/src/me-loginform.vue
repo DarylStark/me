@@ -28,6 +28,7 @@
 
 <script>
 // Import the needed components
+import vue_cookies from 'vue-cookies'
 import me_grid from './components/me-grid'
 import me_grid_column from './components/me-grid-column'
 import me_card from './components/me-card'
@@ -133,10 +134,11 @@ export default {
         // Transform to second-factor form
         this.transform('2nd_factor');
       } else if ('user_token' in data.data) {
-        // Nice! Logging in worked!
-        console.log('We have a user token: ' + data.data.user_token);
+        // Correct credentials were given
 
-        // TODO: Set as cookie and redirect the user
+        // Set as cookie and redirect the user to the homepage
+        vue_cookies.set('user_token', data.data.user_token);
+        window.location.replace('/ui/home')
       } else {
         self.login_failed();
       }
