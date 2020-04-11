@@ -266,4 +266,31 @@ class APIAAA:
 
         # Return the object
         return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'verify_user_token',
+        description = 'Verify a user token',
+        permissions = {
+            'GET': 'aaa.verify_user_token'
+        },
+        user_token_needed = True
+    )
+    def verify_user_token(*args, **kwargs):
+        """ Endpoint for users to verify if they are using a valid User Token. this endpoints
+            respons with a UserToken object for the user """
+        
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_RECORD)
+        
+        # Get all permissions from the database
+        with DatabaseSession() as session:
+            # Find the user token
+            user_token = kwargs['user_token']
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+            
+            response.data = user_token_object
+
+        # Return the object
+        return response
 #---------------------------------------------------------------------------------------------------
