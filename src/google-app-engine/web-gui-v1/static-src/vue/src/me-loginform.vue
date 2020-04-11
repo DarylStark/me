@@ -39,6 +39,7 @@ import jquery from 'jquery'
 
 // Export the form
 export default {
+  name: 'me-loginform',
   components: {
     'me-grid': me_grid,
     'me-grid-column': me_grid_column,
@@ -46,7 +47,6 @@ export default {
     'me-h1': me_h1,
     'me-input': me_input,
   },
-  name: 'me-loginform',
   data: function() {
     return {
       texts: {
