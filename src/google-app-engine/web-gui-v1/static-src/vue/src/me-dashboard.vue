@@ -32,13 +32,14 @@ import me_dashboard_button_menu from './components/me-dashboard-button-menu'
 // Export the dashboard
 export default {
   name: 'me-dashboard',
+  components: {
+    'me-dashboard-button-menu': me_dashboard_button_menu,
+    'me-input': me_input
+  },
   data: function() {
     return {
       'media_type': 'not set yet'
     }
-  },
-  components: {
-    'me-dashboard-button-menu': me_dashboard_button_menu
   },
   methods: {
     set_media_type: function() {
