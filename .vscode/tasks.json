@@ -36,6 +36,22 @@
             "problemMatcher": []
         },
         {
+            "label": "Compile Less file for dashboard",
+            "type": "shell",
+            "command": "lessc",
+            "args": [
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static-src/less/me-dashboard.less",
+                "${workspaceFolder}/src/google-app-engine/web-gui-v1/static/css/me-dashboard.css"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Compile Vue file for the login",
             "type": "shell",
             "command": "npm",
@@ -75,7 +91,7 @@
         },
         {
             "label": "Compile front-end components",
-            "dependsOn": ["Compile Less file for login", "Compile Vue file for the login", "Compile Vue file for the dashboard"],
+            "dependsOn": ["Compile Less file for login", "Compile Less file for dashboard", "Compile Vue file for the login", "Compile Vue file for the dashboard"],
             "group": {
                 "kind": "build",
                 "isDefault": true

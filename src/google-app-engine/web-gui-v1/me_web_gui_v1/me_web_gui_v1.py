@@ -176,8 +176,8 @@ class MeWebGUIv1:
                 elif re.match('^client/login', requested_page):
                     return MeWebGUIv1.client_login()
                 else:
-                    # TODO: Implement
-                    return 'Unknown page. Redirect or something?'
+                    # Nothing given, return the dashboard
+                    return MeWebGUIv1.page_dashboard()
             else:
                 # TODO: Redirect the user or something?
                 MeWebGUIv1.logger.debug('User didn\'t specify a page')
@@ -321,8 +321,18 @@ class MeWebGUIv1:
         # Get the login page static file
         login_page = MeWebGUIv1.get_static_file('html', 'login.html')
 
-        # Return the login_page
+        # Return the login page
         return login_page
+    
+    @logged_in_page(redirect = 'login', redirect_on = 'logged_off')
+    def page_dashboard():
+        """ The method that returns the dashboard-application """
+
+        # Get the dashboard page static file
+        main_page = MeWebGUIv1.get_static_file('html', 'dashboard.html')
+
+        # Return the dashboard page
+        return main_page
     
     @classmethod
     def client_login(cls):
