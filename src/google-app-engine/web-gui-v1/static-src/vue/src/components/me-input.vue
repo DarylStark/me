@@ -1,4 +1,4 @@
-<!-- Vue component for the a grid -->
+<!-- Vue component for the a input -->
 <template>
   <div class='field' v-bind:class='{ disabled: disabled }'>
     <label v-if='label'>{{ label }}</label>

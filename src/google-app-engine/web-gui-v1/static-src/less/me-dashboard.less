@@ -8,4 +8,40 @@ body {
     background-color: @bg-page;
     font-size: @text-size;
 }
+
+// Styles for the dashboard
+#me-dashboard {
+    #me-dashboard-header {
+        width: 100%;
+        background-color: @bg-dark;
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: stretch;
+
+        > div {
+            padding: 10px;
+            display: inline-block;
+            color: white;
+            border-right: 1px solid white; // TODO: Remove this shite
+        }
+
+        #me-dashboard-button-menu {
+            width: 280px;
+            cursor: pointer;
+        }
+
+        #me-dashboard-button-menu.hide_menu {
+            width: auto;
+        }
+
+        #me-dashboard-search {
+            flex-grow: 2;
+
+            .icon {
+                float: right;
+            }
+        }
+    }
+}
 //**************************************************************************************************

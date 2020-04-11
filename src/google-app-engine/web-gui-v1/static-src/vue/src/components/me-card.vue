@@ -1,4 +1,4 @@
-<!-- Vue component for the a grid -->
+<!-- Vue component for the a card -->
 <template>
     <div class='ui' v-bind:class='[ { raised: raised }, "card" ]' v-bind:id='id'>
         <slot></slot>

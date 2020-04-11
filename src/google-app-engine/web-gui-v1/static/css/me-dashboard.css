@@ -2,3 +2,30 @@ body {
   background-color: #f5f5f5;
   font-size: 1em;
 }
+#me-dashboard #me-dashboard-header {
+  width: 100%;
+  background-color: #46494c;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: stretch;
+}
+#me-dashboard #me-dashboard-header > div {
+  padding: 10px;
+  display: inline-block;
+  color: white;
+  border-right: 1px solid white;
+}
+#me-dashboard #me-dashboard-header #me-dashboard-button-menu {
+  width: 280px;
+  cursor: pointer;
+}
+#me-dashboard #me-dashboard-header #me-dashboard-button-menu.hide_menu {
+  width: auto;
+}
+#me-dashboard #me-dashboard-header #me-dashboard-search {
+  flex-grow: 2;
+}
+#me-dashboard #me-dashboard-header #me-dashboard-search .icon {
+  float: right;
+}

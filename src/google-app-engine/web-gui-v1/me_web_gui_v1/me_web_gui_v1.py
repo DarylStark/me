@@ -274,6 +274,13 @@ class MeWebGUIv1:
             """ The real decorator """
 
             def page_method(*args, **kwargs):
+                """ Metod to check if a user is logged in, and to the correct task if he is or if he
+                    isn't """
+
+                # Add the full url to the redirect url
+                full_url = MeWebGUIv1.get_configuration('service', 'full_url')
+                redirect_url = f'{full_url}/{redirect}'
+
                 # See if we have a user token in the cookies
                 if 'user_token' in request.cookies.keys():
                     # Get the API configuration from the config
@@ -284,10 +291,6 @@ class MeWebGUIv1:
                     api_return = requests.get(url = api_url, headers = {
                         'X-Me-Auth-User': request.cookies['user_token']
                     })
-
-                    # Add the full url to the redirect url
-                    full_url = MeWebGUIv1.get_configuration('service', 'full_url')
-                    redirect_url = f'{full_url}/{redirect}'
 
                     if api_return.status_code == 200:
                         # API Return was OK. 

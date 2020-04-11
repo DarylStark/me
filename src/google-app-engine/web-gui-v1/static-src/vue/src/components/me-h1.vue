@@ -1,4 +1,4 @@
-<!-- Vue component for the a grid -->
+<!-- Vue component for the a h1 -->
 <template>
   <h1 class='ui header' v-bind:class="{ inverted: inverted }">
     <slot></slot>
