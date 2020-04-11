@@ -33,8 +33,7 @@ import me_dashboard_button_menu from './components/me-dashboard-button-menu'
 export default {
   name: 'me-dashboard',
   components: {
-    'me-dashboard-button-menu': me_dashboard_button_menu,
-    'me-input': me_input
+    'me-dashboard-button-menu': me_dashboard_button_menu
   },
   data: function() {
     return {
