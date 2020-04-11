@@ -263,13 +263,63 @@ class MeWebGUIv1:
             return Response(static_file, mimetype = mimetype)
         else:
             raise MeWebGUIStaticPageNotFoundError(f'The static file "{requested_page}" cannot be found')
-    
-    @classmethod
-    def page_login(cls):
+
+    def logged_in_page(redirect, redirect_on):
+        """ Decorator for pages that require the user to be logged in. Let 'redirect' argument
+            specifies if, and where the user should be redirected after the method is run. The
+            'redirect_on' argument specifies when the user should be redirected: if he IS logged on,
+            or if he ISN'T logged on """
+
+        def decorator(method):
+            """ The real decorator """
+
+            def page_method(*args, **kwargs):
+                # See if we have a user token in the cookies
+                if 'user_token' in request.cookies.keys():
+                    # Get the API configuration from the config
+                    api_options = MeWebGUIv1.get_configuration('api')
+                    api_url = f'{api_options["base_url"]}/aaa/verify_user_token'
+
+                    # Send the API call to check if this user token is still valid
+                    api_return = requests.get(url = api_url, headers = {
+                        'X-Me-Auth-User': request.cookies['user_token']
+                    })
+
+                    # Add the full url to the redirect url
+                    full_url = MeWebGUIv1.get_configuration('service', 'full_url')
+                    redirect_url = f'{full_url}/{redirect}'
+
+                    if api_return.status_code == 200:
+                        # API Return was OK. 
+                        if redirect_on == 'logged_on':
+                            # The user is logged in, we have to redirect him
+                            return flask.redirect(redirect_url, code = 302)
+                    else:
+                        # API Return was NOK
+                        if redirect_on == 'logged_off':
+                            # The user is not logged in, we have to redirect him
+                            return flask.redirect(redirect_url, code = 302)
+                else:
+                    # User is not logged in because there was no user key
+                    if redirect_on == 'logged_off':
+                        # Redirect the user
+                        return flask.redirect(redirect_url, code = 302)
+                
+                # We made it this far; lets run the method
+                return method(*args, **kwargs)
+            
+            # Return the new method
+            return page_method
+        
+        # Return the decorator
+        return decorator
+
+    @logged_in_page(redirect = 'home', redirect_on = 'logged_on')
+    def page_login():
         """ The method that returns the login-form to the user """
 
         # Get the login page static file
-        login_page = cls.get_static_file('html', 'login.html')
+        login_page = MeWebGUIv1.get_static_file('html', 'login.html')
 
         # Return the login_page
         return login_page

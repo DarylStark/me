@@ -1,7 +1,8 @@
 {
   "development": {
     "service": {
-      "base_url": "ui"
+      "base_url": "ui",
+      "full_url": "http://127.0.0.1:2610/ui"
     },
     "static_files": {
       "cache": false,
@@ -33,7 +34,8 @@
   },
   "production": {
     "service": {
-      "base_url": "ui"
+      "base_url": "ui",
+      "full_url": "https://me-dstark-nl-test.appspot.com/ui"
     },
     "static_files": {
       "cache": true,
