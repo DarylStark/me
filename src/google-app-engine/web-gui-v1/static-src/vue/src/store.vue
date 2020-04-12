@@ -12,7 +12,8 @@ export default new Vuex.Store({
     state: {
         ui: {
             media_type: null,
-            menu_open: true
+            menu_open: true,
+            sidebar_available: true
         }
     },
     mutations: {

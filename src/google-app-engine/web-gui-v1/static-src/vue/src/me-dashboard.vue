@@ -4,21 +4,9 @@
     <!-- Component -->
     <div id='me-dashboard-header'>
       <me-dashboard-button-menu></me-dashboard-button-menu>
-      <!-- Component -->
-      <div id='me-dashboard-search'>
-        <i class='search icon'></i>
-      </div>
-      <!-- /Component -->
-      <!-- Component -->
-      <div id='me-dashboard-button-user'>
-        <i class='user icon'></i>
-      </div>
-      <!-- /Component -->
-      <!-- Component -->
-      <div id='me-dashboard-button-sidebar'>
-        <i class='filter icon'></i>
-      </div>
-      <!-- /Component -->
+      <me-dashboard-search></me-dashboard-search>
+      <me-dashboard-button-user></me-dashboard-button-user>
+      <me-dashboard-button-sidebar></me-dashboard-button-sidebar>
     </div>
     <!-- /Component -->
     <p>{{ $store.state.ui.menu_open }}</p>
@@ -29,15 +17,21 @@
 <script>
 // Import the needed components
 import jquery from 'jquery';
-import me_dashboard_button_menu from './components/me-dashboard-button-menu'
 import store from './store'
+import me_dashboard_button_menu from './components/me-dashboard-button-menu'
+import me_dashboard_search from './components/me-dashboard-search'
+import me_dashboard_button_user from './components/me-dashboard-button-user'
+import me_dashboard_button_sidebar from './components/me-dashboard-button-sidebar'
 
 // Export the dashboard
 export default {
   name: 'me-dashboard',
   store,                  // Makes sure the store is usable in components
   components: {
-    'me-dashboard-button-menu': me_dashboard_button_menu
+    'me-dashboard-button-menu': me_dashboard_button_menu,
+    'me-dashboard-search': me_dashboard_search,
+    'me-dashboard-button-user': me_dashboard_button_user,
+    'me-dashboard-button-sidebar': me_dashboard_button_sidebar
   },
   data: function() {
     return {}

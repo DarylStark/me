@@ -10,11 +10,6 @@
 <script>
 export default {
   name: 'me-dashboard-button-menu',
-  data: function() {
-    return {}
-  },
-  props: {
-  },
   methods: {
       toggle_menu: function() {
           // Toggle the menu
