@@ -1,7 +1,7 @@
 <!-- Vue component for the a 'menu button' in the dashboard header -->
 <template>
   <div id='me-dashboard-search' v-bind:class='{ active: search_active }'>
-      <me-input id='search' ref='search' icon='search' icon_position='right' transparent='true' placeholder='Search ...' v-show='search_active' v-on:escape='toggle_search'></me-input>
+      <me-input id='search' ref='search' icon='search' icon_position='right' transparent='true' placeholder='Search ...' v-show='search_active' v-on:escape='toggle_search' v-on:enter='start_search'></me-input>
       <i class='search icon' v-if='!search_active' v-on:click='toggle_search'></i>
   </div>
 </template>
@@ -30,6 +30,11 @@ export default {
       this.$nextTick(function() {
         this.$refs.search.focus();
       });
+    },
+    start_search: function() {
+      // Method to start the search
+      // TODO: Implement
+      console.log('Searching for "' + this.$refs.search.value + '"');
     }
   }
 }
