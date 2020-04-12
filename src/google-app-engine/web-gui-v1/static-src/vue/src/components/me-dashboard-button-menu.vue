@@ -1,8 +1,8 @@
 <!-- Vue component for the a 'menu button' in the dashboard header -->
 <template>
-  <div id='me-dashboard-button-menu' v-on:click='toggle_menu' v-bind:class="{ hide_menu: !show_menu }">
+  <div id='me-dashboard-button-menu' v-on:click='toggle_menu' v-bind:class="{ hide_menu: !$store.state.ui.menu_open }">
       <i class='bars icon'></i>
-      <span v-if='show_menu'>Me</span>
+      <span v-if='$store.state.ui.menu_open'>Me</span>
   </div>
 </template>
 
@@ -11,16 +11,14 @@
 export default {
   name: 'me-dashboard-button-menu',
   data: function() {
-    return {
-        show_menu: true
-    };
+    return {}
   },
   props: {
   },
   methods: {
       toggle_menu: function() {
           // Toggle the menu
-          this.show_menu = !this.show_menu;
+          this.$store.commit('set_menu_state', !this.$store.state.ui.menu_open);
       }
   }
 }

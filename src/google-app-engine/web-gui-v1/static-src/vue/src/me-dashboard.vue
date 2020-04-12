@@ -21,6 +21,8 @@
       <!-- /Component -->
     </div>
     <!-- /Component -->
+    <p>{{ $store.state.ui.menu_open }}</p>
+    <p>{{ $store.state.ui.media_type }}</p>
   </div>
 </template>
 
@@ -28,32 +30,33 @@
 // Import the needed components
 import jquery from 'jquery';
 import me_dashboard_button_menu from './components/me-dashboard-button-menu'
+import store from './store'
 
 // Export the dashboard
 export default {
   name: 'me-dashboard',
+  store,                  // Makes sure the store is usable in components
   components: {
     'me-dashboard-button-menu': me_dashboard_button_menu
   },
   data: function() {
-    return {
-      'media_type': 'not set yet'
-    }
+    return {}
   },
   methods: {
     set_media_type: function() {
+      // TODO: Maybe move this to the store? Discussable...
+
       // Function to set the window size in the Vue-object and the 'device-type'. The 'device-type' can
       // be either 'desktop', 'table' or 'phone'.
       var media_type = null;
 
       // Search for the correct media-type
-      if (window.matchMedia('only screen and (max-width: 600px)').matches) { media_type = 'phone'; }
-      if (window.matchMedia('only screen and (min-width: 601px)').matches) { media_type = 'tablet'; }
+      if (window.matchMedia('only screen and (max-width: 700px)').matches) { media_type = 'phone'; }
+      if (window.matchMedia('only screen and (min-width: 701px)').matches) { media_type = 'tablet'; }
       if (window.matchMedia('only screen and (min-width: 1000px)').matches) { media_type = 'desktop'; }
 
-      // Set the media type in the Vue object
-      //state.media_type = media_type;
-      this.media_type = media_type;
+      // Set the media type in the store
+      store.commit('set_media_type', media_type);
     }
   },
   created: function() {
@@ -75,4 +78,3 @@ export default {
   }
 }
 </script>
-
