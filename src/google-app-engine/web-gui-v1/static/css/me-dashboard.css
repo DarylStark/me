@@ -29,3 +29,9 @@ body {
 #me-dashboard #me-dashboard-header #me-dashboard-search .icon {
   float: right;
 }
+#me-dashboard #me-dashboard-header #me-dashboard-search.active {
+  background-color: #e8ab02;
+}
+#me-dashboard #me-dashboard-header #me-dashboard-search .input {
+  width: 100%;
+}

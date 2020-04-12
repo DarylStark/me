@@ -2,8 +2,8 @@
 <template>
   <div class='field' v-bind:class='{ disabled: disabled }'>
     <label v-if='label'>{{ label }}</label>
-    <div class='ui' v-bind:class='[ { [icon_position]: icon && icon_position, icon: icon && icon_position }, "input" ]'>
-      <input v-bind:type='type' v-bind:id='id' v-model='value' v-bind:placeholder='placeholder' ref='input_field'>
+    <div class='ui' v-bind:class='[ { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, "input" ]'>
+      <input v-bind:type='type' v-bind:id='id' v-model='value' v-bind:placeholder='placeholder' ref='input_field' v-on:keydown.esc='escape'>
       <i class='icon' v-bind:class='icon' v-if='icon'></i>
     </div>
   </div>
@@ -20,7 +20,8 @@ export default {
     icon_position: { type: String, default: 'left' },
     placeholder: { type: String },
     type: { type: String, default: 'text' },
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
+    transparent: false
   },
   data: function() {
     return {
@@ -29,7 +30,12 @@ export default {
   },
   methods: {
     focus: function() {
+      // Method to focus the input
       this.$refs.input_field.focus();
+    },
+    escape: function() {
+      // When the user presses 'esc' while the input is focussed, we emit a event
+      this.$emit('escape');
     }
   }
 }
