@@ -16,7 +16,7 @@
 
 <script>
 // Import the needed components
-import jquery from 'jquery';
+import jquery from 'jquery'
 import store from './store'
 import me_dashboard_button_menu from './components/me-dashboard-button-menu'
 import me_dashboard_search from './components/me-dashboard-search'
