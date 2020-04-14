@@ -14,6 +14,10 @@
           <i class="user circle icon"></i>
             Profile
         </div>
+        <div class="item">
+          <i class="pen icon"></i>
+            Rename session
+        </div>
         <div class="item" v-on:click.prevent='logout'>
           <i class="sign out alternate icon"></i>
             Logout

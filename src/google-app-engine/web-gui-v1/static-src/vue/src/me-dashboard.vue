@@ -6,7 +6,7 @@
       <me-dashboard-button-menu v-if='!this.$store.state.ui.search_active'></me-dashboard-button-menu>
       <me-dashboard-search></me-dashboard-search>
       <me-dashboard-button-user v-if='!this.$store.state.ui.search_active'></me-dashboard-button-user>
-      <me-dashboard-button-sidebar v-if='!this.$store.state.ui.search_active'></me-dashboard-button-sidebar>
+      <me-dashboard-button-options v-if='!this.$store.state.ui.search_active'></me-dashboard-button-options>
     </div>
     <!-- /Component -->
     <p>{{ $store.state.ui.menu_open }}</p>
@@ -21,7 +21,7 @@ import store from './store'
 import me_dashboard_button_menu from './components/me-dashboard-button-menu'
 import me_dashboard_search from './components/me-dashboard-search'
 import me_dashboard_button_user from './components/me-dashboard-button-user'
-import me_dashboard_button_sidebar from './components/me-dashboard-button-sidebar'
+import me_dashboard_button_options from './components/me-dashboard-button-options'
 
 // Export the dashboard
 export default {
@@ -31,7 +31,7 @@ export default {
     'me-dashboard-button-menu': me_dashboard_button_menu,
     'me-dashboard-search': me_dashboard_search,
     'me-dashboard-button-user': me_dashboard_button_user,
-    'me-dashboard-button-sidebar': me_dashboard_button_sidebar
+    'me-dashboard-button-options': me_dashboard_button_options
   },
   data: function() {
     return {}
