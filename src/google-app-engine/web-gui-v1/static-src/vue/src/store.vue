@@ -13,7 +13,8 @@ export default new Vuex.Store({
         ui: {
             media_type: null,
             menu_open: true,
-            sidebar_available: true
+            sidebar_available: true,
+            search_active: false
         }
     },
     mutations: {

@@ -14,4 +14,5 @@ env*
 
 # Exclude the node-modules
 node_modules
+src/google-app-engine/web-gui-v1/static-src/vue/semantic*
 #---------------------------------------------------------------------------------------------------

@@ -3,10 +3,10 @@
   <div id='me-dashboard'>
     <!-- Component -->
     <div id='me-dashboard-header'>
-      <me-dashboard-button-menu></me-dashboard-button-menu>
+      <me-dashboard-button-menu v-if='!this.$store.state.ui.search_active'></me-dashboard-button-menu>
       <me-dashboard-search></me-dashboard-search>
-      <me-dashboard-button-user></me-dashboard-button-user>
-      <me-dashboard-button-sidebar></me-dashboard-button-sidebar>
+      <me-dashboard-button-user v-if='!this.$store.state.ui.search_active'></me-dashboard-button-user>
+      <me-dashboard-button-sidebar v-if='!this.$store.state.ui.search_active'></me-dashboard-button-sidebar>
     </div>
     <!-- /Component -->
     <p>{{ $store.state.ui.menu_open }}</p>

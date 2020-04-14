@@ -13,17 +13,17 @@ body {
 #me-dashboard {
     #me-dashboard-header {
         width: 100%;
-        background-color: @bg-dark;
+        background-color: @header-bg;
+        color: @header-fg;
         display: inline-flex;
         flex-direction: row;
         flex-wrap: nowrap;
         align-content: stretch;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
 
         > div {
-            padding: 10px;
+            padding: 20px;
             display: inline-block;
-            color: white;
-            border-right: 1px solid white; // TODO: Remove this shite
         }
 
         #me-dashboard-button-menu {
@@ -44,10 +44,25 @@ body {
 
             &.active {
                 background-color: @header-search-bg-active;
+                padding: 15px;
+
+                .icon {
+                    color: @header-search-fg-active;
+                }
             }
 
             .input {
                 width: 100%;
+            }
+
+            input {
+                color: @header-search-fg-active;
+                font-size: 1.3em;
+                font-style: italic;
+            }
+
+            input::placeholder {
+                color: @header-search-ph-active;
             }
         }
     }

@@ -1,8 +1,8 @@
 <!-- Vue component for the a 'menu button' in the dashboard header -->
 <template>
-  <div id='me-dashboard-search' v-bind:class='{ active: search_active }'>
-      <me-input id='search' ref='search' icon='search' icon_position='right' transparent='true' placeholder='Search ...' v-show='search_active' v-on:escape='toggle_search' v-on:enter='start_search'></me-input>
-      <i class='search icon' v-if='!search_active' v-on:click='toggle_search'></i>
+  <div id='me-dashboard-search' v-bind:class='{ active: this.$store.state.ui.search_active }'>
+      <me-input id='search' ref='search' icon='search' icon_position='right' transparent='true' placeholder='Search ...' v-show='this.$store.state.ui.search_active' v-on:escape='toggle_search' v-on:enter='start_search'></me-input>
+      <i class='search icon' v-if='!this.$store.state.ui.search_active' v-on:click='toggle_search'></i>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
   methods: {
     toggle_search: function() {
       // Method to activate or deactive the search bar
-      this.search_active = !this.search_active;
+      this.$store.state.ui.search_active = !this.$store.state.ui.search_active;
 
       // Set focus to the search-input. Because Vue doesn't update the DOM immidiatly, we have to
       // wait for it to do so with the 'nextTick' method.
