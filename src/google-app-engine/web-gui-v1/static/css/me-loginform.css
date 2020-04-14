@@ -1,5 +1,5 @@
 body {
-  background-color: #f5f5f5;
+  background-color: #e8ebef;
   font-size: 1em;
 }
 #me-loginform {
@@ -29,7 +29,7 @@ body {
   font-size: 1.3rem;
   font-weight: normal;
   padding: 10px;
-  background-color: ##2185d0;
+  background-color: #2185d0;
   margin: 0px;
   border-bottom: 1px solid #ffffff;
 }
@@ -41,7 +41,7 @@ body {
   border-radius: 0;
   margin-top: 30px;
   font-size: 1em;
-  background-color: ##2185d0 !important;
+  background-color: #2185d0 !important;
 }
 #me-loginform .column .card #form-login {
   width: 100%;

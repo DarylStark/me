@@ -1,11 +1,8 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-dashboard'>
-    <!-- Component -->
     <me-dashboard-header></me-dashboard-header>
-    <!-- /Component -->
-    <p>{{ $store.state.ui.menu_open }}</p>
-    <p>{{ $store.state.ui.media_type }}</p>
+    <me-dashboard-main-menu></me-dashboard-main-menu>
   </div>
 </template>
 
@@ -14,13 +11,15 @@
 import jquery from 'jquery'
 import store from './store'
 import me_dashboard_header from './components/me-dashboard-header'
+import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 
 // Export the dashboard
 export default {
   name: 'me-dashboard',
   store,                  // Makes sure the store is usable in components
   components: {
-    'me-dashboard-header': me_dashboard_header
+    'me-dashboard-header': me_dashboard_header,
+    'me-dashboard-main-menu': me_dashboard_main_menu
   },
   methods: {
     set_media_type: function() {

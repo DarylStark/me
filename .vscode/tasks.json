@@ -91,11 +91,17 @@
         },
         {
             "label": "Compile front-end components",
-            "dependsOn": ["Compile Less file for login", "Compile Less file for dashboard", "Compile Vue file for the login", "Compile Vue file for the dashboard"],
+            "dependsOn": [
+                "Compile Less file for login",
+                "Compile Less file for dashboard",
+                "Compile Vue file for the login",
+                "Compile Vue file for the dashboard"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": []
         },
         {
             "label": "Run Vue development server for the login form",
