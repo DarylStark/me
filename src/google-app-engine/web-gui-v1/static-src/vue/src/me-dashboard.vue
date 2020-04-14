@@ -2,12 +2,7 @@
 <template>
   <div id='me-dashboard'>
     <!-- Component -->
-    <div id='me-dashboard-header'>
-      <me-dashboard-button-menu v-if='!this.$store.state.ui.search_active'></me-dashboard-button-menu>
-      <me-dashboard-search></me-dashboard-search>
-      <me-dashboard-button-user v-if='!this.$store.state.ui.search_active'></me-dashboard-button-user>
-      <me-dashboard-button-options v-if='!this.$store.state.ui.search_active'></me-dashboard-button-options>
-    </div>
+    <me-dashboard-header></me-dashboard-header>
     <!-- /Component -->
     <p>{{ $store.state.ui.menu_open }}</p>
     <p>{{ $store.state.ui.media_type }}</p>
@@ -18,23 +13,14 @@
 // Import the needed components
 import jquery from 'jquery'
 import store from './store'
-import me_dashboard_button_menu from './components/me-dashboard-button-menu'
-import me_dashboard_search from './components/me-dashboard-search'
-import me_dashboard_button_user from './components/me-dashboard-button-user'
-import me_dashboard_button_options from './components/me-dashboard-button-options'
+import me_dashboard_header from './components/me-dashboard-header'
 
 // Export the dashboard
 export default {
   name: 'me-dashboard',
   store,                  // Makes sure the store is usable in components
   components: {
-    'me-dashboard-button-menu': me_dashboard_button_menu,
-    'me-dashboard-search': me_dashboard_search,
-    'me-dashboard-button-user': me_dashboard_button_user,
-    'me-dashboard-button-options': me_dashboard_button_options
-  },
-  data: function() {
-    return {}
+    'me-dashboard-header': me_dashboard_header
   },
   methods: {
     set_media_type: function() {
