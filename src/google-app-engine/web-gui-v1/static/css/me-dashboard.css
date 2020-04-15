@@ -75,9 +75,8 @@ body {
   padding: 0;
 }
 #me-dashboard #me-dashboard-main-menu div.menu-section > ul > li {
-  font-style: underline;
-  font-size: 1.1em;
-  padding: 10px 18px 10px 18px;
+  font-size: 1em;
+  padding: 8px 18px 8px 18px;
   margin: 0px;
   cursor: pointer;
 }
