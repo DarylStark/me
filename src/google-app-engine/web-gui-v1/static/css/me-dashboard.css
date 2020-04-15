@@ -55,37 +55,55 @@ body {
   color: #afafaf;
 }
 #me-dashboard #me-dashboard-main-menu {
-  background-color: #46494c;
   width: 280px;
   flex-grow: 2;
   background-color: #ffffff;
   z-index: 10;
   overflow-y: auto;
+  overflow-x: hidden;
+  float: left;
+  position: relative;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > h1 {
+#me-dashboard #me-dashboard-main-menu div.menu-second {
+  position: absolute;
+  width: 100%;
+  top: 0%;
+  left: 100%;
+  background-color: #ffffff;
+  height: 100%;
+}
+#me-dashboard #me-dashboard-main-menu > div.menu {
+  background-color: #ffffff;
+  height: 100%;
+  padding: 18px 0 36px 0;
+}
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > h1 {
   color: #2185d0;
   text-transform: uppercase;
   font-size: 1em;
   font-weight: bold;
   margin: 18px 18px 9px 18px;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > ul {
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > ul > li {
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > ul > li {
   font-size: 1em;
   padding: 8px 18px 8px 18px;
   margin: 0px;
   cursor: pointer;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > ul > li .icon {
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > ul > li .icon {
   margin-right: 16px;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > ul > li span {
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > ul > li span {
   padding-top: 2px;
 }
-#me-dashboard #me-dashboard-main-menu div.menu-section > ul > li:hover {
+#me-dashboard #me-dashboard-main-menu > div.menu div.menu-section > ul > li:hover {
   background-color: #afafaf;
+}
+#me-dashboard #me-dashboard-main-menu > div.menu:last-child {
+  margin-bottom: 0px;
 }

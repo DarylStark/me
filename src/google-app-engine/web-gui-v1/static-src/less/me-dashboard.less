@@ -74,46 +74,67 @@ body {
     }
 
     #me-dashboard-main-menu {
-        background-color: @bg-dark;
         width: 280px;
         flex-grow: 2;
         background-color: @menu-bg;
         z-index: 10;
         overflow-y: auto;
+        overflow-x: hidden;
+        float: left;
+        position: relative;
 
-        div.menu-section {
-            >h1 {
-                color: @menu-header-fg;
-                text-transform: uppercase;
-                font-size: 1em;
-                font-weight: bold;
-                margin: 18px 18px 9px 18px;
-            }
+        div.menu-second {
+            position: absolute;
+            width: 100%;
+            top: 0%;
+            left: 100%;
+            background-color: @menu-bg;
+            height: 100%;
+        }
 
-            >ul {
-                list-style: none;
-                margin: 0;
-                padding: 0;
+        > div.menu {
+            background-color: @menu-bg;
+            height: 100%;
+            padding: 18px 0 36px 0;
 
-                >li {
-                    font-size: 1.0em;
-                    padding: 8px 18px 8px 18px;
-                    margin: 0px;
-                    cursor: pointer;
+            div.menu-section {                
+                >h1 {
+                    color: @menu-header-fg;
+                    text-transform: uppercase;
+                    font-size: 1em;
+                    font-weight: bold;
+                    margin: 18px 18px 9px 18px;
+                }
 
-                    .icon {
-                        margin-right: 16px;
-                    }
+                >ul {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
 
-                    span {
-                        padding-top: 2px;
-                    }
+                    >li {
+                        font-size: 1.0em;
+                        padding: 8px 18px 8px 18px;
+                        margin: 0px;
+                        cursor: pointer;
 
-                    &:hover {
-                        background-color: @menu-item-active-bg;
+                        .icon {
+                            margin-right: 16px;
+                        }
+
+                        span {
+                            padding-top: 2px;
+                        }
+
+                        &:hover {
+                            background-color: @menu-item-active-bg;
+                        }
                     }
                 }
             }
+        }
+
+        > div.menu:last-child {
+            margin-bottom: 0px;
         }
     }
 }
