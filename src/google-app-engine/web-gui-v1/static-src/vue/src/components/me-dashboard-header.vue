@@ -1,10 +1,10 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-dashboard-header'>
-    <me-dashboard-button-menu v-if='!this.$store.state.ui.search_active'></me-dashboard-button-menu>
+    <me-dashboard-button-menu v-show='!this.$store.state.ui.search_active'></me-dashboard-button-menu>
     <me-dashboard-search></me-dashboard-search>
-    <me-dashboard-button-user v-if='!this.$store.state.ui.search_active'></me-dashboard-button-user>
-    <me-dashboard-button-options v-if='!this.$store.state.ui.search_active'></me-dashboard-button-options>
+    <me-dashboard-button-user v-show='!this.$store.state.ui.search_active'></me-dashboard-button-user>
+    <me-dashboard-button-options v-show='!this.$store.state.ui.search_active'></me-dashboard-button-options>
   </div>
 </template>
 

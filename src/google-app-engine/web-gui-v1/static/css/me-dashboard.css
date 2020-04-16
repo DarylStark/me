@@ -21,9 +21,10 @@ body {
   align-content: stretch;
   box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
   z-index: 20;
+  height: 60px;
 }
 #me-dashboard #me-dashboard-header > div {
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   display: inline-block;
 }
 #me-dashboard #me-dashboard-header #me-dashboard-button-menu {
@@ -38,10 +39,11 @@ body {
 }
 #me-dashboard #me-dashboard-header #me-dashboard-search .icon {
   float: right;
+  cursor: pointer;
 }
 #me-dashboard #me-dashboard-header #me-dashboard-search.active {
   background-color: #46494c;
-  padding: 15px;
+  padding: 17px 15px 0 15px;
 }
 #me-dashboard #me-dashboard-header #me-dashboard-search.active .icon {
   color: #ffffff;
