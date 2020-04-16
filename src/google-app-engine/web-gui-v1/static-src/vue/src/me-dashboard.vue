@@ -2,7 +2,10 @@
 <template>
   <div id='me-dashboard'>
     <me-dashboard-header></me-dashboard-header>
-    <me-dashboard-main-menu></me-dashboard-main-menu>
+    <div id='me-dashboard-menu-and-content'>
+      <me-dashboard-main-menu></me-dashboard-main-menu>
+      <me-dashboard-content></me-dashboard-content>
+    </div>
   </div>
 </template>
 
@@ -12,6 +15,7 @@ import jquery from 'jquery'
 import store from './store'
 import me_dashboard_header from './components/me-dashboard-header'
 import me_dashboard_main_menu from './components/me-dashboard-main-menu'
+import me_dashboard_content from './components/me-dashboard-content'
 
 // Export the dashboard
 export default {
@@ -19,7 +23,8 @@ export default {
   store,                  // Makes sure the store is usable in components
   components: {
     'me-dashboard-header': me_dashboard_header,
-    'me-dashboard-main-menu': me_dashboard_main_menu
+    'me-dashboard-main-menu': me_dashboard_main_menu,
+    'me-dashboard-content': me_dashboard_content
   },
   methods: {
     set_media_type: function() {
@@ -53,6 +58,24 @@ export default {
     jquery(window).resize(function() {
       // Set the device type again
       vue_this.set_media_type();
+    });
+
+    // Add a handler to the click-event of the 'window'. This handler will check if the user clicked
+    // outside of the menu and hide the menu if this is a mobile phone.
+    jquery(window).click(function(event) {
+      // Create a variable that can be used as 'this' in the callbacks that change the context of
+      // the 'this' element
+      var vue_this = this;
+
+      // Check if the user clicked outside of the menu
+      if(document.getElementById('me-dashboard-main-menu') != null) {
+        if (!document.getElementById('me-dashboard-main-menu').contains(event.target) &&
+            !document.getElementById('me-dashboard-button-menu').contains(event.target) &&
+            store.state.ui.media_type == 'phone') {
+          // If the device is phone, close the menu again
+          store.commit('set_menu_state', false);
+        }
+      }
     });
   }
 }
