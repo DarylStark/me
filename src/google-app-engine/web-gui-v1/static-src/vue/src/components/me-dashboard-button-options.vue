@@ -2,21 +2,21 @@
 <template>
   <div id='me-dashboard-button-options'>
 
-    <div class="ui pointing dropdown top right" ref='dropdown'>
-      <i class="ellipsis vertical icon"></i>
-      <div class="menu">
-        <div class="item" v-if='$store.state.ui.sidebar_available' v-on:click='toggle_sidebar'>
-          <i class="bars icon"></i>
+    <div class='ui pointing dropdown top right' ref='dropdown'>
+      <i class='ellipsis vertical icon'></i>
+      <div class='menu'>
+        <div class='item' v-if='$store.state.ui.sidebar_available' v-on:click='toggle_sidebar'>
+          <i class='bars icon'></i>
             <span v-if='!$store.state.ui.sidebar_open'>Show sidebar</span>
             <span v-if='$store.state.ui.sidebar_open'>Hide sidebar</span>
         </div>
-        <div class="divider" v-if='$store.state.ui.sidebar_available'></div>
-        <div class="item">
-          <i class="terminal icon"></i>
+        <div class='divider' v-if='$store.state.ui.sidebar_available'></div>
+        <div class='item'>
+          <i class='terminal icon'></i>
             Command palette
         </div>
-        <div class="item">
-          <i class="redo icon"></i>
+        <div class='item' v-on:click='reload_page'>
+          <i class='redo icon'></i>
             Reload page
         </div>
       </div>
@@ -41,6 +41,10 @@ export default {
       toggle_sidebar: function() {
           // Toggle the side
           this.$store.commit('set_sidebar_state', !this.$store.state.ui.sidebar_open);
+      },
+      reload_page: function() {
+        // Reload the page
+        location.reload();
       }
   }
 }
