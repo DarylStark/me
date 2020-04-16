@@ -74,6 +74,13 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: auto;
+  transition-property: margin-left;
+  transition-duration: 0.2s;
+}
+#me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu.hidden {
+  margin-left: -280px;
+  transition-property: margin-left;
+  transition-duration: 0.2s;
 }
 #me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu div.menu-second {
   position: absolute;

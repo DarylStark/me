@@ -1,6 +1,6 @@
 <!-- Vue component for the login-form -->
 <template>
-  <div id='me-dashboard-main-menu' v-if='$store.state.ui.menu_open' v-bind:class='{ floating: $store.state.ui.media_type != "desktop" }'>
+  <div id='me-dashboard-main-menu' v-bind:class='{ floating: $store.state.ui.media_type != "desktop", hidden: !$store.state.ui.menu_open }'>
     <me-dashboard-main-menu-main></me-dashboard-main-menu-main>
     <me-dashboard-main-menu-notes></me-dashboard-main-menu-notes>
   </div>
