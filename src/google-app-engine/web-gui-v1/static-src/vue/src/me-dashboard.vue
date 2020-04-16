@@ -5,6 +5,7 @@
     <div id='me-dashboard-menu-and-content'>
       <me-dashboard-main-menu></me-dashboard-main-menu>
       <me-dashboard-content></me-dashboard-content>
+      <me-dashboard-sidebar></me-dashboard-sidebar>
     </div>
   </div>
 </template>
@@ -16,6 +17,7 @@ import store from './store'
 import me_dashboard_header from './components/me-dashboard-header'
 import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
+import me_dashboard_sidebar from './components/me-dashboard-sidebar'
 
 // Export the dashboard
 export default {
@@ -24,7 +26,8 @@ export default {
   components: {
     'me-dashboard-header': me_dashboard_header,
     'me-dashboard-main-menu': me_dashboard_main_menu,
-    'me-dashboard-content': me_dashboard_content
+    'me-dashboard-content': me_dashboard_content,
+    'me-dashboard-sidebar': me_dashboard_sidebar
   },
   methods: {
     set_media_type: function() {
@@ -71,7 +74,9 @@ export default {
       if(document.getElementById('me-dashboard-main-menu') != null) {
         if (!document.getElementById('me-dashboard-main-menu').contains(event.target) &&
             !document.getElementById('me-dashboard-button-menu').contains(event.target) &&
-            store.state.ui.media_type == 'phone') {
+            (store.state.ui.media_type == 'phone' || store.state.ui.media_type == 'tablet')) {
+          
+          console.log('aaa');
           // If the device is phone, close the menu again
           store.commit('set_menu_state', false);
         }

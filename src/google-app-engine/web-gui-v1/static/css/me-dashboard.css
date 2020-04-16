@@ -65,10 +65,6 @@ body {
   flex-direction: row;
   overflow: hidden;
 }
-#me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu.floating {
-  height: calc(100% - 60px);
-  position: absolute;
-}
 #me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu {
   width: 280px;
   background-color: #ffffff;
@@ -83,6 +79,10 @@ body {
   margin-left: -280px;
   transition-property: margin-left;
   transition-duration: 0.2s;
+}
+#me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu.floating {
+  height: calc(100% - 60px);
+  position: absolute;
 }
 #me-dashboard #me-dashboard-menu-and-content #me-dashboard-main-menu div.menu-second {
   position: absolute;
@@ -131,4 +131,20 @@ body {
   width: auto;
   flex-grow: 2;
   overflow: auto;
+}
+#me-dashboard #me-dashboard-menu-and-content #me-dashboard-sidebar {
+  width: 320px;
+  background-color: #ffffff;
+  transition-property: margin-right;
+  transition-duration: 0.2s;
+}
+#me-dashboard #me-dashboard-menu-and-content #me-dashboard-sidebar.hidden {
+  margin-right: -320px;
+  transition-property: margin-right;
+  transition-duration: 0.2s;
+}
+#me-dashboard #me-dashboard-menu-and-content #me-dashboard-sidebar.floating {
+  height: calc(100% - 60px);
+  position: absolute;
+  right: 0px;
 }

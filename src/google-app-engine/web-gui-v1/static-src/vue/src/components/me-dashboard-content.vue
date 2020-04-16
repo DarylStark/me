@@ -1,6 +1,5 @@
 <template>
   <div id='me-dashboard-content'>
-    <p>Content komt hier</p>
   </div>
 </template>
 

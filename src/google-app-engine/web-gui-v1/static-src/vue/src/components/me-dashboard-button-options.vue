@@ -5,9 +5,10 @@
     <div class="ui pointing dropdown top right" ref='dropdown'>
       <i class="ellipsis vertical icon"></i>
       <div class="menu">
-        <div class="item" v-if='$store.state.ui.sidebar_available'>
+        <div class="item" v-if='$store.state.ui.sidebar_available' v-on:click='toggle_sidebar'>
           <i class="bars icon"></i>
-            Show sidebar
+            <span v-if='!$store.state.ui.sidebar_open'>Show sidebar</span>
+            <span v-if='$store.state.ui.sidebar_open'>Hide sidebar</span>
         </div>
         <div class="divider" v-if='$store.state.ui.sidebar_available'></div>
         <div class="item">
@@ -35,6 +36,12 @@ export default {
   mounted: function() {
     // Add the 'dropdown' functionality of Semantic UI to the dropdown
     $(this.$refs.dropdown).dropdown({ action: 'hide' });
+  },
+  methods: {
+      toggle_sidebar: function() {
+          // Toggle the side
+          this.$store.commit('set_sidebar_state', !this.$store.state.ui.sidebar_open);
+      }
   }
 }
 </script>

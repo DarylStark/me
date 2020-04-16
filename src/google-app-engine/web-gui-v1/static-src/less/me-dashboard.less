@@ -38,7 +38,7 @@ body {
         }
 
         #me-dashboard-button-menu {
-            width: 280px;
+            width: @menu-width;
             cursor: pointer;
 
             &.hide_menu {
@@ -85,13 +85,8 @@ body {
         flex-direction: row;
         overflow: hidden;
 
-        #me-dashboard-main-menu.floating {
-            height: calc(100% - 60px);
-            position: absolute;
-        }
-
         #me-dashboard-main-menu {
-            width: 280px;
+            width: @menu-width;
             background-color: @menu-bg;
             z-index: 10;
             overflow-y: auto;
@@ -101,9 +96,14 @@ body {
             transition-duration: 0.2s;
 
             &.hidden {
-                margin-left: -280px;
+                margin-left: -@menu-width;
                 transition-property: margin-left;
                 transition-duration: 0.2s;
+            }
+
+            &.floating {
+                height: calc(100% - 60px);
+                position: absolute;
             }
 
             div.menu-second {
@@ -165,6 +165,25 @@ body {
             width: auto;
             flex-grow: 2;
             overflow: auto;
+        }
+
+        #me-dashboard-sidebar {
+            width: @sidebar-width;
+            background-color: @sidebar-bg;
+            transition-property: margin-right;
+            transition-duration: 0.2s;
+            
+            &.hidden {
+                margin-right: -@sidebar-width;
+                transition-property: margin-right;
+                transition-duration: 0.2s;
+            }
+
+            &.floating {
+                height: calc(100% - 60px);
+                position: absolute;
+                right: 0px;
+            }
         }
     }
 }
