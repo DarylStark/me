@@ -110,8 +110,6 @@ export default {
         if (!document.getElementById('me-dashboard-main-menu').contains(event.target) &&
             !document.getElementById('me-dashboard-button-menu').contains(event.target) &&
             (store.state.ui.media_type == 'phone' || store.state.ui.media_type == 'tablet')) {
-          
-          console.log('aaa');
           // If the device is phone, close the menu again
           store.commit('set_menu_state', false);
         }
