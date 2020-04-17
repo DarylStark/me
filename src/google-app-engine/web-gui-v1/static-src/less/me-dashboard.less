@@ -38,7 +38,7 @@ body {
         }
 
         #me-dashboard-button-menu {
-            width: @menu-width;
+            max-width: @menu-width;
             cursor: pointer;
 
             &.hide_menu {
@@ -86,7 +86,8 @@ body {
         overflow: hidden;
 
         #me-dashboard-main-menu {
-            width: @menu-width;
+            flex-grow: 0;
+            min-width: @menu-width;
             background-color: @menu-bg;
             z-index: 10;
             overflow-y: auto;
@@ -168,7 +169,9 @@ body {
         }
 
         #me-dashboard-sidebar {
-            width: @sidebar-width;
+            flex-grow: 0;
+            min-width: @sidebar-width;
+            max-width: 320px;
             background-color: @sidebar-bg;
             transition-property: margin-right;
             transition-duration: 0.2s;
@@ -181,7 +184,7 @@ body {
 
             &.floating {
                 height: calc(100% - 60px);
-                position: absolute;
+                position: fixed;
                 right: 0px;
             }
         }
