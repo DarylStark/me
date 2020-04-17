@@ -137,7 +137,7 @@ export default {
         // Correct credentials were given
 
         // Set as cookie and redirect the user to the homepage
-        vue_cookies.set('user_token', data.data.user_token);
+        vue_cookies.set('user_token', data.data.user_token, Infinity);
         window.location.replace('/ui/home')
       } else {
         self.login_failed();
