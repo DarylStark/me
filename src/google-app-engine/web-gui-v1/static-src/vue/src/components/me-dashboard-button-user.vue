@@ -33,6 +33,7 @@
 
 import '../../semantic/dist/semantic'
 import '../../semantic/dist/components/dropdown'
+import APICall from '../me/api_call'
 
 export default {
   name: 'me-dashboard-button-user',
@@ -41,7 +42,24 @@ export default {
     $(this.$refs.dropdown).dropdown({ action: 'hide' });
   },
   methods: {
-    logout: function() { console.log('logging out'); }
+    logout: function() {
+      APICall({
+        group: 'aaa',
+        endpoint: 'remove_user_token',
+        method: 'DELETE'
+      }).then(function(data) {
+        // Logged out! Remove the cookie
+        $cookies.remove('user_token');
+
+        // Redirect the user to the loginpage
+        location.href = '/ui/login';
+      }).catch(function(data) {
+        // Something went wrong
+        console.log(data);
+
+        // TODO: Error message
+      });
+    }
   }
 }
 </script>

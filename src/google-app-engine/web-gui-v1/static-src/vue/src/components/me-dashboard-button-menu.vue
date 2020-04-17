@@ -2,7 +2,7 @@
 <template>
   <div id='me-dashboard-button-menu' v-on:click='toggle_menu' v-bind:class="{ hide_menu: !$store.state.ui.menu_open }">
       <i class='bars icon'></i>
-      <span v-if='$store.state.ui.menu_open'>Me</span>
+      <span v-if='$store.state.ui.menu_open'>{{ title }}</span>
   </div>
 </template>
 
@@ -10,6 +10,14 @@
 <script>
 export default {
   name: 'me-dashboard-button-menu',
+  computed: {
+    title: function() {
+      if (this.$store.state.app.environment != 'production') {
+        return 'Me (' + this.$store.state.app.environment + ')';
+      }
+      return 'Me'
+    }
+  },
   methods: {
       toggle_menu: function() {
           // Toggle the menu

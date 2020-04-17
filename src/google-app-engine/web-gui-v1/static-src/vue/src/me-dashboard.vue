@@ -12,12 +12,17 @@
 
 <script>
 // Import the needed components
+import Vue from 'vue'
 import jquery from 'jquery'
 import store from './store'
 import me_dashboard_header from './components/me-dashboard-header'
 import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
 import me_dashboard_sidebar from './components/me-dashboard-sidebar'
+import vue_cookies from 'vue-cookies'
+
+// Enable the use of the Vue Cookies module
+Vue.use(vue_cookies);
 
 // Export the dashboard
 export default {
@@ -35,7 +40,7 @@ export default {
 
       // Function to set the window size in the Vue-object and the 'device-type'. The 'device-type' can
       // be either 'desktop', 'table' or 'phone'.
-      var media_type = null;
+      let media_type = null;
 
       // Search for the correct media-type
       if (window.matchMedia('only screen and (max-width: 700px)').matches) { media_type = 'phone'; }
@@ -54,7 +59,13 @@ export default {
 
     // Create a variable that can be used as 'this' in the callbacks that change the context of the
     // 'this' element
-    var vue_this = this;
+    let vue_this = this;
+
+    // Set the environment for the application. We retrieve this from a cookie
+    store.commit('set_environment', $cookies.get('environment'));
+
+    // Set the user token for the application. We retrieve this from a cookie
+    store.commit('set_user_token', $cookies.get('user_token'));
 
     // Add a handler to the resize-event of the 'window' object so we can see when the user resized
     // the window

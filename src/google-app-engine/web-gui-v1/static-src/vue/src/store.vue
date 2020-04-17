@@ -10,6 +10,10 @@ Vue.use(Vuex);
 // Export the store
 export default new Vuex.Store({
     state: {
+        app: {
+            environment: null,
+            user_token: null
+        },
         ui: {
             media_type: null,
             search_active: false,
@@ -46,6 +50,17 @@ export default new Vuex.Store({
             // to true, the sidebar should be open. Whe the 'new_state' is set to false, the menu
             // should be closed
             state.ui.sidebar_open = new_state;
+        },
+        set_environment: function(state, environment) {
+            // Sets the environment for the app. If the environment is empty, we assume production
+            state.app.environment = 'production';
+            if (environment) {
+                state.app.environment = environment;
+            }
+        },
+        set_user_token: function(state, user_token) {
+            // Sets the user token for the app
+            state.app.user_token = user_token;
         }
     }
 });
