@@ -20,6 +20,7 @@ import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
 import me_dashboard_sidebar from './components/me-dashboard-sidebar'
 import vue_cookies from 'vue-cookies'
+import me_api_call from './me/api_call'
 
 // Enable the use of the Vue Cookies module
 Vue.use(vue_cookies);
@@ -66,6 +67,29 @@ export default {
 
     // Set the user token for the application. We retrieve this from a cookie
     store.commit('set_user_token', $cookies.get('user_token'));
+
+    // Verify the user token. When we do this, we get the User Token object from the API in
+    // response.
+    me_api_call({
+      group: 'aaa', endpoint: 'verify_user_token',
+      method: 'GET'
+    }).then(function(data) {
+      // We got the data. Check if the description for the session is filled in
+      if (data['data']['object']['description'] == null) {
+        $('body').toast({
+          position: 'bottom center',
+          message: 'This session has no name yet. You can set a name for this session on your user profile.',
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user'
+        });
+      }
+    }).catch(function(data) {
+      // Something went wrong
+      console.log(data);
+
+      // TODO: Error message
+    });
 
     // Add a handler to the resize-event of the 'window' object so we can see when the user resized
     // the window

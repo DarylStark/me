@@ -33,7 +33,7 @@
 
 import '../../semantic/dist/semantic'
 import '../../semantic/dist/components/dropdown'
-import APICall from '../me/api_call'
+import me_api_call from '../me/api_call'
 
 export default {
   name: 'me-dashboard-button-user',
@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     logout: function() {
-      APICall({
+      me_api_call({
         group: 'aaa',
         endpoint: 'remove_user_token',
         method: 'DELETE'
