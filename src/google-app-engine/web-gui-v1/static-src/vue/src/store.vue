@@ -44,12 +44,24 @@ export default new Vuex.Store({
             // true, the menu should be open. Whe the 'new_state' is set to false, the menu should
             // be closed
             state.ui.menu_open = new_state;
+
+            // When we are on mobile, the state of the menu is set to open AND the sidebar is
+            // already open, we have to close the sidebar. Otherwise, they are in eachothers way
+            if (state.ui.media_type == 'phone' && state.ui.sidebar_open && new_state) {
+                state.ui.sidebar_open = false;
+            }
         },
         set_sidebar_state: function(state, new_state) {
             // Method to set the state of the sidebar; open or closed. When the 'new_state' is set
             // to true, the sidebar should be open. Whe the 'new_state' is set to false, the menu
             // should be closed
             state.ui.sidebar_open = new_state;
+
+            // When we are on mobile, the state of the sidebar is set to open AND the menu is
+            // already open, we have to close the menu. Otherwise, they are in eachothers way
+            if (state.ui.media_type == 'phone' && state.ui.menu_open && new_state) {
+                state.ui.menu_open = false;
+            }
         },
         set_environment: function(state, environment) {
             // Sets the environment for the app. If the environment is empty, we assume production

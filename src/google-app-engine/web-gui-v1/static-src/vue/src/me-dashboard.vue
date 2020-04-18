@@ -105,13 +105,13 @@ export default {
       // the 'this' element
       var vue_this = this;
 
-      // Check if the user clicked outside of the menu
+      // Check if the user clicked inside the content
       if(document.getElementById('me-dashboard-main-menu') != null) {
-        if (!document.getElementById('me-dashboard-main-menu').contains(event.target) &&
-            !document.getElementById('me-dashboard-button-menu').contains(event.target) &&
+        if (document.getElementById('me-dashboard-content').contains(event.target) && 
             (store.state.ui.media_type == 'phone' || store.state.ui.media_type == 'tablet')) {
           // If the device is phone, close the menu again
           store.commit('set_menu_state', false);
+          store.commit('set_sidebar_state', false);
         }
       }
     });
