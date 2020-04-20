@@ -4,6 +4,7 @@
 
     <div class="ui pointing dropdown top right" ref='dropdown'>
       <i class='user icon'></i>
+      <!-- TODO: Display the name of the user instead of a static name -->
       <span v-if='$store.state.ui.media_type != "phone"'>Daryl Stark</span>
       <div class="menu">
         <div class="header" v-if='$store.state.ui.media_type == "phone"'>
@@ -11,16 +12,18 @@
           Daryl Stark
         </div>
         <div class="item">
-          <i class="user circle icon"></i>
+          <router-link to='/userprofile'>
+            <i class="user circle icon"></i>
             Profile
+          </router-link>
         </div>
         <div class="item">
           <i class="pen icon"></i>
-            Rename session
+          Rename session
         </div>
         <div class="item" v-on:click.prevent='logout'>
           <i class="sign out alternate icon"></i>
-            Logout
+          Logout
         </div>
       </div>
     </div>

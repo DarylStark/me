@@ -1,6 +1,5 @@
-/* A global store for Vue. Will be used to store state information about the application */
-
 <script>
+/* A global store for Vue. Will be used to store state information about the application */
 import Vue from 'vue';
 import Vuex from 'vuex';
 

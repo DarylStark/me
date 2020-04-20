@@ -14,7 +14,6 @@
 // Import the needed components
 import Vue from 'vue'
 import jquery from 'jquery'
-import store from './store'
 import me_dashboard_header from './components/me-dashboard-header'
 import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
@@ -28,7 +27,6 @@ Vue.use(vue_cookies);
 // Export the dashboard
 export default {
   name: 'me-dashboard',
-  store,                  // Makes sure the store is usable in components
   components: {
     'me-dashboard-header': me_dashboard_header,
     'me-dashboard-main-menu': me_dashboard_main_menu,
@@ -44,12 +42,12 @@ export default {
       let media_type = null;
 
       // Search for the correct media-type
-      if (window.matchMedia('only screen and (max-width: 700px)').matches) { media_type = 'phone'; }
-      if (window.matchMedia('only screen and (min-width: 701px)').matches) { media_type = 'tablet'; }
-      if (window.matchMedia('only screen and (min-width: 1000px)').matches) { media_type = 'desktop'; }
+      if (window.matchMedia('only screen and (max-width: 1024px)').matches) { media_type = 'tablet'; }
+      if (window.matchMedia('only screen and (max-width: 840px)').matches) { media_type = 'phone'; }
+      if (window.matchMedia('only screen and (min-width: 1024px)').matches) { media_type = 'desktop'; }
 
       // Set the media type in the store
-      store.commit('set_media_type', media_type);
+      this.$store.commit('set_media_type', media_type);
     }
   },
   created: function() {
@@ -63,10 +61,10 @@ export default {
     let vue_this = this;
 
     // Set the environment for the application. We retrieve this from a cookie
-    store.commit('set_environment', $cookies.get('environment'));
+    this.$store.commit('set_environment', $cookies.get('environment'));
 
     // Set the user token for the application. We retrieve this from a cookie
-    store.commit('set_user_token', $cookies.get('user_token'));
+    this.$store.commit('set_user_token', $cookies.get('user_token'));
 
     // Verify the user token. When we do this, we get the User Token object from the API in
     // response.
@@ -101,17 +99,13 @@ export default {
     // Add a handler to the click-event of the 'window'. This handler will check if the user clicked
     // outside of the menu and hide the menu if this is a mobile phone.
     jquery(window).click(function(event) {
-      // Create a variable that can be used as 'this' in the callbacks that change the context of
-      // the 'this' element
-      var vue_this = this;
-
       // Check if the user clicked inside the content
       if(document.getElementById('me-dashboard-main-menu') != null) {
         if (document.getElementById('me-dashboard-content').contains(event.target) && 
-            (store.state.ui.media_type == 'phone' || store.state.ui.media_type == 'tablet')) {
+            (vue_this.$store.state.ui.media_type == 'phone' || vue_this.$store.state.ui.media_type == 'tablet')) {
           // If the device is phone, close the menu again
-          store.commit('set_menu_state', false);
-          store.commit('set_sidebar_state', false);
+          vue_this.$store.commit('set_menu_state', false);
+          vue_this.$store.commit('set_sidebar_state', false);
         }
       }
     });

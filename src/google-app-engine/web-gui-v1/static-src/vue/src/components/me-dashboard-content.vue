@@ -1,5 +1,6 @@
 <template>
   <div id='me-dashboard-content'>
+    <router-view></router-view>
   </div>
 </template>
 
