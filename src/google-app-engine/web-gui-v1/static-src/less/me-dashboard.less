@@ -191,12 +191,39 @@ body {
     }
 
     #me-dashboard-content {
-        h1 {
-            font-size: 1.25em;
-            font-weight: 550;
-            font-family: Roboto;
+        .me-page-title {
             background-color: rgba(255,255,255,0.45);       // TODO: Move to theme-file
-            padding: 16px;
+            padding: 24px;
+
+            > div {
+                display: inline-block;
+            }
+
+            > .title {
+                font-size: 1.50em;
+                font-weight: 550;
+                font-family: Roboto Slab;                   // TODO: add font to imports
+                padding-top: 4px;
+            }
+
+            > .actions {
+                float: right;
+                margin-top: -5px;
+            }
+        }
+    }
+
+    #me-content-userprofile {
+        > .grid {
+            margin: 0px !important;         // Needed so mobile isn't scrolling
+
+            .column {
+                max-width: 100%;
+
+                .card {
+                    width: 100%;
+                }
+            }
         }
     }
 }
