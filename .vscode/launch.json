@@ -55,6 +55,17 @@
                 "group": "Debug GAE services",
                 "order": 1
             }
+        },
+        {
+            "name": "Debug all REST API and WebGUI",
+            "configurations": [
+                "Debug service rest-api-v1", "Debug service web-gui-v1"
+            ],
+            "presentation": {
+                "hidden": false,
+                "group": "Debug GAE services",
+                "order": 1
+            }
         }
     ]
 }
