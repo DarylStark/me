@@ -293,4 +293,30 @@ class APIAAA:
 
         # Return the object
         return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'get_user_object',
+        description = 'Get the user object for the current user',
+        permissions = {
+            'GET': 'aaa.get_user_object'
+        },
+        user_token_needed = True
+    )
+    def get_user_object(*args, **kwargs):
+        """ Endpoint for users to retrieve their user object """
+        
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_RECORD)
+        
+        # Get all permissions from the database
+        with DatabaseSession() as session:
+            # Find the user token
+            user_token = kwargs['user_token']
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+            
+            response.data = user_token_object.user_object
+
+        # Return the object
+        return response
 #---------------------------------------------------------------------------------------------------

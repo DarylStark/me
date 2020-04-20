@@ -42,7 +42,7 @@ class User(Database.base_class):
     user_api_tokens = relationship("APIUserToken")
 
     # Fields that need to be hidden from the API
-    api_hide_fields = [ 'password' ]
+    api_hide_fields = [ 'password', 'secret' ]
 
     def set_password(self, password):
         """ Method to set the password for this user """

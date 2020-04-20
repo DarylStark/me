@@ -49,6 +49,7 @@ class APIUserToken(Database.base_class):
 
     # Many-to-one relationship mappings
     client = relationship("APIClientToken")
+    user_object = relationship("User")
 
     def generate_random_token(self):
         """ Method to generate a random user token """
