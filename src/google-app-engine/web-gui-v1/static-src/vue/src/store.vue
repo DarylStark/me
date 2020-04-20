@@ -62,6 +62,11 @@ export default new Vuex.Store({
                 state.ui.menu_open = false;
             }
         },
+        set_sidebar_availability: function(state, new_availability) {
+            // Enable or disable the sidebar. For some pages, the sidebar is not needed and has to
+            // be disabled to not confuse the user
+            state.ui.sidebar_available = new_availability;
+        },
         set_environment: function(state, environment) {
             // Sets the environment for the app. If the environment is empty, we assume production
             state.app.environment = 'production';

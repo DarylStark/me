@@ -16,6 +16,7 @@ Vue.use(VueRouter);
 export default new VueRouter({
   base: '/ui/',
   mode: 'history',
+  linkExactActiveClass: 'active',
   routes: [
     { path: '/home', component: me_dashboard },
     { path: '/feed', component: me_feed },

@@ -14,6 +14,10 @@ export default {
   name: 'me-content-userprofile',
   components: {
     'me-h1': me_h1
+  },
+  created: function() {
+    // We don't need a sidebar on this page. Disable it.
+    this.$store.commit('set_sidebar_availability', false);
   }
 }
 </script>

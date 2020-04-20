@@ -11,12 +11,12 @@
           <i class="user icon"></i>
           Daryl Stark
         </div>
-        <div class="item">
-          <router-link to='/userprofile'>
-            <i class="user circle icon"></i>
-            Profile
-          </router-link>
-        </div>
+        <router-link to='/userprofile' tag='div' class='item'>
+        <!--<div class="item">-->
+          <i class="user circle icon"></i>
+          Profile
+        <!--</div>-->
+        </router-link>
         <div class="item">
           <i class="pen icon"></i>
           Rename session

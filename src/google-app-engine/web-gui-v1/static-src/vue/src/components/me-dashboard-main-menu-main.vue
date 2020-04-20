@@ -1,15 +1,12 @@
 <template>
     <div class='menu' id='menu-main'>
       <div v-for='menuitem in menuitems' class='menu-section'>
-        <h1>{{ menuitem.group }}</h1>
+        <h1 v-if='menuitem.display_group_title'>{{ menuitem.group }}</h1>
         <ul>
-          <li v-for='subitem in menuitem.items'>
-            <!-- TODO: make sure the complete LI is clickable -->
-            <router-link v-bind:to='subitem.dst'>
-              <i v-bind:class='[ subitem.icon, "icon" ]'></i>
-              <span>{{ subitem.title }}</span>
-            </router-link>
-          </li>
+          <router-link v-bind:to='subitem.dst' v-for='subitem in menuitem.items' tag='li'>            
+            <i v-bind:class='[ subitem.icon, "icon" ]'></i>
+            <span>{{ subitem.title }}</span>
+          </router-link>
         </ul>
       </div>
     </div>
@@ -23,6 +20,7 @@ export default {
       menuitems: [
         {
           group: 'Menu',
+          display_group_title: false,
           items: [
             { title: 'Dashboard', icon: 'columns', dst: '/home' },
             { title: 'Feed', icon: 'list', dst: '/feed' },
@@ -31,9 +29,10 @@ export default {
         },
         {
           group: 'Music',
+          display_group_title: true,
           items: [
-            { title: 'Events', icon: 'music', dst: '/home' },
-            { title: 'Making music', icon: 'guitar', dst: '/home' }
+            { title: 'Events', icon: 'music', dst: '/events' },
+            { title: 'Making music', icon: 'guitar', dst: '/making_music' }
           ]
         }
       ]
