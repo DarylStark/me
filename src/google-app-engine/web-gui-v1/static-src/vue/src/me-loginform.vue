@@ -1,7 +1,7 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-loginform'>
-    <me-grid>
+    <me-grid vcenter hcenter>
       <me-grid-column>
         <me-card raised>
           <div ref='credentials' id='form-login'>
