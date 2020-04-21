@@ -296,14 +296,14 @@ class APIAAA:
     
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',
-        name = 'get_user_object',
-        description = 'Get the user object for the current user',
+        name = 'user_object',
+        description = 'Manage the own user object',
         permissions = {
             'GET': 'aaa.get_user_object'
         },
         user_token_needed = True
     )
-    def get_user_object(*args, **kwargs):
+    def user_object(*args, **kwargs):
         """ Endpoint for users to retrieve their user object """
         
         # Create an empty response object

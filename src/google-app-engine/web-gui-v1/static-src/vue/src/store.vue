@@ -2,6 +2,7 @@
 /* A global store for Vue. Will be used to store state information about the application */
 import Vue from 'vue';
 import Vuex from 'vuex';
+import me_api_call from './me/api_call'
 
 // Make sure Vue knows to use Vuex
 Vue.use(Vuex);
@@ -19,6 +20,14 @@ export default new Vuex.Store({
             menu_open: true,
             sidebar_available: true,
             sidebar_open: true
+        },
+        api_data: {
+            user_object: {
+                _updated: false,
+                username: null,
+                fullname: null,
+                email: null
+            }
         }
     },
     mutations: {
@@ -77,6 +86,51 @@ export default new Vuex.Store({
         set_user_token: function(state, user_token) {
             // Sets the user token for the app
             state.app.user_token = user_token;
+        },
+        api_update_user_object: function(state, options = null) {
+            // Method to update the user object
+
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                force: false
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Update the object, if needed
+            if (api_options.force || !state.api_data.user_object._updated) {
+                // Retrieve the user object
+                me_api_call({
+                  group: 'aaa', endpoint: 'user_object',
+                  method: 'GET'
+                }).then(function(data) {
+                  // Data received
+                  state.api_data.user_object._updated = true;
+                  state.api_data.user_object.fullname = data.data.object.fullname;
+                  state.api_data.user_object.username = data.data.object.username;
+                  state.api_data.user_object.email = data.data.object.email;
+
+                  // Run the callback (if there is any)
+                  if (api_options.success) { api_options.success(state.api_data.user_object); }
+                }).catch(function(data) {
+                  // Something went wrong
+                  console.log(data);
+
+                  // TODO: Error message
+
+                  // Run the callback (if there is any)
+                  if (api_options.failed) { api_options.failed(data); }
+                });
+            } else {
+                api_options.success(state.api_data.user_object);
+            }
         }
     }
 });

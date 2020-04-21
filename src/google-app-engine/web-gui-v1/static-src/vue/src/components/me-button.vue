@@ -1,6 +1,6 @@
 <template>
-  <button v-bind:class='[ "ui", { primary: primary}, "button" ]'>
-      <slot></slot>
+  <button v-bind:class='[ "ui", { primary: primary}, { disabled: disabled }, "button" ]'>
+    <slot></slot>
   </button>
 </template>
 
@@ -8,7 +8,8 @@
 export default {
   name: 'me-button',
   props: {
-      primary: { type: Boolean, default: false }
+      primary: { type: Boolean, default: false },
+      disabled: { type: Boolean, default: false }
   }
 }
 </script>

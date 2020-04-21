@@ -66,6 +66,9 @@ export default {
     // Set the user token for the application. We retrieve this from a cookie
     this.$store.commit('set_user_token', $cookies.get('user_token'));
 
+    // Update the user object in the store. This is used to set the users name on the page
+    this.$store.commit('api_update_user_object');
+
     // Verify the user token. When we do this, we get the User Token object from the API in
     // response.
     me_api_call({

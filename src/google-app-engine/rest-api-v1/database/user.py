@@ -35,6 +35,7 @@ class User(Database.base_class):
     created =       Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
     fullname =      Column(String(128), nullable = False)
     username =      Column(String(128), nullable = False)
+    email =         Column(String(128), nullable = True)
     password =      Column(String(512), nullable = False)
     secret =        Column(String(256), nullable = True)
 
