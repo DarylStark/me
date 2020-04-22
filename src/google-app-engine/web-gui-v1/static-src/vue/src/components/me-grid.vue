@@ -1,6 +1,6 @@
 <!-- Vue component for the a grid -->
 <template>
-  <div v-bind:class='[ "ui", { "middle aligned": vcenter, "center aligned": hcenter }, "grid" ]'>
+  <div v-bind:class='[ "me-grid", { "vcenter": vcenter, "hcenter": hcenter, "pageheight": pageheight } ]'>
     <slot></slot>
   </div>
 </template>
@@ -11,7 +11,8 @@ export default {
   name: 'me-grid',
   props: {
     vcenter: { type: Boolean, default: false },
-    hcenter: { type: Boolean, default: false }
+    hcenter: { type: Boolean, default: false },
+    pageheight: { type: Boolean, default: false }
   }
 }
 </script>

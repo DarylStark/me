@@ -1,14 +1,14 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-loginform'>
-    <me-grid vcenter hcenter>
-      <me-grid-column>
+    <me-grid vcenter hcenter pageheight>
+      <me-cell padding center span=2>
         <me-card raised>
           <div ref='credentials' id='form-login'>
             <me-h1 inverted>{{ texts.header_credentials }}</me-h1>
             <form class='ui form' v-on:submit.prevent='login'>
-              <me-input v-bind:label='texts.field_username' ref='username' id='username' icon='user' v-bind:placeholder='texts.field_username_placeholder' v-bind:disabled="status_waiting"></me-input>
-              <me-input v-bind:label='texts.field_password' ref='password' id='password' icon='lock' v-bind:placeholder='texts.field_password_placeholder' v-bind:disabled="status_waiting" type='password'></me-input>
+              <me-input v-bind:label='texts.field_username' v-model='fields.username' ref='username' id='username' icon='user' v-bind:placeholder='texts.field_username_placeholder' v-bind:disabled="status_waiting"></me-input>
+              <me-input v-bind:label='texts.field_password' v-model='fields.password' ref='password' id='password' icon='lock' v-bind:placeholder='texts.field_password_placeholder' v-bind:disabled="status_waiting" type='password'></me-input>
               <button class='fluid ui primary button' v-bind:class='{ loading: status_waiting }'>{{ texts.button_login }}</button>
             </form>
           </div>
@@ -16,12 +16,12 @@
             <me-h1 inverted>{{ texts.header_2nd_factor }}</me-h1>
             <form class='ui form' v-on:submit.prevent='login'>
               <p>Please provide the code from your authenticator app</p>
-              <me-input ref='second_factor_field' id='2nd-factor' icon='key' v-bind:placeholder='texts.field_2nd_factor_placeholder' v-bind:disabled="status_waiting"></me-input>
+              <me-input ref='second_factor_field' v-model='fields.second_factor' id='2nd-factor' icon='key' v-bind:placeholder='texts.field_2nd_factor_placeholder' v-bind:disabled="status_waiting"></me-input>
               <button class='fluid ui primary button' v-bind:class='{ loading: status_waiting }'>{{ texts.button_login }}</button>
             </form>
           </div>
         </me-card>
-      </me-grid-column>
+      </me-cell>
     </me-grid>
   </div>
 </template>
@@ -30,7 +30,7 @@
 // Import the needed components
 import vue_cookies from 'vue-cookies'
 import me_grid from './components/me-grid'
-import me_grid_column from './components/me-grid-column'
+import me_cell from './components/me-cell'
 import me_card from './components/me-card'
 import me_h1 from './components/me-h1'
 import me_input from './components/me-input'
@@ -42,7 +42,7 @@ export default {
   name: 'me-loginform',
   components: {
     'me-grid': me_grid,
-    'me-grid-column': me_grid_column,
+    'me-cell': me_cell,
     'me-card': me_card,
     'me-h1': me_h1,
     'me-input': me_input,
@@ -59,6 +59,11 @@ export default {
         field_password_placeholder:' Password',
         field_2nd_factor_placeholder: 'Second factor',
         button_login: 'Log in'
+      },
+      fields: {
+        username: null,
+        password: null,
+        second_factor: null
       },
       status_waiting: false,
       status: 'login'
@@ -77,12 +82,12 @@ export default {
 
       // Verify if the needed fields are filled in
       if (this.status == 'login') {
-        if (this.$refs.username.value == "" || this.$refs.username.value == undefined || this.$refs.username.value == null ||
-            this.$refs.password.value == "" || this.$refs.password.value == undefined || this.$refs.password.value == null) {
+        if (this.fields.username == "" || this.fields.username == null ||
+            this.fields.password == "" || this.fields.password == null) {
             return;
         }
       } else if (this.status == '2nd_factor') {
-        if (this.$refs.second_factor_field.value == "" || this.$refs.second_factor_field.value == undefined || this.$refs.second_factor_field.value == null) {
+        if (this.fields.second_factor == "" || this.fields.second_factor == null) {
             return;
         }
       }
@@ -92,13 +97,13 @@ export default {
 
       // Create a data-object for Axios
       var login_data = {
-        username: this.$refs.username.value,
-        password: this.$refs.password.value
+        username: this.fields.username,
+        password: this.fields.password
       }
 
       // Add Second Factor if it filled in
-      if (this.$refs.second_factor_field.value != "" && this.$refs.second_factor_field.value != undefined && this.$refs.second_factor_field.value != null) {
-        login_data.second_factor = this.$refs.second_factor_field.value;
+      if (this.fields.second_factor != "" && this.fields.second_factor != null) {
+        login_data.second_factor = this.fields.second_factor;
       }
 
       // Send the POST to the login-backend
@@ -112,7 +117,7 @@ export default {
       // Method that gets run when the logging in fails
 
       // Empty the password field
-      this.$refs.password.value = '';
+      this.fields.password = '';
       this.$refs.password.focus();
 
       // Make sure the form isn't blocked anymore
