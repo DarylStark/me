@@ -43,7 +43,7 @@ export default {
 
       // Search for the correct media-type
       if (window.matchMedia('only screen and (max-width: 1024px)').matches) { media_type = 'tablet'; }
-      if (window.matchMedia('only screen and (max-width: 840px)').matches) { media_type = 'phone'; }
+      if (window.matchMedia('only screen and (max-width: 799px)').matches) { media_type = 'phone'; }
       if (window.matchMedia('only screen and (min-width: 1024px)').matches) { media_type = 'desktop'; }
 
       // Set the media type in the store

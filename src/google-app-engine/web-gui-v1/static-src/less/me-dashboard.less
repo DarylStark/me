@@ -37,6 +37,94 @@ body {
     border-radius: 0 !important;
 }
 
+// Stylings for a grid
+div.me-grid {
+    width: 100%;
+
+    // Configuration for the flex-container
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+
+    &.pageheight {
+        height: 100%;
+    }
+
+    &.vcenter {
+        align-items: center;
+    }
+
+    &.hcenter {
+        justify-content: center;
+    }
+
+    .cell {
+        flex-grow: 1;
+        width: 25%;
+        max-width: 25%;
+        min-width: 25%;
+
+        &.center {
+            text-align: center;
+        }
+
+        // Cell spanning
+        &.span-2 {
+            flex-grow: 2;
+            min-width: 50%;
+            max-width: 50%;
+        }
+
+        &.span-3 {
+            flex-grow: 3;
+            min-width: 75%;
+            max-width: 75%;
+        }
+
+        &.span-4 {
+            flex-grow: 4;
+            min-width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    // Stylings for tablet
+    @media screen and (max-width: @max-size-tablet) {
+        .cell {
+            width: 50%;
+            max-width: 50%;
+            min-width: 50%;
+
+            // Cell spanning
+            &.span-2, &.span-3, &.span-4 {
+                background-color: lime;
+                width: 100%;
+                flex-grow: 2;
+                max-width: 100%;
+                min-width: 100%;
+            }
+        }
+
+        .hide-tablet {
+            display: none;
+        }
+    }
+
+    // Stylings for mobile phone
+    @media screen and (max-width: @max-size-mobile) {
+        .cell {
+            width: 100%;
+            max-width: 100%;
+            min-width: 100%;
+        }
+
+        .hide-phone {
+            display: none;
+        }
+    }
+}
+
 // Styles for the dashboard
 #me-dashboard {
     display: flex;
