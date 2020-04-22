@@ -7,7 +7,7 @@
       </template>
     </me-page-title>
     <me-grid>
-      <me-cell padding span='2'>
+      <me-cell padding v-bind:span="2">
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
@@ -17,7 +17,7 @@
           </form>
         </me-card>
       </me-cell>
-      <me-cell padding span='2'>
+      <me-cell padding v-bind:span="2">
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
