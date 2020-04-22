@@ -26,7 +26,8 @@ export default new Vuex.Store({
                 _updated: false,
                 username: null,
                 fullname: null,
-                email: null
+                email: null,
+                password_date: null
             }
         }
     },
@@ -116,6 +117,7 @@ export default new Vuex.Store({
                   state.api_data.user_object.fullname = data.data.object.fullname;
                   state.api_data.user_object.username = data.data.object.username;
                   state.api_data.user_object.email = data.data.object.email;
+                  state.api_data.user_object.password_date = new Date(data.data.object.password_date + ' UTC');
 
                   // Run the callback (if there is any)
                   if (api_options.success) { api_options.success(state.api_data.user_object); }

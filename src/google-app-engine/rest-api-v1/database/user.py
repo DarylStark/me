@@ -37,6 +37,7 @@ class User(Database.base_class):
     username =      Column(String(128), nullable = False)
     email =         Column(String(128), nullable = True)
     password =      Column(String(512), nullable = False)
+    password_date = Column(DateTime, nullable = False)
     secret =        Column(String(256), nullable = True)
 
     # One-to-many relationship mappings
@@ -48,6 +49,7 @@ class User(Database.base_class):
     def set_password(self, password):
         """ Method to set the password for this user """
         self.password = argon2.hash(password)
+        self.password_date = datetime.datetime.utcnow()
     
     def verify_password(self, password):
         """ Checks the password and returns True if the given password is correct """

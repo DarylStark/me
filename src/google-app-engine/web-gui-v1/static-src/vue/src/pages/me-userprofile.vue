@@ -21,7 +21,7 @@
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
-            <div>Your password is 98793845 days old.</div>
+            <div>Your password is {{ password_age }} days old.</div>
             <div>
               <me-button>Change password</me-button>
             </div>
@@ -67,6 +67,15 @@ export default {
         email: null
       },
       changed: false
+    }
+  },
+  computed: {
+    password_age: function() {
+      // Computed property for the password age
+      let today = new Date(new Date().toDateString());
+      let pw_date = new Date(this.$store.state.api_data.user_object.password_date.toDateString())
+      let age = (today - pw_date) / 1000 / 3600 / 24;
+      return age;
     }
   },
   created: function() {
