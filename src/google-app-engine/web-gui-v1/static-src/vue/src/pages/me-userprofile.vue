@@ -26,10 +26,16 @@
               <me-button>Change password</me-button>
             </div>
           </div>
-          <div class='action_button'>
-            <div>You have enabled two-factor authentication. Good for you!</div>
+          <div class='action_button' v-if='$store.state.api_data.user_object.second_factor_enabled'>
+            <div>Two-factor authentication is enabled</div>
             <div>
               <me-button>Disable</me-button>
+            </div>
+          </div>
+          <div class='action_button' v-if='!$store.state.api_data.user_object.second_factor_enabled'>
+            <div>Two-factor authentication is disabled</div>
+            <div>
+              <me-button>Enable</me-button>
             </div>
           </div>
         </me-card>

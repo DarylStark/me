@@ -27,7 +27,8 @@ export default new Vuex.Store({
                 username: null,
                 fullname: null,
                 email: null,
-                password_date: null
+                password_date: null,
+                second_factor_enabled: false
             }
         }
     },
@@ -118,6 +119,7 @@ export default new Vuex.Store({
                   state.api_data.user_object.username = data.data.object.username;
                   state.api_data.user_object.email = data.data.object.email;
                   state.api_data.user_object.password_date = new Date(data.data.object.password_date + ' UTC');
+                  state.api_data.user_object.second_factor_enabled = data.data.object.second_factor_enabled;
 
                   // Run the callback (if there is any)
                   if (api_options.success) { api_options.success(state.api_data.user_object); }

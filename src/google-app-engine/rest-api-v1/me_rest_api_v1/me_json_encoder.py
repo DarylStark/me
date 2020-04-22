@@ -29,6 +29,19 @@ class MeJSONEncoder(JSONEncoder):
         # Then we create a dict with the only the column items
         column_dict = { key: value for key, value in obj.__dict__.items() if key in columns and not key in fields_to_hide }
 
+        # Add fields that are in the 'api_extra_fields' list
+        try:
+            api_extra_fields = obj.api_extra_fields
+        except AttributeError:
+            api_extra_fields = list()
+        
+        # Loop through the extra fields and add them to the outgoing dict
+        for extra_field in api_extra_fields:
+            try:
+                column_dict[extra_field] = obj.__getattribute__(extra_field)
+            except AttributeError:
+                column_dict[extra_field] = None
+
         # Check if a '__objectname__' is given and add it to the outgoing dict
         column_dict['_type'] = ''
         if '__objecttype__' in obj.__dir__():

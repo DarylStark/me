@@ -45,6 +45,7 @@ class User(Database.base_class):
 
     # Fields that need to be hidden from the API
     api_hide_fields = [ 'password', 'secret' ]
+    api_extra_fields = [ 'second_factor_enabled' ]
 
     def set_password(self, password):
         """ Method to set the password for this user """
@@ -60,4 +61,9 @@ class User(Database.base_class):
             client can present this to the user """
         self.secret = pyotp.random_base32()
         return self.secret
+
+    @property
+    def second_factor_enabled(self):
+        """ Property that returns of a secret is filled in """
+        return not self.secret is None
 #---------------------------------------------------------------------------------------------------
