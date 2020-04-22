@@ -215,43 +215,6 @@ body {
         }
     }
 
-    #me-content-userprofile {
-        > .grid {
-            margin: 0px !important;         // Needed so mobile isn't scrolling
-            width: 100%;
-
-            .column {
-                width: 50%;
-                max-width: 100%;
-                min-width: 400px;
-
-                .card {
-                    width: 100%;
-                    text-align: left;
-                    min-width: 100%;
-
-                    form {
-                        padding: 14px 16px 14px 16px;
-                        font-size: @text-size;
-                    }
-                }
-            }
-        }
-
-        #authentication {
-            > div:nth-child(1) {
-                border-bottom: 1px solid #cccccc; // TODO: Move to colorsheet
-            }
-
-            > div div {
-                display: block;
-                padding: 16px 16px 16px 16px;
-
-                &:nth-child(2) {
-                    text-align: right;
-                }
-            }
-        }
-    }
+    @import 'me-userprofile.less';
 }
 //**************************************************************************************************

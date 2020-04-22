@@ -6,9 +6,9 @@
         <me-button primary :disabled='!changed'>Save</me-button>
       </template>
     </me-page-title>
-    <me-grid hcenter>
-      <me-grid-column>
-        <me-card raised>
+    <me-grid>
+      <me-cell padding span='2'>
+        <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
             <me-input label='Username' id='username' placeholder='Username' icon='user' v-model='user_object.username' v-on:input='changed = true'></me-input>
@@ -16,26 +16,24 @@
             <me-input label='E-mail address' id='email' placeholder='E-mail address' icon='user' v-model='user_object.email' v-on:input='changed = true'></me-input>
           </form>
         </me-card>
-      </me-grid-column>
-      <me-grid-column>
-        <me-card raised>
+      </me-cell>
+      <me-cell padding span='2'>
+        <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
-          <div id='authentication'>
+          <div class='action_button'>
+            <div>Your password is 98793845 days old.</div>
             <div>
-              <div>Your password is 98793845 days old.</div>
-              <div>
-                <me-button>Change password</me-button>
-              </div>
+              <me-button>Change password</me-button>
             </div>
+          </div>
+          <div class='action_button'>
+            <div>You have enabled two-factor authentication. Good for you!</div>
             <div>
-              <div>You have enabled two-factor authentication. Good for you!</div>
-              <div>
-                <me-button>Disable</me-button>
-              </div>
+              <me-button>Disable</me-button>
             </div>
           </div>
         </me-card>
-      </me-grid-column>
+      </me-cell>
     </me-grid>
   </div>
 </template>
@@ -43,7 +41,7 @@
 <script>
 import me_page_title from '../components/me-page-title'
 import me_grid from '../components/me-grid'
-import me_grid_column from '../components/me-grid-column'
+import me_cell from '../components/me-cell'
 import me_card from '../components/me-card'
 import me_input from '../components/me-input'
 import me_h1 from '../components/me-h1'
@@ -55,7 +53,7 @@ export default {
   components: {
     'me-page-title': me_page_title,
     'me-grid': me_grid,
-    'me-grid-column': me_grid_column,
+    'me-cell': me_cell,
     'me-card': me_card,
     'me-input': me_input,
     'me-h1': me_h1,

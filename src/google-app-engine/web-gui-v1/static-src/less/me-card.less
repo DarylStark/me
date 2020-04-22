@@ -1,5 +1,10 @@
 .ui.card {
     border-radius: 0;
+    text-align: left;
+
+    &.wide {
+        width: 100%;
+    }
 
     div.padding {
         padding: 14px 16px 14px 16px;
@@ -17,5 +22,22 @@
 
     > :first-child {
         border-radius: 0 !important;
+    }
+
+    .action_button {
+        border-bottom: 1px solid rgba(34,36,38,.15); // TODO: Move to colorsheet
+
+        &:last-child {
+            border-bottom: 0px;
+        }
+
+        > div {
+            display: block;
+            padding: 16px 16px 16px 16px;
+
+            &:nth-child(2) {
+                text-align: right;
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 <!-- Vue component for the a card -->
 <template>
-  <div class='ui' v-bind:class='[ { raised: raised }, "card" ]' v-bind:id='id'>
+  <div class='ui' v-bind:class='[ { raised: raised }, "card", { wide: wide } ]' v-bind:id='id'>
     <div v-bind:class='{ padding: padding }'>
       <slot></slot>
     </div>
@@ -14,7 +14,8 @@ export default {
   props: {
     id: null,
     raised: { type: Boolean, default: false },
-    padding: { type: Boolean, default: false }
+    padding: { type: Boolean, default: false },
+    wide: { type: Boolean, default: false }
   }
 }
 </script>
