@@ -2,7 +2,7 @@
 <template>
   <div id='me-loginform'>
     <me-grid vcenter hcenter pageheight>
-      <me-cell padding center span=2>
+      <me-cell padding center v-bind:span=2>
         <me-card raised>
           <div ref='credentials' id='form-login'>
             <me-h1 inverted>{{ texts.header_credentials }}</me-h1>
