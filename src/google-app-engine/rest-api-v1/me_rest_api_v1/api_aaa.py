@@ -299,24 +299,66 @@ class APIAAA:
         name = 'user_object',
         description = 'Manage the own user object',
         permissions = {
-            'GET': 'aaa.get_user_object'
+            'GET': 'aaa.get_user_object',
+            'PATCH': 'aaa.update_user_object'
         },
         user_token_needed = True
     )
     def user_object(*args, **kwargs):
-        """ Endpoint for users to retrieve their user object """
+        """ Endpoint for users to retrieve and update their user object """
         
-        # Create an empty response object
-        response = APIResponse(APIResponse.TYPE_RECORD)
-        
-        # Get all permissions from the database
-        with DatabaseSession() as session:
-            # Find the user token
-            user_token = kwargs['user_token']
-            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+        # GET: retrieve the user object
+        if request.method.upper() == 'GET':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_RECORD)
             
-            response.data = user_token_object.user_object
+            # Get the user object from the database
+            with DatabaseSession() as session:
+                # Find the user token
+                user_token = kwargs['user_token']
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+                
+                response.data = user_token_object.user_object
 
-        # Return the object
-        return response
+            # Return the object
+            return response
+        
+        # PATCH: update the user object
+        if request.method.upper() == 'PATCH':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+            response.data = False
+
+            # Get the data
+            json_data = request.json
+
+            # Get the user object from the database
+            with DatabaseSession(commit_on_end = True) as session:
+                # Find the user token
+                user_token = kwargs['user_token']
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+
+                # Change the given fields after verifing them
+                if 'username' in json_data.keys():
+                    if len(json_data['username']) > 3:
+                        user_token_object.user_object.username = json_data['username']
+                    else:
+                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The username "{json_data["username"]}" is not a valid username!')
+
+                if 'fullname' in json_data.keys():
+                    if len(json_data['fullname']) > 3:
+                        user_token_object.user_object.fullname = json_data['fullname']
+                    else:
+                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The full name "{json_data["fullname"]}" is not a valid full name!')
+                
+                if 'email' in json_data.keys():
+                    # TODO: Decent validation
+                    if len(json_data['email']) > 3:
+                        user_token_object.user_object.email = json_data['email']
+                    else:
+                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The e-mailaddress"{json_data["email"]}" is not a valid e-mailaddress!')
+
+            # Return the object
+            response.data = True
+            return response
 #---------------------------------------------------------------------------------------------------

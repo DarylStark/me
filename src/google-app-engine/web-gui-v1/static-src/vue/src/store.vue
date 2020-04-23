@@ -135,6 +135,44 @@ export default new Vuex.Store({
             } else {
                 api_options.success(state.api_data.user_object);
             }
+        },
+        api_save_user_object: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                user_object: null
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            me_api_call({
+                group: 'aaa', endpoint: 'user_object',
+                method: 'PATCH',
+                data: api_options.user_object
+            }).then(function(data) {
+                // Update the store
+                state.api_data.user_object.fullname = api_options.user_object.fullname;
+                state.api_data.user_object.username = api_options.user_object.username;
+                state.api_data.user_object.email = api_options.user_object.email;
+
+                // Run the callback (if there is any)
+                if (api_options.success) { api_options.success(state.api_data.user_object); }
+            }).catch(function(data) {
+                // Something went wrong
+                console.log(data);
+
+                // TODO: Error message
+
+                // Run the callback (if there is any)
+                if (api_options.failed) { api_options.failed(data); }
+            });
+            
         }
     }
 });

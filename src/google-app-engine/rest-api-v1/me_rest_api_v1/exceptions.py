@@ -141,6 +141,10 @@ class MeRESTAPIv1AAARetrieveUserTokenFactorWrongError(MeRESTAPIv1PermissionDenie
     """ Error when a user tries to retrieve a user token with a wrong 2nd factor code """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to update a user object with a invalid field """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):

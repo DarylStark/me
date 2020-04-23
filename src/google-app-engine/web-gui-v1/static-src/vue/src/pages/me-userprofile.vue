@@ -3,7 +3,7 @@
     <me-page-title icon='user circle'>
       User profile
       <template v-slot:actions>
-        <me-button primary :disabled='!changed'>Save</me-button>
+        <me-button primary :disabled='!changed' :loading='saving' v-on:click='save_profile'>Save</me-button>
         <me-button :disabled='!changed' v-on:click='set_field_values'>Cancel</me-button>
       </template>
     </me-page-title>
@@ -73,7 +73,8 @@ export default {
         username: null,
         email: null
       },
-      changed: false
+      changed: false,
+      saving: false
     }
   },
   computed: {
@@ -87,6 +88,8 @@ export default {
   },
   methods: {
     set_field_values: function() {
+      // Method to reset the form to the default values
+
       // Local this
       var vue_this = this;
 
@@ -101,6 +104,37 @@ export default {
 
       // Reset 'changed'
       this.changed = false;
+    },
+    save_profile: function() {
+      // Method to save the profile
+
+      this.saving = true;
+      this.changed = false;
+
+      // Local this
+      var vue_this = this;
+
+      // Local this
+      this.$store.commit('api_save_user_object', {
+        user_object: {
+          fullname: this.user_object.fullname,
+          username: this.user_object.username,
+          email: this.user_object.email
+        },
+        success: function() {
+          // Succes! The profile is saved
+          console.log('Saved');
+
+          vue_this.saving = false;
+        },
+        failed: function() {
+          // Failure
+          // TODO: handle
+          vue_this.changed = true;
+          this.saving = false;
+          console.log('Error');
+        }
+      });
     }
   },
   created: function() {
