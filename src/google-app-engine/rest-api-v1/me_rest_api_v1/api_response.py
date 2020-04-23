@@ -36,6 +36,7 @@ class APIResponse:
 
         # The data that the endpoint returns. Should be set by the endpoint itself
         self.data = None
+        self.data_text = None
 
         # Paginating. If the 'paginate' option is set to True, the decorator will do the paginating.
         # A endpoint can choose to do this self by setting this option to False. This can be usefull
@@ -143,6 +144,7 @@ class APIResponse:
             # Add the data
             response_dict['dataset'] = {
                 'data': self.data,
+                'data_text': self.data_text,
                 'page': self.page,
                 'items_per_page': self.items_per_page,
                 'last_page': self.last_page,
@@ -154,12 +156,14 @@ class APIResponse:
         if self.response_type == self.TYPE_RECORD:
             # If we only have one record to return, we set it in the data
             response_dict['object'] = self.data
+            response_dict['data_text'] = self.data_text
         
         # If this is done-thingy, we check if data is a boolean and if it is, we set that as the
         # return type
         if self.response_type == self.TYPE_DONE:
             if type(self.data) is bool:
                 response_dict['success'] = self.data
+                response_dict['data_text'] = self.data_text
             else:
                 raise MeRESTAPIv1EndpointDataNotABoolError('Data is of type "{bad_type} and not of type "{good_type}"'.format(
                     bad_type = type(self.data),

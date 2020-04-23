@@ -17,6 +17,8 @@ from database import APIClientToken
 from database import APIUserPermission
 import datetime
 import pyotp
+from sqlalchemy import and_
+import re
 #---------------------------------------------------------------------------------------------------
 @MeRESTAPIv1.register_group(name = 'aaa', description = 'Authentication and authorization')
 class APIAAA:
@@ -327,7 +329,8 @@ class APIAAA:
         if request.method.upper() == 'PATCH':
             # Create an empty response object
             response = APIResponse(APIResponse.TYPE_DONE)
-            response.data = False
+            response.data = True
+            error = False
 
             # Get the data
             json_data = request.json
@@ -339,26 +342,38 @@ class APIAAA:
                 user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
 
                 # Change the given fields after verifing them
-                if 'username' in json_data.keys():
+                if 'username' in json_data.keys() and not error:
                     if len(json_data['username']) > 3:
-                        user_token_object.user_object.username = json_data['username']
+                        # Check if this username is unique
+                        user_username_count = session.query(User).filter(and_(User.username == json_data['username'], User.id != user_token_object.user_object.id)).count()
+                        if user_username_count == 0:
+                            user_token_object.user_object.username = json_data['username']
+                        else:
+                            response.data = False
+                            response.data_text = 'username is already in use'
+                            error = True
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The username "{json_data["username"]}" is not a valid username!')
 
-                if 'fullname' in json_data.keys():
+                if 'fullname' in json_data.keys() and not error:
                     if len(json_data['fullname']) > 3:
                         user_token_object.user_object.fullname = json_data['fullname']
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The full name "{json_data["fullname"]}" is not a valid full name!')
                 
-                if 'email' in json_data.keys():
-                    # TODO: Decent validation
-                    if len(json_data['email']) > 3:
-                        user_token_object.user_object.email = json_data['email']
+                if 'email' in json_data.keys() and not error:
+                    if re.match('^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$', json_data['email']):
+                        # Check if this emailaddress is unique
+                        user_email_count = session.query(User).filter(and_(User.email == json_data['email'], User.id != user_token_object.user_object.id)).count()
+                        if user_email_count == 0:
+                            user_token_object.user_object.email = json_data['email']
+                        else:
+                            response.data = False
+                            response.data_text = 'emailaddress is already in use'
+                            error = True
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The e-mailaddress"{json_data["email"]}" is not a valid e-mailaddress!')
 
             # Return the object
-            response.data = True
             return response
 #---------------------------------------------------------------------------------------------------

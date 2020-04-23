@@ -156,19 +156,21 @@ export default new Vuex.Store({
                 method: 'PATCH',
                 data: api_options.user_object
             }).then(function(data) {
-                // Update the store
-                state.api_data.user_object.fullname = api_options.user_object.fullname;
-                state.api_data.user_object.username = api_options.user_object.username;
-                state.api_data.user_object.email = api_options.user_object.email;
+                if (data.data.success) {
+                    // Update the store
+                    state.api_data.user_object.fullname = api_options.user_object.fullname;
+                    state.api_data.user_object.username = api_options.user_object.username;
+                    state.api_data.user_object.email = api_options.user_object.email;
 
-                // Run the callback (if there is any)
-                if (api_options.success) { api_options.success(state.api_data.user_object); }
+                    // Run the callback (if there is any)
+                    if (api_options.success) { api_options.success(state.api_data.user_object); }
+                } else {
+                    // API was not a succes
+                    return Promise.reject(data.data.data_text);
+                }
             }).catch(function(data) {
                 // Something went wrong
-                console.log(data);
-
-                // TODO: Error message
-
+                
                 // Run the callback (if there is any)
                 if (api_options.failed) { api_options.failed(data); }
             });

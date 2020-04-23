@@ -26,8 +26,8 @@ class User(Database.base_class):
 
     # Set constrains for this table
     __table_args__ = (
-        UniqueConstraint('fullname'),
-        UniqueConstraint('username')
+        UniqueConstraint('username'),
+        UniqueConstraint('email')
     )
 
     # Database columns for this table
@@ -35,7 +35,7 @@ class User(Database.base_class):
     created =       Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
     fullname =      Column(String(128), nullable = False)
     username =      Column(String(128), nullable = False)
-    email =         Column(String(128), nullable = True)
+    email =         Column(String(128), nullable = False)
     password =      Column(String(512), nullable = False)
     password_date = Column(DateTime, nullable = False)
     secret =        Column(String(256), nullable = True)

@@ -123,16 +123,31 @@ export default {
         },
         success: function() {
           // Succes! The profile is saved
-          console.log('Saved');
-
           vue_this.saving = false;
+
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Your userprofile is saved',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
         },
-        failed: function() {
-          // Failure
-          // TODO: handle
+        failed: function(error) {
+          // The API failed
           vue_this.changed = true;
-          this.saving = false;
-          console.log('Error');
+          vue_this.saving = false;
+          
+          // Show an error
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Couldn\'t save your userprofile; ' + error,
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
         }
       });
     }
