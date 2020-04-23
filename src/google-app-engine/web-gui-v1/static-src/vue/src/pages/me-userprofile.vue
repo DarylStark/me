@@ -4,6 +4,7 @@
       User profile
       <template v-slot:actions>
         <me-button primary :disabled='!changed'>Save</me-button>
+        <me-button :disabled='!changed' v-on:click='set_field_values'>Cancel</me-button>
       </template>
     </me-page-title>
     <me-grid>
@@ -84,18 +85,27 @@ export default {
       return age;
     }
   },
-  created: function() {
-    // Local this
-    var vue_this = this;
+  methods: {
+    set_field_values: function() {
+      // Local this
+      var vue_this = this;
 
-    // Make sure there is a user profile
-    this.$store.commit('api_update_user_object', {
-        success: function(data) {
-            vue_this.user_object.fullname = data.fullname;
-            vue_this.user_object.username = data.username;
-            vue_this.user_object.email = data.email;
-        }
-    });
+      // Set the fields for the profile
+      this.$store.commit('api_update_user_object', {
+          success: function(data) {
+              vue_this.user_object.fullname = data.fullname;
+              vue_this.user_object.username = data.username;
+              vue_this.user_object.email = data.email;
+          }
+      });
+
+      // Reset 'changed'
+      this.changed = false;
+    }
+  },
+  created: function() {
+    // Set the fields
+    this.set_field_values();
 
     // We don't need a sidebar on this page. Disable it.
     this.$store.commit('set_sidebar_availability', false);

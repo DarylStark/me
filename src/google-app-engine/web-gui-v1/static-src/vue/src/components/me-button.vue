@@ -1,5 +1,5 @@
 <template>
-  <button v-bind:class='[ "ui", { primary: primary}, { disabled: disabled }, "button" ]'>
+  <button v-bind:class='[ "ui", { primary: primary}, { disabled: disabled }, "button" ]' v-on:click='$emit("click");'>
     <slot></slot>
   </button>
 </template>
