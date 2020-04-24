@@ -12,9 +12,9 @@
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
-            <me-input label='Username' id='username' placeholder='Username' icon='user' v-model='user_object.username' v-on:input='changed = true'></me-input>
-            <me-input label='Full name' id='fullname' placeholder='Full name' icon='user circle' v-model='user_object.fullname' v-on:input='changed = true'></me-input>
-            <me-input label='E-mail address' id='email' placeholder='E-mail address' icon='user' v-model='user_object.email' v-on:input='changed = true'></me-input>
+            <me-input label='Username' :disabled='saving' id='username' placeholder='Username' icon='user' v-model='user_object.username' v-on:input='changed = true'></me-input>
+            <me-input label='Full name' :disabled='saving' id='fullname' placeholder='Full name' icon='user circle' v-model='user_object.fullname' v-on:input='changed = true'></me-input>
+            <me-input label='E-mail address' :disabled='saving' id='email' placeholder='E-mail address' icon='user' v-model='user_object.email' v-on:input='changed = true'></me-input>
           </form>
         </me-card>
       </me-cell>
@@ -22,7 +22,8 @@
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
-            <div>Your password is {{ password_age }} days old.</div>
+            <div v-if='password_age > 0'>Your password is {{ password_age }} days old.</div>
+            <div v-if='password_age == 0'>You changed your password today</div>
             <div>
               <me-button v-on:click='show_change_password_dialog'>Change password</me-button>
             </div>
