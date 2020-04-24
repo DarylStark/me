@@ -70,6 +70,10 @@ class MeRESTAPIv1EndpointInvalidPageError(MeRESTAPIv1PageNotFoundError):
     """ Error when a endpoint get a invalid page """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAChangePasswordMissingFieldsError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to change his password and fields are missing """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):

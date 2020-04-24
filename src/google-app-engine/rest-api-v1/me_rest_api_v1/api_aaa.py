@@ -330,7 +330,6 @@ class APIAAA:
             # Create an empty response object
             response = APIResponse(APIResponse.TYPE_DONE)
             response.data = True
-            error = False
 
             # Get the data
             json_data = request.json
@@ -342,7 +341,7 @@ class APIAAA:
                 user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
 
                 # Change the given fields after verifing them
-                if 'username' in json_data.keys() and not error:
+                if 'username' in json_data.keys():
                     if len(json_data['username']) > 3:
                         # Check if this username is unique
                         user_username_count = session.query(User).filter(and_(User.username == json_data['username'], User.id != user_token_object.user_object.id)).count()
@@ -351,17 +350,17 @@ class APIAAA:
                         else:
                             response.data = False
                             response.data_text = 'username is already in use'
-                            error = True
+                            return response
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The username "{json_data["username"]}" is not a valid username!')
 
-                if 'fullname' in json_data.keys() and not error:
+                if 'fullname' in json_data.keys():
                     if len(json_data['fullname']) > 3:
                         user_token_object.user_object.fullname = json_data['fullname']
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The full name "{json_data["fullname"]}" is not a valid full name!')
                 
-                if 'email' in json_data.keys() and not error:
+                if 'email' in json_data.keys():
                     if re.match('^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$', json_data['email']):
                         # Check if this emailaddress is unique
                         user_email_count = session.query(User).filter(and_(User.email == json_data['email'], User.id != user_token_object.user_object.id)).count()
@@ -370,10 +369,62 @@ class APIAAA:
                         else:
                             response.data = False
                             response.data_text = 'emailaddress is already in use'
-                            error = True
+                            return response
                     else:
                         raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The e-mailaddress"{json_data["email"]}" is not a valid e-mailaddress!')
 
             # Return the object
             return response
+
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'change_password',
+        description = 'Change the password for the current user',
+        permissions = {
+            'PATCH': 'aaa.change_password'
+        },
+        user_token_needed = True
+    )
+    def change_password(*args, **kwargs):
+        """ Endpoint for users to change their password """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DONE)
+        response.data = True
+
+        # Get the data
+        json_data = request.json
+
+        if not 'current_pw' in json_data.keys() or not 'new_pw' in json_data.keys():
+            raise MeRESTAPIv1AAAChangePasswordMissingFieldsError('Not all fields are specified. Need "current_pw" and "new_pw"')
+        
+        # Verify the lenght of the new password
+        if len(json_data['new_pw']) < 8:
+            response.data = False
+            response.data_text = 'new_pw_too_short'
+            return response
+
+        # Get the user object from the database
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the user object
+            user_token = kwargs['user_token']
+            user = session.query(APIUserToken).filter(APIUserToken.token == user_token).first().user_object
+
+            # Verify the 'current pw'
+            if not user.verify_password(json_data['current_pw']):
+                response.data = False
+                response.data_text = 'current_pw'
+                return response
+            
+            # Check if the new password is different from the current password
+            if json_data['new_pw'] == json_data['current_pw']:
+                response.data = False
+                response.data_text = 'new_pw_equal_to_current'
+                return response
+            
+            # Update the password
+            user.set_password(json_data['new_pw'])
+
+        # Return the response
+        return response
 #---------------------------------------------------------------------------------------------------
