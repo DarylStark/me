@@ -8,7 +8,7 @@
       </template>
     </me-page-title>
     <me-grid>
-      <me-cell padding v-bind:span="2">
+      <me-cell padding v-bind:span='2'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
@@ -18,13 +18,13 @@
           </form>
         </me-card>
       </me-cell>
-      <me-cell padding v-bind:span="2">
+      <me-cell padding v-bind:span='2'>
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
             <div>Your password is {{ password_age }} days old.</div>
             <div>
-              <me-button>Change password</me-button>
+              <me-button v-on:click='show_change_password_dialog'>Change password</me-button>
             </div>
           </div>
           <div class='action_button' v-if='$store.state.api_data.user_object.second_factor_enabled'>
@@ -54,6 +54,7 @@ import me_input from '../components/me-input'
 import me_h1 from '../components/me-h1'
 import me_button from '../components/me-button'
 import me_api_call from '../me/api_call'
+import eventbus from '../eventbus'
 
 export default {
   name: 'me-content-userprofile',
@@ -150,6 +151,10 @@ export default {
           });
         }
       });
+    },
+    show_change_password_dialog: function() {
+      // Show the change password dialog
+      eventbus.$emit('show_modal', 'modal_change_password')
     }
   },
   created: function() {

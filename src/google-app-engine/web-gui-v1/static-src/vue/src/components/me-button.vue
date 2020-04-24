@@ -1,5 +1,6 @@
 <template>
-  <button v-bind:class='[ "ui", { primary: primary}, { disabled: disabled }, { loading: loading }, "button" ]' v-on:click='$emit("click");'>
+  <button v-bind:class='[ "ui", { primary: primary}, { disabled: disabled }, { loading: loading }, { right: label_icon && label_position == "right" }, { labeled: label_icon }, { icon: label_icon }, "button" ]' v-on:click='$emit("click");'>
+    <i v-bind:class='[ label_icon, "icon" ]' v-if='label_icon != null'></i>
     <slot></slot>
   </button>
 </template>
@@ -10,7 +11,9 @@ export default {
   props: {
       primary: { type: Boolean, default: false },
       disabled: { type: Boolean, default: false },
-      loading: { type: Boolean, default: false }
+      loading: { type: Boolean, default: false },
+      label_icon: { type: String, default: null },
+      label_position: { type: String, default: "left" }
   }
 }
 </script>

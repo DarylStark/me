@@ -1,12 +1,16 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-dashboard'>
+    <!-- Header area -->
     <me-dashboard-header></me-dashboard-header>
     <div id='me-dashboard-menu-and-content'>
+      <!-- Content area -->
       <me-dashboard-main-menu></me-dashboard-main-menu>
       <me-dashboard-content></me-dashboard-content>
       <me-dashboard-sidebar></me-dashboard-sidebar>
     </div>
+    <!-- Dialogs -->
+    <me-modal-changepassword></me-modal-changepassword>
   </div>
 </template>
 
@@ -18,6 +22,7 @@ import me_dashboard_header from './components/me-dashboard-header'
 import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
 import me_dashboard_sidebar from './components/me-dashboard-sidebar'
+import me_modal_changepassword from './modals/me-modal-changepassword'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
 
@@ -31,7 +36,8 @@ export default {
     'me-dashboard-header': me_dashboard_header,
     'me-dashboard-main-menu': me_dashboard_main_menu,
     'me-dashboard-content': me_dashboard_content,
-    'me-dashboard-sidebar': me_dashboard_sidebar
+    'me-dashboard-sidebar': me_dashboard_sidebar,
+    'me-modal-changepassword': me_modal_changepassword
   },
   methods: {
     set_media_type: function() {
