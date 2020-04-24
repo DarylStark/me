@@ -174,7 +174,10 @@ export default new Vuex.Store({
                 // Run the callback (if there is any)
                 if (api_options.failed) { api_options.failed(data); }
             });
-            
+        },
+        api_save_user_object_password_date: function(state) {
+            // Sets the password-date for the user object to now
+            state.api_data.user_object.password_date = new Date();
         }
     }
 });

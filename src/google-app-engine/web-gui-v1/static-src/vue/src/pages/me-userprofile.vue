@@ -154,7 +154,7 @@ export default {
     },
     show_change_password_dialog: function() {
       // Show the change password dialog
-      eventbus.$emit('show_modal', 'modal_change_password')
+      eventbus.$emit('show_modal', 'modal_change_password');
     }
   },
   created: function() {
