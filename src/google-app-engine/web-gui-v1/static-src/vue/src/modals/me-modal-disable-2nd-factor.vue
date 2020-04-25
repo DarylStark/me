@@ -17,7 +17,7 @@ import me_button from './../components/me-button'
 import me_api_call from '../me/api_call'
 
 export default {
-  name: 'me-modal-disabble-2nd-factor',
+  name: 'me-modal-disable-2nd-factor',
   data: function() {
     return {
       saving: false
@@ -33,8 +33,45 @@ export default {
       this.saving = false;
     },
     submit: function() {
-      console.log('Disabling');
+      // The user wants to disable two-factor authentication
       this.saving = true;
+
+      // Local this
+      let vue_this = this;
+
+      // Start the correct endpoint in the API
+      me_api_call({
+        group: 'aaa', endpoint: 'disable_two_factor',
+        method: 'PATCH',
+      }).then(function(data) {
+        // Success! Close the modal
+        vue_this.close();
+
+        // Given an success toast
+        $('body').toast({
+          position: 'bottom center',
+          message: 'Disabled two-factor authentication',
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user',
+          class: 'success'
+        });
+
+        // Set the new password date in the store
+        vue_this.$store.commit('api_set_user_object_2nd_factor', false);
+      }).catch(function(data) {
+        vue_this.saving = false;
+
+        // Show an error
+        $('body').toast({
+          position: 'bottom center',
+          message: data,
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user',
+          class: 'error'
+        });
+      });
     }
   }
 }

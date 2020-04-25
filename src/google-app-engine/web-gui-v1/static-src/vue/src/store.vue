@@ -178,6 +178,11 @@ export default new Vuex.Store({
         api_save_user_object_password_date: function(state) {
             // Sets the password-date for the user object to now
             state.api_data.user_object.password_date = new Date();
+        },
+        api_set_user_object_2nd_factor: function(state, enabled) {
+            // Sets the 'second_factor_enabled' value to true or false so the application knows the
+            // state of two-factor authentication
+            state.api_data.user_object.second_factor_enabled = enabled == true;
         }
     }
 });
