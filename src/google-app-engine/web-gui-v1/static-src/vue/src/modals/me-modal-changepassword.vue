@@ -84,7 +84,7 @@ export default {
             // Given an success toast
             $('body').toast({
               position: 'bottom center',
-              message: 'Your password is chaned',
+              message: 'Your password is changed',
               closeIcon: true,
               displayTime: 'auto',
               showIcon: 'user',
