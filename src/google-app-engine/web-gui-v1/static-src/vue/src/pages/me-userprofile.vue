@@ -22,20 +22,21 @@
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
-            <div v-if='password_age > 0'>Your password is {{ password_age }} days old.</div>
+            <div v-if='password_age == 1'>Your password is <b>{{ password_age }} day</b> old.</div>
+            <div v-if='password_age > 1'>Your password is <b>{{ password_age }} days</b> old.</div>
             <div v-if='password_age == 0'>You changed your password today</div>
             <div>
               <me-button v-on:click='show_change_password_dialog'>Change password</me-button>
             </div>
           </div>
           <div class='action_button' v-if='$store.state.api_data.user_object.second_factor_enabled'>
-            <div>Two-factor authentication is enabled</div>
+            <div>Two-factor authentication is <b>enabled</b></div>
             <div>
               <me-button v-on:click='show_disable_2nd_factor_dialog'>Disable</me-button>
             </div>
           </div>
           <div class='action_button' v-if='!$store.state.api_data.user_object.second_factor_enabled'>
-            <div>Two-factor authentication is disabled. Enabling two-factor authentication enhances the security of your account.</div>
+            <div>Two-factor authentication is <b>disabled</b></div>
             <div>
               <me-button>Enable</me-button>
             </div>
