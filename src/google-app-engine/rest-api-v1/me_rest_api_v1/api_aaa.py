@@ -427,4 +427,30 @@ class APIAAA:
 
         # Return the response
         return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'disable_two_factor',
+        description = 'Disable two-factor authentication for the current user',
+        permissions = {
+            'PATCH': 'aaa.disable_two_factor'
+        },
+        user_token_needed = True
+    )
+    def disable_two_factor(*args, **kwargs):
+        """ Endpoint for users to disable two-factor authentication """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DONE)
+        response.data = True
+
+        # Get the user object from the database
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the user object
+            user_token = kwargs['user_token']
+            user = session.query(APIUserToken).filter(APIUserToken.token == user_token).first().user_object
+            user.secret = None
+        
+        # Return the response
+        return response
 #---------------------------------------------------------------------------------------------------
