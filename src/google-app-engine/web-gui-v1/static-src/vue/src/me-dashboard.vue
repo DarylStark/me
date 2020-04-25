@@ -11,6 +11,7 @@
     </div>
     <!-- Dialogs -->
     <me-modal-changepassword></me-modal-changepassword>
+    <me-modal-disable-2nd-factor></me-modal-disable-2nd-factor>
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import me_dashboard_main_menu from './components/me-dashboard-main-menu'
 import me_dashboard_content from './components/me-dashboard-content'
 import me_dashboard_sidebar from './components/me-dashboard-sidebar'
 import me_modal_changepassword from './modals/me-modal-changepassword'
+import me_modal_disable_2nd_factor from './modals/me-modal-disable-2nd-factor'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
 
@@ -37,7 +39,8 @@ export default {
     'me-dashboard-main-menu': me_dashboard_main_menu,
     'me-dashboard-content': me_dashboard_content,
     'me-dashboard-sidebar': me_dashboard_sidebar,
-    'me-modal-changepassword': me_modal_changepassword
+    'me-modal-changepassword': me_modal_changepassword,
+    'me-modal-disable-2nd-factor': me_modal_disable_2nd_factor
   },
   methods: {
     set_media_type: function() {

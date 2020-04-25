@@ -3,7 +3,7 @@
     <div class='header'>
       {{ title }}
     </div>
-    <div class='content'>
+    <div v-bind:class='[ { image: type == "image" }, "content" ]'>
       <slot></slot>
     </div>
     <div class='actions'>
@@ -19,7 +19,8 @@ export default {
   name: 'me-modal',
   props: {
       'id': { type: String, mandatory: true },
-      'title': { type: String }
+      'title': { type: String },
+      'type': { type: String, default: null }
   },
   methods: {
       show: function() {

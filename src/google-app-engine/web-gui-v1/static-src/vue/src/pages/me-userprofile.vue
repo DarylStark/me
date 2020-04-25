@@ -31,11 +31,11 @@
           <div class='action_button' v-if='$store.state.api_data.user_object.second_factor_enabled'>
             <div>Two-factor authentication is enabled</div>
             <div>
-              <me-button>Disable</me-button>
+              <me-button v-on:click='show_disable_2nd_factor_dialog'>Disable</me-button>
             </div>
           </div>
           <div class='action_button' v-if='!$store.state.api_data.user_object.second_factor_enabled'>
-            <div>Two-factor authentication is disabled</div>
+            <div>Two-factor authentication is disabled. Enabling two-factor authentication enhances the security of your account.</div>
             <div>
               <me-button>Enable</me-button>
             </div>
@@ -156,6 +156,10 @@ export default {
     show_change_password_dialog: function() {
       // Show the change password dialog
       eventbus.$emit('show_modal', 'modal_change_password');
+    },
+    show_disable_2nd_factor_dialog: function() {
+      // Show the change password dialog
+      eventbus.$emit('show_modal', 'modal_disable_2nd_factor');
     }
   },
   created: function() {
