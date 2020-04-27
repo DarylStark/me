@@ -28,7 +28,9 @@ export default {
   methods: {
     focus: function() {
       // Method to focus the input
-      this.$refs.input_field.focus();
+      this.$nextTick(function(){
+        this.$refs.input_field.focus()
+      });
     },
     escape: function() {
       // When the user presses 'esc' while the input is focussed, we emit a event

@@ -9,7 +9,6 @@ export default function(options) {
   
   // Create a object with the default values
   let api_options = {
-      start: true,                // Wheter or not the constructor should start the request
       api_url: null,              // The URL of the API
       user_token: null,           // The user token for the logged on user
       method: 'GET',              // The HTTP method to use for the request

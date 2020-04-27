@@ -77,7 +77,7 @@ class APIAAA:
             # Check if a secret is filled in. If it is, we require two-factor authentication. To
             # signal this to the client, we return a response with '2nd-factor-required'. The client
             # can then ask the user for the 2nd factor.
-            if user.secret and not '2nd_factor' in json_data.keys():
+            if user.second_factor_enabled and not '2nd_factor' in json_data.keys():
                 response.data = {
                     '_type': '2nd_factor',
                     '2nd_factor_required': True
@@ -100,7 +100,7 @@ class APIAAA:
                 expirationdate = datetime.datetime.utcnow() + datetime.timedelta(hours = expire_hours)
             
             # If a 2nd factor was required and the key is given, we can check if it is correct
-            if user.secret and '2nd_factor' in json_data.keys():
+            if user.second_factor_enabled and '2nd_factor' in json_data.keys():
                 factor = json_data['2nd_factor']
                 if factor != pyotp.TOTP(user.secret).now():
                     # Second factor was wrong. Give an error for the user
@@ -450,6 +450,85 @@ class APIAAA:
             user_token = kwargs['user_token']
             user = session.query(APIUserToken).filter(APIUserToken.token == user_token).first().user_object
             user.secret = None
+            user.secret_verified = False
+        
+        # Return the response
+        return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'enable_two_factor',
+        description = 'Enable two-factor authentication for the current user',
+        permissions = {
+            'PATCH': 'aaa.enable_two_factor'
+        },
+        user_token_needed = True
+    )
+    def enable_two_factor(*args, **kwargs):
+        """ Endpoint for users to enable two-factor authentication """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_RECORD)
+
+        # Get the user object from the database
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the user object
+            user_token = kwargs['user_token']
+            user = session.query(APIUserToken).filter(APIUserToken.token == user_token).first().user_object
+
+            # Check if second factor is already enabled
+            if user.second_factor_enabled:
+                raise MeRESTAPIv1AAAEnableTwoFactorAlreadyEnabledError('Second factor authentication is already enabled for this user')
+
+            # Generate a new secret key and return it to the user
+            user.generate_secret()
+            response.data = { 'type': '_secret', 'secret': user.secret }
+        
+        # Return the response
+        return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'verify_two_factor',
+        description = 'Verify two-factor authentication for the current user',
+        permissions = {
+            'PATCH': 'aaa.verify_two_factor'
+        },
+        user_token_needed = True
+    )
+    def verify_two_factor(*args, **kwargs):
+        """ Endpoint for users to verify their two-factor authentication """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DONE)
+        response.data = True
+
+        # Get the data
+        json_data = request.json
+
+        # Check if the '2nd_factor' is in the request
+        if not '2nd_factor' in json_data.keys():
+            raise MeRESTAPIv1AAAVerifyTwoFactorMissingFieldsError('Not all fields are specified. Need "2nd_factor"')
+
+        # Get the user object from the database
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the user object
+            user_token = kwargs['user_token']
+            user = session.query(APIUserToken).filter(APIUserToken.token == user_token).first().user_object
+
+            # Check if second factor is disabled for the user
+            if user.second_factor_enabled == True:
+                raise MeRESTAPIv1AAAVerifyTwoFactorAlreadyEnabledError('Second factor authentication is already enabled for this user')
+
+            # Check if the given value is correct
+            factor = json_data['2nd_factor']
+            factor_should_be = pyotp.TOTP(user.secret).now()
+            if factor == factor_should_be:
+                user.secret_verified = True
+            else:
+                user.secret_verified = False
+                response.data = False
+                response.data_text = '2nd_factor'
         
         # Return the response
         return response

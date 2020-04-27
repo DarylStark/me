@@ -152,7 +152,7 @@ class APIResponse:
                 'all_item_count': self.all_item_count
             }
         
-        # If this is dataset, we have to add the data
+        # If this is single record, we have to add the data
         if self.response_type == self.TYPE_RECORD:
             # If we only have one record to return, we set it in the data
             response_dict['object'] = self.data

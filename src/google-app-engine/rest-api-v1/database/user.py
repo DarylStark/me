@@ -31,14 +31,15 @@ class User(Database.base_class):
     )
 
     # Database columns for this table
-    id =            Column(Integer, primary_key = True)
-    created =       Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
-    fullname =      Column(String(128), nullable = False)
-    username =      Column(String(128), nullable = False)
-    email =         Column(String(128), nullable = False)
-    password =      Column(String(512), nullable = False)
-    password_date = Column(DateTime, nullable = False)
-    secret =        Column(String(256), nullable = True)
+    id =                Column(Integer, primary_key = True)
+    created =           Column(DateTime, nullable = False, default = datetime.datetime.utcnow)
+    fullname =          Column(String(128), nullable = False)
+    username =          Column(String(128), nullable = False)
+    email =             Column(String(128), nullable = False)
+    password =          Column(String(512), nullable = False)
+    password_date =     Column(DateTime, nullable = False)
+    secret =            Column(String(256), nullable = True)
+    secret_verified =   Column(Boolean, nullable = False, default = True)
 
     # One-to-many relationship mappings
     user_api_tokens = relationship("APIUserToken")
@@ -60,10 +61,11 @@ class User(Database.base_class):
         """ Method to generate a random secret for this object. The secret gets returned so the
             client can present this to the user """
         self.secret = pyotp.random_base32()
+        self.secret_verified = False
         return self.secret
 
     @property
     def second_factor_enabled(self):
         """ Property that returns of a secret is filled in """
-        return not self.secret is None
+        return not self.secret is None and self.secret_verified
 #---------------------------------------------------------------------------------------------------

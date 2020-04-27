@@ -149,6 +149,20 @@ class MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(MeRESTAPIv1PermissionDenie
     """ Error when a user tries to update a user object with a invalid field """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAVerifyTwoFactorMissingFieldsError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to verify a second factor without a code """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAEnableTwoFactorAlreadyEnabledError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to verify a second factor for a account where second factor is
+        already enabled """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAVerifyTwoFactorAlreadyEnabledError(MeRESTAPIv1PermissionDeniedError):
+    """ Error when a user tries to verify a second factor for a account where second factor is
+        already enabled """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):
