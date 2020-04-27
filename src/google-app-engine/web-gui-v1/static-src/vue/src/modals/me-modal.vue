@@ -36,15 +36,15 @@ export default {
       }
   },
   mounted() {
-      // Local this
-      let vue_this = this;
+    // Local this
+    let vue_this = this;
 
-      // Listen for 'show_dialog' events
-      eventbus.$on('show_modal', function(modal_id) {
-        if (vue_this.id == modal_id) {
-          vue_this.show();
-        }
-      });
+    // Listen for 'show_dialog' events
+    eventbus.$on('show_modal', function(modal_id) {
+      if (vue_this.id == modal_id) {
+        vue_this.show();
+      }
+    });
   }
 }
 </script>

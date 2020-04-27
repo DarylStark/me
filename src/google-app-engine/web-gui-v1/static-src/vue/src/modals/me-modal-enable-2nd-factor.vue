@@ -21,7 +21,7 @@
       </div>
       <div v-show='step == 3'>
         <p>Enter the code that the authenitcation app gives you</p>
-        <me-input id='code' ref='code' v-model='code' icon='lock' icon_position='left' placeholder='Code'></me-input>
+        <me-input id='code' ref='code' v-model='code' icon='lock' icon_position='left' placeholder='Code' v-on:enter='enable' :disabled='loading'></me-input>
       </div>
     </div>
     <template v-slot:actions>
@@ -117,7 +117,6 @@ export default {
       }
 
       if (this.step == 3) {
-        console.log('Focussing');
         this.$refs.code.focus();
       }
     },

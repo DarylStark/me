@@ -1,8 +1,8 @@
 <!-- Vue component for the a input -->
 <template>
-  <div class='field' v-bind:class='{ disabled: disabled }'>
+  <div class='field'>
     <label v-if='label'>{{ label }}</label>
-    <div v-bind:class='[ "ui", { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, "input", { error: error } ]'>
+    <div v-bind:class='[ "ui", { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, { disabled: disabled }, "input", { error: error } ]'>
       <input v-on:change='change' v-bind:type='type' v-bind:id='id' v-bind:value='value' v-bind:placeholder='placeholder' ref='input_field' v-on:keydown.esc='escape' v-on:keydown.enter='enter' v-on:input='$emit("input", $event.target.value)'>
       <i class='icon' v-bind:class='icon' v-if='icon'></i>
     </div>
