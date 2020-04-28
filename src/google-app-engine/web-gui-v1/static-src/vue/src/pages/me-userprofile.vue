@@ -193,6 +193,32 @@ export default {
 
     // We don't need a sidebar on this page. Disable it.
     this.$store.commit('set_sidebar_availability', false);
+  },
+  beforeRouteLeave: function(to, from, next) {
+    // When the user tries to leave the page before saving or resetting the information, we give the
+    // user a warning and a chance to save the form first
+    $('body').toast({
+      message: 'You haven\'t saved the form yet. Are you sure you want to leave?',
+      displayTime: 0,
+      class: 'white',
+      position: 'top center',
+      title: 'Profile changed',
+      actions: [
+        {
+          text: 'Yes',
+          class: 'green',
+          click: function() {
+            next(true);
+          }
+        }, {
+          text: 'No',
+          class: 'red',
+          click: function() {
+            next(false);
+          }
+        }
+      ]
+    });
   }
 }
 </script>
