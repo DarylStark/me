@@ -1,9 +1,9 @@
 <template>
   <me-modal id='modal_change_password' title='Change your password' ref='modal'>
     <form class='ui form'>
-      <me-input type='password' label='Current password' id='current_pw' icon='lock' :disabled='saving' v-model='fields.current_pw' :error='current_pw_error'></me-input>
-      <me-input type='password' label='New password' id='new_pw_1' icon='lock' :disabled='saving' v-model='fields.new_pw_1' :error='new_pw_1_error'></me-input>
-      <me-input type='password' label='Repeat new password' id='new_pw_2' icon='lock' :disabled='saving' v-model='fields.new_pw_2' :error='new_pw_2_error'></me-input>
+      <me-input type='password' v-on:enter='submit' label='Current password' id='current_pw' icon='lock' :disabled='saving' v-model='fields.current_pw' :error='current_pw_error'></me-input>
+      <me-input type='password' v-on:enter='submit' label='New password' id='new_pw_1' icon='lock' :disabled='saving' v-model='fields.new_pw_1' :error='new_pw_1_error'></me-input>
+      <me-input type='password' v-on:enter='submit' label='Repeat new password' id='new_pw_2' icon='lock' :disabled='saving' v-model='fields.new_pw_2' :error='new_pw_2_error'></me-input>
     </form>
     <template v-slot:actions>
       <me-button v-on:click='close' :disabled='saving'>Cancel</me-button>
