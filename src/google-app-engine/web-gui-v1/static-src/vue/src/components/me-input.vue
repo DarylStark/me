@@ -2,7 +2,7 @@
 <template>
   <div class='field'>
     <label v-if='label'>{{ label }}</label>
-    <div v-bind:class='[ "ui", { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, { disabled: disabled }, "input", { error: error } ]'>
+    <div v-bind:class='[ "ui", { fluid: fluid }, { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, { disabled: disabled }, "input", { error: error } ]'>
       <input v-on:change='change' v-bind:type='type' v-bind:id='id' v-bind:value='value' v-bind:placeholder='placeholder' ref='input_field' v-on:keydown.esc='escape' v-on:keydown.enter='enter' v-on:input='$emit("input", $event.target.value)'>
       <i class='icon' v-bind:class='icon' v-if='icon'></i>
     </div>
@@ -23,7 +23,8 @@ export default {
     disabled: { type: Boolean, default: false },
     transparent: false,
     value: { type: String, default: null },
-    error: { type: Boolean, default: false }
+    error: { type: Boolean, default: false },
+    fluid: { type: Boolean, default: false }
   },
   methods: {
     focus: function() {

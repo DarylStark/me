@@ -1,12 +1,12 @@
 <template>
   <div class='ui small modal' v-bind:id='id' ref='modal'>
-    <div class='header'>
+    <div class='header' v-if='title'>
       {{ title }}
     </div>
-    <div v-bind:class='[ { image: type == "image" }, "content" ]'>
+    <div v-bind:class='[ { image: type == "image" }, { content: content } ]'>
       <slot></slot>
     </div>
-    <div class='actions'>
+    <div class='actions' v-if='show_actions'>
       <slot name='actions'></slot>
     </div>
   </div>
@@ -18,9 +18,16 @@ import eventbus from '../eventbus'
 export default {
   name: 'me-modal',
   props: {
-      'id': { type: String, mandatory: true },
-      'title': { type: String },
-      'type': { type: String, default: null }
+    'id': { type: String, mandatory: true },
+    'title': { type: String, default: null },
+    'type': { type: String, default: null },
+    'content': { type: Boolean, default: true }
+  },
+  computed: {
+    'show_actions': function() {
+      // Return 'true' if action slot is set
+      return 'actions' in this.$slots
+    }
   },
   methods: {
       show: function() {

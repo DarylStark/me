@@ -1,0 +1,25 @@
+#modal_command_palette {
+    input {
+        border: 0px;
+    }
+
+    .commands {
+        max-height: 250px;
+        height: auto;
+        overflow-y: scroll;
+        border-top: 1px solid #dedede;          // TODO: move to colorsheet
+
+        .command {
+            border-bottom: 1px solid #dedede;          // TODO: move to colorsheet
+
+            > div {
+                padding: 12px;
+                
+            }
+
+            &:last-child {
+                border-bottom: 0px;
+            }
+        }
+    }
+}

@@ -11,7 +11,7 @@
             <span v-if='$store.state.ui.sidebar_open'>Hide sidebar</span>
         </div>
         <div class='divider' v-if='$store.state.ui.sidebar_available'></div>
-        <div class='item'>
+        <div class='item' v-on:click='command_palette'>
           <i class='terminal icon'></i>
             Command palette
         </div>
@@ -27,9 +27,9 @@
 
 <!-- The script that gets exported from the file -->
 <script>
-
 import '../../semantic/dist/semantic'
 import '../../semantic/dist/components/dropdown'
+import eventbus from '../eventbus'
 
 export default {
   name: 'me-dashboard-button-options',
@@ -38,14 +38,18 @@ export default {
     $(this.$refs.dropdown).dropdown({ action: 'hide' });
   },
   methods: {
-      toggle_sidebar: function() {
-          // Toggle the side
-          this.$store.commit('set_sidebar_state', !this.$store.state.ui.sidebar_open);
-      },
-      reload_page: function() {
-        // Reload the page
-        location.reload();
-      }
+    toggle_sidebar: function() {
+        // Toggle the side
+        this.$store.commit('set_sidebar_state', !this.$store.state.ui.sidebar_open);
+    },
+    reload_page: function() {
+      // Reload the page
+      location.reload();
+    },
+    command_palette: function() {
+      // Show the enable 2nd factor dialog
+      eventbus.$emit('show_modal', 'modal_command_palette');
+    }
   }
 }
 </script>

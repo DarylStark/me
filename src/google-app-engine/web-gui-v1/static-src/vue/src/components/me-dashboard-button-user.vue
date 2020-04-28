@@ -12,10 +12,8 @@
           {{ $store.state.api_data.user_object.fullname }}
         </div>
         <router-link to='/userprofile' tag='div' class='item'>
-        <!--<div class="item">-->
           <i class="user circle icon"></i>
           Profile
-        <!--</div>-->
         </router-link>
         <div class="item">
           <i class="pen icon"></i>
