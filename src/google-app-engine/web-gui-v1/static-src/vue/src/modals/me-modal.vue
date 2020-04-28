@@ -24,11 +24,18 @@ export default {
   },
   methods: {
       show: function() {
+        // Local ths
+        let vue_this = this;
+
+        // Show the modal
         $(this.$refs.modal).modal({
           centered: true,
           closable: true,
           transition: 'fade',
-          duration: 200
+          duration: 200,
+          onHidden: function() {
+            vue_this.$emit('hidden');
+          }
         }).modal('show');
       },
       hide: function() {

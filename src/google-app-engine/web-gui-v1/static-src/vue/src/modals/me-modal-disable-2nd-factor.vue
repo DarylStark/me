@@ -1,5 +1,5 @@
 <template>
-  <me-modal id='modal_disable_2nd_factor' title='Disable two-factor authentication' ref='modal'>
+  <me-modal id='modal_disable_2nd_factor' title='Disable two-factor authentication' ref='modal' v-on:hidden='reset'>
     <div class='description'>
       <div class='ui header'>Are you sure you want to disable two-factor authentication?</div>
       <p>Doing this greatly reduces the security of your account and should only be done when you know exactly what you're doing!</p>
@@ -30,6 +30,8 @@ export default {
   methods: {
     close: function() {
       this.$refs.modal.hide();
+    },
+    reset: function() {
       this.saving = false;
     },
     submit: function() {

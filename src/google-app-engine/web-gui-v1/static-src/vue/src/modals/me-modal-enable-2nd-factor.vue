@@ -1,5 +1,5 @@
 <template>
-  <me-modal id='modal_enable_2nd_factor' title='Enable two-factor authentication' ref='modal'>
+  <me-modal id='modal_enable_2nd_factor' title='Enable two-factor authentication' ref='modal' v-on:hidden='reset'>
     <div class='description'>
       <div v-show='step == 1'>
         <p>Enabline two-factor authentication requires a app on your smartphone or a plugin in your webbrowser to generate one time passwords. Two apps you can use for this on Android are:</p>
@@ -67,6 +67,8 @@ export default {
   methods: {
     close: function() {
       this.$refs.modal.hide();
+    },
+    reset: function() {
       this.saving = false;
       this.step = 1;
       this.loaded_secret = false;

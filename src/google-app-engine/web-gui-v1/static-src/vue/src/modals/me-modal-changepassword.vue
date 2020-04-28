@@ -1,5 +1,5 @@
 <template>
-  <me-modal id='modal_change_password' title='Change your password' ref='modal'>
+  <me-modal id='modal_change_password' title='Change your password' ref='modal' v-on:hidden='reset'>
     <form class='ui form'>
       <me-input type='password' v-on:enter='submit' label='Current password' id='current_pw' icon='lock' :disabled='saving' v-model='fields.current_pw' :error='current_pw_error'></me-input>
       <me-input type='password' v-on:enter='submit' label='New password' id='new_pw_1' icon='lock' :disabled='saving' v-model='fields.new_pw_1' :error='new_pw_1_error'></me-input>
@@ -17,6 +17,7 @@ import me_modal from './me-modal'
 import me_input from './../components/me-input'
 import me_button from './../components/me-button'
 import me_api_call from '../me/api_call'
+import eventbus from '../eventbus'
 
 export default {
   name: 'me-modal-changepassword',
@@ -46,6 +47,8 @@ export default {
   methods: {
     close: function() {
       this.$refs.modal.hide();
+    },
+    reset: function() {
       this.fields.current_pw = null;
       this.fields.new_pw_1 = null;
       this.fields.new_pw_2 = null;
