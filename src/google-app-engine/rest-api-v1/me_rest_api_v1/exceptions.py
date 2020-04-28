@@ -145,10 +145,6 @@ class MeRESTAPIv1AAARetrieveUserTokenFactorWrongError(MeRESTAPIv1PermissionDenie
     """ Error when a user tries to retrieve a user token with a wrong 2nd factor code """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(MeRESTAPIv1PermissionDeniedError):
-    """ Error when a user tries to update a user object with a invalid field """
-    pass
-#---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1AAAVerifyTwoFactorMissingFieldsError(MeRESTAPIv1PermissionDeniedError):
     """ Error when a user tries to verify a second factor without a code """
     pass

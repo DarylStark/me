@@ -349,16 +349,20 @@ class APIAAA:
                             user_token_object.user_object.username = json_data['username']
                         else:
                             response.data = False
-                            response.data_text = 'username is already in use'
+                            response.data_text = 'username_in_use'
                             return response
                     else:
-                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The username "{json_data["username"]}" is not a valid username!')
+                        response.data = False
+                        response.data_text = 'username_invalid'
+                        return response
 
                 if 'fullname' in json_data.keys():
                     if len(json_data['fullname']) > 3:
                         user_token_object.user_object.fullname = json_data['fullname']
                     else:
-                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The full name "{json_data["fullname"]}" is not a valid full name!')
+                        response.data = False
+                        response.data_text = 'fullname_invalid'
+                        return response
                 
                 if 'email' in json_data.keys():
                     if re.match('^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$', json_data['email']):
@@ -368,10 +372,12 @@ class APIAAA:
                             user_token_object.user_object.email = json_data['email']
                         else:
                             response.data = False
-                            response.data_text = 'emailaddress is already in use'
+                            response.data_text = 'email_in_use'
                             return response
                     else:
-                        raise MeRESTAPIv1AAAUpdateUserObjectInvalidFieldError(f'The e-mailaddress"{json_data["email"]}" is not a valid e-mailaddress!')
+                        response.data = False
+                        response.data_text = 'email_invalid'
+                        return response
 
             # Return the object
             return response

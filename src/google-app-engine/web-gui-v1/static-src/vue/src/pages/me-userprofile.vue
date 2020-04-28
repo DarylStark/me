@@ -12,9 +12,9 @@
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
-            <me-input label='Username' :disabled='saving' id='username' placeholder='Username' icon='user' v-model='user_object.username' v-on:input='changed = true'></me-input>
-            <me-input label='Full name' :disabled='saving' id='fullname' placeholder='Full name' icon='user circle' v-model='user_object.fullname' v-on:input='changed = true'></me-input>
-            <me-input label='E-mail address' :disabled='saving' id='email' placeholder='E-mail address' icon='user' v-model='user_object.email' v-on:input='changed = true'></me-input>
+            <me-input label='Username' :disabled='saving' id='username' placeholder='Username' icon='user' v-model='user_object.username' v-on:input='changed = true' :error='fields.username_error'></me-input>
+            <me-input label='Full name' :disabled='saving' id='fullname' placeholder='Full name' icon='user circle' v-model='user_object.fullname' v-on:input='changed = true' :error='fields.fullname_error'></me-input>
+            <me-input label='E-mail address' :disabled='saving' id='email' placeholder='E-mail address' icon='user' v-model='user_object.email' v-on:input='changed = true' :error='fields.email_error'></me-input>
           </form>
         </me-card>
       </me-cell>
@@ -76,6 +76,11 @@ export default {
         username: null,
         email: null
       },
+      fields: {
+        username_error: false,
+        fullname_error: false,
+        email_error: false
+      },
       changed: false,
       saving: false
     }
@@ -117,6 +122,11 @@ export default {
       // Local this
       var vue_this = this;
 
+      // Set all errors to false
+      this.fields.username_error = false;
+      this.fields.fullname_error = false;
+      this.fields.email_error = false;
+
       // Local this
       this.$store.commit('api_save_user_object', {
         user_object: {
@@ -141,11 +151,19 @@ export default {
           // The API failed
           vue_this.changed = true;
           vue_this.saving = false;
+
+          // Create a error text based on the given error
+          let error_text = 'unknown error'
+          if (error == 'username_in_use') { error_text = 'username is already in use'; vue_this.fields.username_error = true; }
+          if (error == 'username_invalid') { error_text = 'username is not valid'; vue_this.fields.username_error = true; }
+          if (error == 'fullname_invalid') { error_text = 'full name is not valid'; vue_this.fields.fullname_error = true; }
+          if (error == 'email_in_use') { error_text = 'e-mailaddress is already in use'; vue_this.fields.email_error = true; }
+          if (error == 'email_invalid') { error_text = 'e-mailaddress is invalid'; vue_this.fields.email_error = true; }
           
           // Show an error
           $('body').toast({
             position: 'bottom center',
-            message: 'Couldn\'t save your userprofile; ' + error,
+            message: 'Couldn\'t save your userprofile; ' + error_text,
             closeIcon: true,
             displayTime: 'auto',
             showIcon: 'user',
