@@ -21,7 +21,7 @@ export default {
   methods: {
       toggle_menu: function() {
           // Toggle the menu
-          this.$store.commit('set_menu_state', !this.$store.state.ui.menu_open);
+          this.$store.commit('set_menu_state', 'toggle');
       }
   }
 }

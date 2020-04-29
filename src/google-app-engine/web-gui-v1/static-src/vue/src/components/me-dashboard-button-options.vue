@@ -40,7 +40,7 @@ export default {
   methods: {
     toggle_sidebar: function() {
         // Toggle the side
-        this.$store.commit('set_sidebar_state', !this.$store.state.ui.sidebar_open);
+        this.$store.commit('set_sidebar_state', 'toggle');
     },
     reload_page: function() {
       // Reload the page

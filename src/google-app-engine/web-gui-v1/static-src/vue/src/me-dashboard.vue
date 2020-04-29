@@ -31,6 +31,7 @@ import me_modal_enable_2nd_factor from './modals/me-modal-enable-2nd-factor'
 import me_modal_command_palette from './modals/me-modal-command-palette'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
+import eventbus from './eventbus'
 
 // Enable the use of the Vue Cookies module
 Vue.use(vue_cookies);
@@ -125,6 +126,25 @@ export default {
           vue_this.$store.commit('set_menu_state', false);
           vue_this.$store.commit('set_sidebar_state', false);
         }
+      }
+    });
+
+    // Add a handler to 'keyup' events. When the user does a keyup event we can do special actions,
+    // like opening the command pallete, hide the menu, hide the sidebar, etc.
+    jquery(document).keyup(function(event) {
+      // CTRL+SHIFT+Q opens the Command Palette
+      if (event.ctrlKey && event.key == 'Q') {
+        eventbus.$emit('show_modal', 'modal_command_palette');
+      }
+
+      // CTRL+SHIFT+A: Toggle the menu
+      if (event.ctrlKey && event.key == 'A') {
+        vue_this.$store.commit('set_menu_state', 'toggle');
+      }
+
+      // CTRL+SHIFT+A: Toggle the sidebar
+      if (event.ctrlKey && event.key == 'S') {
+        vue_this.$store.commit('set_sidebar_state', 'toggle');
       }
     });
   }

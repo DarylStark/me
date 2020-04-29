@@ -51,9 +51,13 @@ export default new Vuex.Store({
         },
         set_menu_state: function(state, new_state) {
             // Method to set the state of the menu; open or closed. When the 'new_state' is set to
-            // true, the menu should be open. Whe the 'new_state' is set to false, the menu should
-            // be closed
-            state.ui.menu_open = new_state;
+            // true, the menu should be open. When the 'new_state' is set to false, the menu should
+            // be closed. If the state is set to 'toggle', we 'toggle' the menu
+            if (new_state == true || new_state == false) {
+                state.ui.menu_open = new_state;
+            } else if(new_state == 'toggle') {
+                state.ui.menu_open = !state.ui.menu_open;
+            }
 
             // When we are on mobile, the state of the menu is set to open AND the sidebar is
             // already open, we have to close the sidebar. Otherwise, they are in eachothers way
@@ -64,8 +68,12 @@ export default new Vuex.Store({
         set_sidebar_state: function(state, new_state) {
             // Method to set the state of the sidebar; open or closed. When the 'new_state' is set
             // to true, the sidebar should be open. Whe the 'new_state' is set to false, the menu
-            // should be closed
-            state.ui.sidebar_open = new_state;
+            // should be closed. If the state is set to 'toggle', we 'toggle' the menu
+            if (new_state == true || new_state == false) {
+                state.ui.sidebar_open = new_state;
+            } else if(new_state == 'toggle') {
+                state.ui.sidebar_open = !state.ui.sidebar_open;
+            }
 
             // When we are on mobile, the state of the sidebar is set to open AND the menu is
             // already open, we have to close the menu. Otherwise, they are in eachothers way
