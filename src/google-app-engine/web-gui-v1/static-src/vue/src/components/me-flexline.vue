@@ -1,15 +1,12 @@
 <!-- Vue component for the login-form -->
 <template>
-  <div v-bind:class='[ "me-flexline", extra_class ]'>
+  <div class='me-flexline'>
       <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'me-flexline',
-  props: {
-    extra_class: { type: String }
-  }
+  name: 'me-flexline'
 }
 </script>

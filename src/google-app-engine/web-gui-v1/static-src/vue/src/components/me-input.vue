@@ -3,7 +3,7 @@
   <div class='field'>
     <label v-if='label'>{{ label }}</label>
     <div v-bind:class='[ "ui", { fluid: fluid }, { transparent: transparent, [icon_position]: icon && icon_position, icon: icon && icon_position }, { disabled: disabled }, "input", { error: error } ]'>
-      <input v-on:change='change' v-bind:type='type' v-bind:id='id' v-bind:value='value' v-bind:placeholder='placeholder' ref='input_field' v-on:keydown.esc='escape' v-on:keydown.enter='enter' v-on:input='$emit("input", $event.target.value)'>
+      <input v-on:change='change' v-bind:type='type' v-bind:id='id' v-bind:value='value' v-bind:placeholder='placeholder' ref='input_field' v-on:keydown.up='up' v-on:keydown.down='down' v-on:keydown.esc='escape' v-on:keydown.enter='enter' v-on:input='$emit("input", $event.target.value)'>
       <i class='icon' v-bind:class='icon' v-if='icon'></i>
     </div>
   </div>
@@ -44,6 +44,14 @@ export default {
     change: function() {
       // When the user changes the input, we emit a event
       this.$emit('change');
+    },
+    up: function() {
+      // When the user presses the Up-key, we emit a event
+      this.$emit('up');
+    },
+    down: function() {
+      // When the user presses the Down-key, we emit a event
+      this.$emit('down');
     }
   }
 }

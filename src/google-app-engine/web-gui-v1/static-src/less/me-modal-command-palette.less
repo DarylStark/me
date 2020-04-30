@@ -1,6 +1,22 @@
 #modal_command_palette {
-    input {
-        border: 0px;
+    .field {
+        background-color: @header-search-bg-active;
+        
+        input {
+            border: 0px;
+            background-color: @header-search-bg-active;
+            color: @header-search-fg-active;
+            font-size: 1.3em;
+            font-style: italic;
+        }
+
+        input::placeholder {
+            color: @header-search-ph-active;
+        }
+
+        .icon {
+            color: @header-search-fg-active;
+        }
     }
 
     .commands {
@@ -19,6 +35,10 @@
 
             &:last-child {
                 border-bottom: 0px;
+            }
+
+            &.selected {
+                background-color: @bg-page;
             }
         }
     }
