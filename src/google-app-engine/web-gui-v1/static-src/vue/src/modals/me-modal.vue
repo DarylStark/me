@@ -21,7 +21,8 @@ export default {
     'id': { type: String, mandatory: true },
     'title': { type: String, default: null },
     'type': { type: String, default: null },
-    'content': { type: Boolean, default: true }
+    'content': { type: Boolean, default: true },
+    'centered': { type: Boolean, default: true }
   },
   computed: {
     'show_actions': function() {
@@ -36,7 +37,7 @@ export default {
 
         // Show the modal
         $(this.$refs.modal).modal({
-          centered: true,
+          centered: vue_this.centered,
           closable: true,
           transition: 'fade',
           duration: 200,

@@ -24,7 +24,7 @@ export default {
           items: [
             { title: 'Dashboard', icon: 'columns', dst: '/home' },
             { title: 'Feed', icon: 'list', dst: '/feed' },
-            { title: 'Notebook', icon: 'clipboard outline', dst: '/notes' }
+            { title: 'Notes', icon: 'clipboard outline', dst: '/notes' }
           ]
         },
         {

@@ -1,15 +1,8 @@
 <template>
-  <me-modal id='modal_command_palette' v-bind:content='false'>
-    <me-input id='fuzzy_search' placeholder='Enter a command' transparent icon='search' icon_position='right' fluid v-model='query' v-on:up='up' v-on:down='down' v-on:change='reset_counter'></me-input>
-    <div class='commands'>
-      <me-flexline v-for='(command, index) in command_list' v-bind:key='command.title' v-bind:class='[ "command", { "selected": index == active_index } ]'>
-        <div>
-          <i v-bind:class='[ command.icon, "icon" ]' v-if='command.icon'></i>
-          <b>{{ command.group }}</b>: {{ command.title }}
-        </div>
-        <div class='spacer'></div>
-        <div>{{ command.type }}</div>
-      </me-flexline>
+  <me-modal id='modal_command_palette' ref='modal' v-bind:content='false' v-bind:centered='false' v-on:hidden='reset'>
+    <div class='ui fluid search'>
+      <input class='prompt' type='text' placeholder='Enter a command' ref='q' v-model='query'>
+      <div class='results'></div>
     </div>
   </me-modal>
 </template>
@@ -23,175 +16,154 @@ import me_flexline from './../components/me-flexline'
 export default {
   name: 'me-modal-command-palette',
   components: {
-    'me-modal': me_modal,
-    'me-input': me_input,
-    'me-flexline': me_flexline
+    'me-modal': me_modal
+  },
+  mounted: function() {
+    // Initialize the search-box for Fomantic UI
+    $('.ui.search').search({
+      source: this.command_list,
+      type: 'cmdpalette',
+      searchDelay: 0,
+      maxResults: 256,
+      selectFirstResult: true,
+      showNoResults: false,
+      searchFields: [ 'title', 'category' ],
+      onSelect: this.execute_command,
+      minCharacters: 0,
+      duration: 0,
+      templates: {
+        cmdpalette: function(response) {
+          // Create a empty string
+          let responses = '';
+
+          // Loop through the given responses and create divs form them
+          response.results.forEach(function(element) {
+            let response_div = '<a class="result"><div class="content"><div class="title"><i class="' + element.icon + ' icon"></i> ' + element.title + '</div><div class="category">' + element.category + '</div></div></a>';
+
+            // Add the new div to the response
+            responses += response_div;
+          });
+
+          // Return the response
+          return responses;
+        }
+      }
+    });
   },
   computed: {
     command_list: function() {
-      // Local this
-      var vue_this = this;
+      let return_list = [];
 
-      // Return the filtered list
-      return this.commands.filter(function(command) { 
-        if (vue_this.query == null || vue_this.query == '') { return true; }
-        return command.title.toLowerCase().includes(vue_this.query.toLowerCase()) || command.group.toLowerCase().includes(vue_this.query.toLowerCase());
+      this.commands.forEach(function(command) {
+        if (command.type == 'link') {
+          command.title = 'Go to <b>' + command.title + '</b>';
+        }
+        return_list.push(command);
       });
+
+      return return_list;
     }
   },
   data: function() {
     return {
       query: '',
-      active_index: 0,
       commands: [
         {
           icon: 'columns',
-          group: 'Pages',
+          category: 'Pages',
           title: 'Dashboard',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/dashboard'
         },
         {
           icon: 'list',
-          group: 'Pages',
+          category: 'Pages',
           title: 'Feed',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/feed'
         },
         {
           icon: 'clipboard outline',
-          group: 'Pages',
-          title: 'Notebook',
+          category: 'Pages',
+          title: 'Notes',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/notes'
         },
         {
           icon: 'music',
-          group: 'Pages',
+          category: 'Pages',
           title: 'Events',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/events'
         },
         {
           icon: 'guitar',
-          group: 'Pages',
+          category: 'Pages',
           title: 'Making music',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/making_music'
         },
         {
           icon: 'user circle',
-          group: 'Pages',
+          category: 'Pages',
           title: 'User profile',
           type: 'link',
-          action: function() { console.log('c'); }
+          uri: '/userprofile'
         },
         {
           icon: 'sign out alternate',
-          group: 'User account',
+          category: 'User account',
           title: 'Logout',
           type: 'action',
-          action: function() { console.log('c'); }
+          action: function() { console.log('Command to logout'); }
         },
         {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout2',
+          icon: 'bars',
+          category: 'Layout',
+          title: 'Toggle menu',
           type: 'action',
-          action: function() { console.log('c'); }
+          action: function(vue_instance) {
+            vue_instance.$store.commit('set_menu_state', 'toggle');
+          }
         },
         {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout3',
+          icon: 'bars',
+          category: 'Layout',
+          title: 'Toggle sidebar',
           type: 'action',
-          action: function() { console.log('c'); }
-        },
-        {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout4',
-          type: 'action',
-          action: function() { console.log('c'); }
-        },
-        {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logou5t',
-          type: 'action',
-          action: function() { console.log('c'); }
-        },
-        {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout6',
-          type: 'action',
-          action: function() { console.log('c'); }
-        },
-        {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout7',
-          type: 'action',
-          action: function() { console.log('c'); }
-        },
-        {
-          icon: 'sign out alternate',
-          group: 'User account',
-          title: 'Logout8',
-          type: 'action',
-          action: function() { console.log('c'); }
+          action: function(vue_instance) {
+            vue_instance.$store.commit('set_sidebar_state', 'toggle');
+          }
         }
       ]
     }
   },
-  watch: {
-    query: function() {
-      // When the query changes, we have to reset the 'active_index'
-      this.reset_counter();
-    }
-  },
   methods: {
-    scroll_to_active: function(position) {
-      Vue.nextTick(function() {
-        let active_top = $('.command.selected').position().top;
-        let parent_top = $('.commands').offset().top;
-        let element_top = active_top - parent_top;
+    execute_command: function(command, results) {
+      // When a item is chosen, this method gets called and we can perform the needed action
 
-        console.log('Active top: ' + active_top);
-        console.log('Parent top: ' + parent_top);
-        console.log('Element top: ' + element_top);
+      // Close the modal
+      this.$refs.modal.hide();
 
-        if (position == 'top') {
-          console.log(element_top);
-          $('.commands').scrollTop(element_top);
+      // Check the command type and execute it
+      if (command.type == 'link') {
+        if ('uri' in command) {
+          // Navigate to the URI
+          this.$router.push(command.uri);
         }
-      });
+      } else if (command.type == 'action') {
+        if ('action' in command) {
+          // Run the connected method. We set the first argument to 'this' so the calling
+          // method can use the Vue Instance. This way, the method can use the store, for
+          // instance
+          command.action(this);
+        }
+      }
     },
-    up: function() {
-      // When the user presses the up key, we move the selected element one up
-      this.active_index -= 1;
-
-      // Check if we got out of the list
-      if (this.active_index < 0) { this.active_index = this.command_list.length - 1; }
-
-      // Scroll to the item
-      this.scroll_to_active('top');
-    },
-    down: function() {
-      // When the user presses the down key, we move the selected element one down
-      this.active_index += 1;
-
-      // Check if we got out of the list
-      if (this.active_index >= this.command_list.length ) { this.active_index = 0; }
-
-      // Scroll to the item
-      this.scroll_to_active('bottom');
-    },
-    reset_counter: function() {
-      // Set the counter back to 0
-      console.log('resetting');
-      this.active_index = 0;
+    reset: function() {
+      // Reset the form
+      this.query = '';
+      this.$refs.q.value = '';
     }
   }
 }
