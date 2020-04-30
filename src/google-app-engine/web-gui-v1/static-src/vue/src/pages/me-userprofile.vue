@@ -7,8 +7,8 @@
         <me-button :disabled='!changed' v-on:click='set_field_values'>Cancel</me-button>
       </template>
     </me-page-title>
-    <me-grid hcenter>
-      <me-cell padding v-bind:span='4'>
+    <me-grid>
+      <me-cell padding v-bind:span='6'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
@@ -18,7 +18,7 @@
           </form>
         </me-card>
       </me-cell>
-      <me-cell padding v-bind:span='4'>
+      <me-cell padding v-bind:span='6'>
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
