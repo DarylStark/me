@@ -7,7 +7,7 @@
         <me-button :disabled='!changed' v-on:click='set_field_values'>Cancel</me-button>
       </template>
     </me-page-title>
-    <me-grid>
+    <me-grid hcenter>
       <me-cell padding v-bind:span='6'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
@@ -44,6 +44,29 @@
         </me-card>
       </me-cell>
     </me-grid>
+    <me-page-title icon='key'>
+      User tokens
+    </me-page-title>
+    <me-grid>
+      <me-cell padding v-bind:span='12'>
+        <me-card raised wide class='clients'>
+          <me-h1 inverted>Authorized clients</me-h1>
+          <me-flexline class='client'>
+            <div>
+              <p class='title'>Postman <span class='publisher'>(Daryl Stark)</span></p>
+              <p class='version'>Version: 1.0</p>
+            </div>
+            <div class='spacer'></div>
+            <div><me-button>Add user token</me-button></div>
+          </me-flexline>
+          <me-flexline class='client'>
+            <div><span class='title'>me-web-gui</span></div>
+            <div class='spacer'></div>
+            <div><me-button>Add user token</me-button></div>
+          </me-flexline>
+        </me-card>
+      </me-cell>
+    </me-grid>
   </div>
 </template>
 
@@ -57,6 +80,7 @@ import me_h1 from '../components/me-h1'
 import me_button from '../components/me-button'
 import me_api_call from '../me/api_call'
 import eventbus from '../eventbus'
+import me_flexline from '../components/me-flexline'
 
 export default {
   name: 'me-content-userprofile',
@@ -67,7 +91,8 @@ export default {
     'me-card': me_card,
     'me-input': me_input,
     'me-h1': me_h1,
-    'me-button': me_button
+    'me-button': me_button,
+    'me-flexline': me_flexline
   },
   data: function() {
     return {
@@ -107,6 +132,22 @@ export default {
               vue_this.user_object.fullname = data.fullname;
               vue_this.user_object.username = data.username;
               vue_this.user_object.email = data.email;
+          }
+      });
+
+      // Reset 'changed'
+      this.changed = false;
+    },
+    set_clients: function() {
+      // Method to set the API clients
+
+      // Local this
+      var vue_this = this;
+
+      // Set the fields for the profile
+      this.$store.commit('api_update_api_clients', {
+          success: function(data) {
+              console.log(data);
           }
       });
 
@@ -190,6 +231,9 @@ export default {
   created: function() {
     // Set the fields
     this.set_field_values();
+
+    // Set the API clients
+    this.set_clients();
 
     // We don't need a sidebar on this page. Disable it.
     this.$store.commit('set_sidebar_availability', false);

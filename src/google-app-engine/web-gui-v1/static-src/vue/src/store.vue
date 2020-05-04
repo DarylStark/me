@@ -29,6 +29,10 @@ export default new Vuex.Store({
                 email: null,
                 password_date: null,
                 second_factor_enabled: false
+            },
+            api_clients: {
+                _updated: false,
+                clients: []
             }
         }
     },
@@ -191,7 +195,49 @@ export default new Vuex.Store({
             // Sets the 'second_factor_enabled' value to true or false so the application knows the
             // state of two-factor authentication
             state.api_data.user_object.second_factor_enabled = enabled == true;
-        }
+        },
+        api_update_api_clients: function(state, options = null) {
+            // Method to update the API clients
+
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                force: false
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Update the object, if needed
+            if (api_options.force || !state.api_data.api_clients._updated) {
+                // Retrieve the user object
+                me_api_call({
+                  group: 'api_clients', endpoint: 'clients',
+                  method: 'GET'
+                }).then(function(data) {
+                  // Data received
+                  console.log(data);
+
+                  // Run the callback (if there is any)
+                  if (api_options.success) { api_options.success(state.api_data.api_clients); }
+                }).catch(function(data) {
+                  // Something went wrong
+                  console.log(data);
+
+                  // TODO: Error message
+
+                  // Run the callback (if there is any)
+                  if (api_options.failed) { api_options.failed(data); }
+                });
+            } else {
+                api_options.success(state.api_data.api_clients);
+            }
+        },
     }
 });
 </script>
