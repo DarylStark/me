@@ -225,14 +225,51 @@ export default new Vuex.Store({
 
                   // Add the new data to the current list
                   data.data.dataset.data.forEach(function(element) {
+                      // Add a 'user tokens' property to the element
+                      element.user_tokens = [];
+
+                      // Add the element to the list
                       state.api_data.api_clients.clients.push(element);
                   });
 
-                  // Set 'updated' to true so it won't update again if needed
-                  state.api_data.api_clients._updated = true;
+                  // Now that we have the clients, we can retrieve the user tokens for this client
+                  me_api_call({
+                      group: 'aaa', endpoint: 'user_token',
+                      method: 'GET'
+                  }).then(function(data) {
+                      // Set 'updated' to true so it won't update again if needed
+                      state.api_data.api_clients._updated = true;
 
-                  // Run the callback (if there is any)
-                  if (api_options.success) { api_options.success(state.api_data.api_clients.clients); }
+                      // Add the user-tokens to the client-objects
+                      data.data.dataset.data.forEach(function(element) {
+                        // Convert the date-fields to a Date object
+                        element.created = new Date(element.created + ' UTC');
+                        if (element.expiration) {
+                            element.expiration = new Date(element.expiration + ' UTC');
+                        }
+
+                        // Find the client token that belongs to this one
+                        let api_client = state.api_data.api_clients.clients.find(function(client) {
+                            return client.id == element.client_token;
+                        });
+
+                        if (api_client) {
+                            // Add the user token to the client-object
+                            api_client.user_tokens.push(element);
+                        }
+                      });
+
+                      // Run the callback (if there is any)
+                      if (api_options.success) { api_options.success(state.api_data.api_clients.clients); }
+                  }).catch(function(data){
+                    // Something went wrong
+                    console.log(data);
+
+                    // TODO: Error message
+
+                    // Run the callback (if there is any)
+                    if (api_options.failed) { api_options.failed(data); }
+                  });
                 }).catch(function(data) {
                   // Something went wrong
                   console.log(data);

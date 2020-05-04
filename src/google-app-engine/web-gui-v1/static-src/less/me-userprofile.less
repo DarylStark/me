@@ -9,34 +9,67 @@
     }
 
     .clients {
-        .client {
-            background-color: rgba(255,255,255,.45); // TODO: Colorsheet
+        > div {
+            .client {
+                background-color: #ffffff; // TODO: Colorsheet
+                
+                > .me-flexline {
+                    padding: 12px 16px 12px 16px;
+                    border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
 
-            > div {
-                padding: 12px 16px 12px 16px;
-                border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
+                    &.client_title {
+                        background-color: #f3f4f7; // TODO: Colorsheet
+                    }
+
+                    p.title {
+                        font-weight: 600;
+                        font-size: 1.1em;
+                        margin-bottom: 0px;
+                    }
+
+                    span.publisher {
+                        font-weight: 400;
+                        font-size: 1em;
+                        font-style: italic;
+                    }
+
+                    p.version {
+                        color: #cccccc; // TODO: colorsheet
+                        font-style: italic;
+                    }
+                }
+
+                > div.user_token {
+                    .me-flexline {
+                        padding: 12px 16px 12px 16px;
+                        border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
+
+                        .actions {
+                            i {
+                                margin-left: 12px;
+                                cursor: pointer;
+                            }
+                        }
+
+                        .title {
+                            font-weight: 600;
+                        }
+                    }
+                }
             }
 
-            p.title {
-                font-weight: 600;
-                font-size: 1.1em;
-                margin-bottom: 0px;
+            .client:last-child {
+                border-bottom: 0px;
             }
 
-            span.publisher {
-                font-weight: 400;
-                font-size: 1em;
-                font-style: italic;
-            }
+            .loading {
+                text-align: center;
+                margin: 24px 0px 24px 0px;
 
-            p.version {
-                color: #cccccc; // TODO: colorsheet
-                font-style: italic;
+                .loader {
+                    margin-right: 12px;
+                }
             }
-        }
-
-        .client:last-child {
-            border-bottom: 0px;
         }
     }
 }

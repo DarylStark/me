@@ -51,19 +51,11 @@
       <me-cell padding v-bind:span='12'>
         <me-card raised wide class='clients'>
           <me-h1 inverted>Authorized clients</me-h1>
-          <me-flexline class='client'>
-            <div>
-              <p class='title'>Postman <span class='publisher'>(Daryl Stark)</span></p>
-              <p class='version'>Version: 1.0</p>
-            </div>
-            <div class='spacer'></div>
-            <div><me-button>Add user token</me-button></div>
-          </me-flexline>
-          <me-flexline class='client'>
-            <div><span class='title'>me-web-gui</span></div>
-            <div class='spacer'></div>
-            <div><me-button>Add user token</me-button></div>
-          </me-flexline>
+          <me-userprofile-api-client v-if='loaded_clients' v-for='client in $store.state.api_data.api_clients.clients' v-bind:key='client.id' v-bind:client='client'></me-userprofile-api-client>
+          <div class='loading' v-if='!loaded_clients'>
+            <div class='ui active inline loader'></div>
+            Loading the API clients
+          </div>
         </me-card>
       </me-cell>
     </me-grid>
@@ -80,7 +72,7 @@ import me_h1 from '../components/me-h1'
 import me_button from '../components/me-button'
 import me_api_call from '../me/api_call'
 import eventbus from '../eventbus'
-import me_flexline from '../components/me-flexline'
+import me_userprofile_api_client from '../components/me-userprofile-api-client'
 
 export default {
   name: 'me-content-userprofile',
@@ -92,7 +84,7 @@ export default {
     'me-input': me_input,
     'me-h1': me_h1,
     'me-button': me_button,
-    'me-flexline': me_flexline
+    'me-userprofile-api-client': me_userprofile_api_client
   },
   data: function() {
     return {
@@ -107,7 +99,8 @@ export default {
         email_error: false
       },
       changed: false,
-      saving: false
+      saving: false,
+      loaded_clients: false
     }
   },
   computed: {
@@ -147,7 +140,7 @@ export default {
       // Set the fields for the profile
       this.$store.commit('api_update_api_clients', {
           success: function(data) {
-              console.log(data);
+            vue_this.loaded_clients = true;
           }
       });
 

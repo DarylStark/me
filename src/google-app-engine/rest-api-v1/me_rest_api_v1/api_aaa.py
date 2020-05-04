@@ -538,4 +538,31 @@ class APIAAA:
         
         # Return the response
         return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'user_token',
+        description = 'Create, retrieve, update or delete API Client tokens',
+        permissions = {
+            'GET': 'aaa.retrieve_user_token'
+        },
+        user_token_needed = True
+    )
+    def user_token(*args, **kwargs):
+        """ Endpoint for users to create, retrieve, update or delete API user tokens """
+
+        if request.method.upper() == 'GET':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DATASET)
+            
+            # Get all permissions from the database
+            with DatabaseSession() as session:
+                # Get the users tokens
+                user_tokens = session.query(APIUserToken)
+            
+            # Set the return data
+            response.data = user_tokens.all()
+
+            # Return the object
+            return response
 #---------------------------------------------------------------------------------------------------

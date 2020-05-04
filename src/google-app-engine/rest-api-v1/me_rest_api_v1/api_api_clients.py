@@ -35,7 +35,7 @@ class APIAPIClients:
             
             # Get all permissions from the database
             with DatabaseSession() as session:
-                # Find the client token
+                # Get the client tokens
                 client_tokens = session.query(APIClientToken)
             
             # Set the return data
