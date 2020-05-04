@@ -21,5 +21,6 @@ from me_rest_api_v1.exceptions import *
 # API pages
 from me_rest_api_v1.api_users import APIUsers
 from me_rest_api_v1.api_aaa import APIAAA
+from me_rest_api_v1.api_api_clients import APIAPIClients
 from me_rest_api_v1.api_system import APISystem
 #---------------------------------------------------------------------------------------------------

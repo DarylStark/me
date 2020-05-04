@@ -217,14 +217,22 @@ export default new Vuex.Store({
             if (api_options.force || !state.api_data.api_clients._updated) {
                 // Retrieve the user object
                 me_api_call({
-                  group: 'api_clients', endpoint: 'clients',
+                  group: 'api_clients', endpoint: 'client',
                   method: 'GET'
                 }).then(function(data) {
-                  // Data received
-                  console.log(data);
+                  // Data received. First, we remove all data from the current list
+                  state.api_data.api_clients.clients = []
+
+                  // Add the new data to the current list
+                  data.data.dataset.data.forEach(function(element) {
+                      state.api_data.api_clients.clients.push(element);
+                  });
+
+                  // Set 'updated' to true so it won't update again if needed
+                  state.api_data.api_clients._updated = true;
 
                   // Run the callback (if there is any)
-                  if (api_options.success) { api_options.success(state.api_data.api_clients); }
+                  if (api_options.success) { api_options.success(state.api_data.api_clients.clients); }
                 }).catch(function(data) {
                   // Something went wrong
                   console.log(data);
@@ -235,7 +243,7 @@ export default new Vuex.Store({
                   if (api_options.failed) { api_options.failed(data); }
                 });
             } else {
-                api_options.success(state.api_data.api_clients);
+                api_options.success(state.api_data.api_clients.clients);
             }
         },
     }
