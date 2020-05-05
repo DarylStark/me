@@ -42,6 +42,7 @@
                 > div.user_token {
                     .me-flexline {
                         padding: 12px 16px 12px 16px;
+                        border: 0px;
                         border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
 
                         .actions {
@@ -49,10 +50,18 @@
                                 margin-left: 12px;
                                 cursor: pointer;
                             }
+
+                            .inline {
+                                display: inline-block;
+                            }
                         }
 
                         .title {
                             font-weight: 600;
+                        }
+
+                        .expired {
+                            color: #ff0000; // TODO: Colorsheet
                         }
                     }
 

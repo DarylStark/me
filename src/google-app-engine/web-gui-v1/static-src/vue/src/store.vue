@@ -283,6 +283,76 @@ export default new Vuex.Store({
                 api_options.success(state.api_data.api_clients.clients);
             }
         },
+        api_update_api_user_token: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    id: null,
+                    expire: null
+                }
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Check if a 'id' is given
+            if (api_options.fields.id == null) {
+                // TODO: Error message
+                return;
+            }
+
+            // Find the local object
+            var user_token = null;
+            state.api_data.api_clients.clients.forEach(function(client) {
+                if (user_token == null) {
+                    user_token = client.user_tokens.find(function(user) {
+                        return user.id == api_options.fields.id;
+                    });
+                }
+            });
+
+            console.log(user_token);
+            console.log(user_token.expiration);
+
+            // Make sure the 'expire' date is a dateformat that the API understands
+            if (api_options.fields.expire) {
+                // Save the old expire date-object to a temporary variable
+                var old_expire = api_options.fields.expire;
+
+                // Convert to UTC and replace the characters we don't need
+                api_options.fields.expire = api_options.fields.expire.toISOString();
+                api_options.fields.expire = api_options.fields.expire.replace('T', ' ');
+                api_options.fields.expire = api_options.fields.expire.replace('Z', '');
+                api_options.fields.expire = api_options.fields.expire.replace('.000', '');
+            }
+
+            // Send the request
+            me_api_call({
+                group: 'aaa', endpoint: 'user_token',
+                method: 'PATCH',
+                data: api_options.fields
+            }).then(function(data) {
+                // Update the local fields
+
+                // Update the expiration date
+                if (api_options.fields.expire) {
+                    user_token.expiration = old_expire;
+                }
+
+                // Execute the callback
+                if (api_options.success) { api_options.success(data); }
+            }).catch(function(error) {
+                console.log(error);
+                // TODO: Error message
+                if (api_options.failed) { api_options.failed(error); }
+            });
+        }
     }
 });
 </script>

@@ -1,20 +1,27 @@
 <template>
   <div class='user_token'>
-    <me-flexline>
+    <me-flexline class='ui segment'>
+      <div class='ui blue top attached fast filling indeterminate progress' ref='progressbar' v-if='loading'>
+        <div class='bar'></div>
+      </div>
       <div>
           <p v-if='user_token.description' class='title'>{{ user_token.description }}</p>
           <p v-if='!user_token.description' class='title'>No title given</p>
-          <p v-if='user_token.expiration'>{{ expire }}</p>
+          <p v-if='user_token.expiration'>Will expire on: {{ expire }} <span v-if='expired' class='expired'>(expired)</span></p>
           <p v-if='!user_token.expiration'>This token will not expire</p>
       </div>
       <div class='spacer'></div>
       <div class='actions'>
-        <div class='ui icon red button' data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled' ><i class='power off icon'></i></div>
-        <div class='ui icon green button' data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled'><i class='play icon'></i></div>
-        <div class='ui icon button' data-tooltip='Reveal token' data-position='top left' v-on:click='show_token = !show_token'><i class='key icon'></i></div>
-        <div class='ui icon button' data-tooltip='Rename token' data-position='top center'><i class='edit icon'></i></div>
-        <div v-bind:class='[ "ui", { disabled: !user_token.expiration }, "icon", "button" ]' data-tooltip='Refresh token' data-position='top right'><i class='sync icon'></i></div>
-        <div class='ui icon red button' data-tooltip='Remove token' data-position='top right'><i class='trash icon'></i></div>
+        <me-button icon='power off' data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled' class='red'></me-button>
+        <me-button icon='play' data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled' class='green'></me-button>
+        <me-button icon='key' data-tooltip='Reveal token' data-position='top left' v-on:click='show_token = !show_token'></me-button>
+        <me-button icon='edit' data-tooltip='Rename token' data-position='top center'></me-button>
+        <div class='inline'>
+          <div class='ui calendar' ref='expire_date_button'>
+            <me-button icon='clock outline' data-tooltip='Set expire date and time' data-position='top right' class='calendar'></me-button>
+          </div>
+        </div>
+        <me-button data-tooltip='Remove token' data-position='top right' icon='trash' class='red'></me-button>
       </div>
     </me-flexline>
     <me-flexline  v-if='show_token' class='token_line'>
@@ -31,6 +38,7 @@
 
 <script>
 import me_flexline from './me-flexline'
+import me_button from './me-button'
 
 export default {
   name: 'me-userprofile-api-user',
@@ -38,12 +46,17 @@ export default {
     expire: function() {
       let date_options = { year: 'numeric', month: 'long', day: 'numeric' };
       return this.user_token.expiration.toLocaleTimeString(undefined, date_options);
+    },
+    expired: function() {
+      let today = new Date();
+      return this.user_token.expiration < today;
     }
   },
   data: function() {
     return {
       show_token: false,
-      copied: false
+      copied: false,
+      loading: false
     }
   },
   methods: {
@@ -59,13 +72,62 @@ export default {
 
         setTimeout(function() { vue_this.copied = false; }, 2000);
       });
+    },
+    expire_date_set: function(date, mode) {
+      if (mode == 'minute') {
+        this.loading = true;
+
+        // Local this
+        let vue_this = this;
+
+        // We have the time, let's update the user token
+        this.$store.commit('api_update_api_user_token', {
+          success: function() {
+            vue_this.loading = false;
+            $('body').toast({
+              position: 'bottom center',
+              message: 'Updated expiration date and time',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'success'
+            });
+          },
+          failed: function() {
+            vue_this.loading = false;
+            $('body').toast({
+              position: 'bottom center',
+              message: 'Something went wrong while updating the expiration date and time',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'error'
+            });
+          },
+          fields: {
+            expire: date,
+            id: this.user_token.id,
+          }
+        })
+      }
     }
   },
   components: {
-    'me-flexline': me_flexline
+    'me-flexline': me_flexline,
+    'me-button': me_button
   },
   props: {
     user_token: { mandatory: true }
+  },
+  mounted: function() {
+    // Create the calendar object
+    $(this.$refs.expire_date_button).calendar({
+      firstDayOfWeek: 1,
+      onSelect: this.expire_date_set
+    });
+
+    // Create the progressbar-object
+    $(this.$refs.progressbar).progress();
   }
 }
 </script>

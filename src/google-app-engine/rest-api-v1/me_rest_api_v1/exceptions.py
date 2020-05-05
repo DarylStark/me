@@ -74,6 +74,14 @@ class MeRESTAPIv1AAAChangePasswordMissingFieldsError(MeRESTAPIv1PageNotFoundErro
     """ Error when a user tries to change his password and fields are missing """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUpdateUserTokenMissingIDError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to update a user token with a missing ID """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUpdateUserTokenMissingNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to update a user token that doesn't exist """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
@@ -158,6 +166,10 @@ class MeRESTAPIv1AAAVerifyTwoFactorAlreadyEnabledError(MeRESTAPIv1PermissionDeni
     """ Error when a user tries to verify a second factor for a account where second factor is
         already enabled """
     pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUpdateUserTokenWrongFieldFormatError(MeRESTAPIv1PermissionDeniedError):
+    """ Error for when a user tries to update the expire field for a user token with a invalid date
+    """
 #---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------

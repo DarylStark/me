@@ -544,7 +544,8 @@ class APIAAA:
         name = 'user_token',
         description = 'Create, retrieve, update or delete API Client tokens',
         permissions = {
-            'GET': 'aaa.retrieve_user_token'
+            'GET': 'aaa.retrieve_user_token',
+            'PATCH': 'aaa.update_user_token'
         },
         user_token_needed = True
     )
@@ -555,14 +556,53 @@ class APIAAA:
             # Create an empty response object
             response = APIResponse(APIResponse.TYPE_DATASET)
             
-            # Get all permissions from the database
+            # Get all user tokens from the database
             with DatabaseSession() as session:
                 # Get the users tokens
+                # TODO: Make sure only the tokens for the current user are returned
                 user_tokens = session.query(APIUserToken)
             
             # Set the return data
             response.data = user_tokens.all()
 
             # Return the object
+            return response
+        
+        if request.method.upper() == 'PATCH':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+
+            # Get the given data
+            json_data = request.json
+
+            # Check if we got an 'id'
+            if not 'id' in json_data.keys():
+                raise MeRESTAPIv1AAAUpdateUserTokenMissingIDError('Missing "id" in data')
+
+            # Start a database session
+            with DatabaseSession(commit_on_end = True) as session:
+                # Find the given token
+                # TODO: Only for the current user
+                user_tokens = session.query(APIUserToken).filter(APIUserToken.id == json_data['id'])
+
+                # Check if we got a user token
+                if user_tokens.count() != 1:
+                    raise MeRESTAPIv1AAAUpdateUserTokenMissingNotFoundError(f'User with id {json_data["id"]} can not be found')
+
+                # Get the token to update
+                token_object = user_tokens.first()
+
+                # Update the 'expire' field
+                if 'expire' in json_data.keys():
+                    try:
+                        # Verify the expire
+                        expire_datetime = datetime.datetime.fromisoformat(json_data['expire'])
+                        token_object.expiration = expire_datetime
+                    except ValueError:
+                        raise MeRESTAPIv1AAAUpdateUserTokenWrongFieldFormatError(f'The date "{json_data["expire"]}" is not in the correct format')
+
+                # Set the response to True so the caller knows everything went OK
+                response.data = True
+            
             return response
 #---------------------------------------------------------------------------------------------------
