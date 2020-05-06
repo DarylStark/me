@@ -73,6 +73,10 @@ export default {
         setTimeout(function() { vue_this.copied = false; }, 2000);
       });
     },
+    rename_token: function() {
+      // TODO: Implement
+      console.log('renaming');
+    },
     expire_date_set: function(date, mode) {
       if (mode == 'minute') {
         this.loading = true;
