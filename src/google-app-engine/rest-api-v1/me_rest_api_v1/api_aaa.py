@@ -544,6 +544,7 @@ class APIAAA:
         name = 'user_token',
         description = 'Create, retrieve, update or delete API Client tokens',
         permissions = {
+            'POST': 'aaa.create_user_token',
             'GET': 'aaa.retrieve_user_token',
             'PATCH': 'aaa.update_user_token'
         },
@@ -551,6 +552,56 @@ class APIAAA:
     )
     def user_token(*args, **kwargs):
         """ Endpoint for users to create, retrieve, update or delete API user tokens """
+
+        if request.method.upper() == 'POST':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_RECORD)
+
+            # Get the given data
+            json_data = request.json
+
+            # Check if we got an 'client-id'
+            if not 'client_id' in json_data.keys():
+                raise MeRESTAPIv1AAACreateUserTokenMissingClientIDError('Missing "client_id" in data')
+            
+            # Start a database session
+            with DatabaseSession(commit_on_end = True, expire_on_commit = False) as session:
+                # Check if the given client-token exists
+                client_tokens = session.query(APIClientToken).filter(APIClientToken.id == json_data['client_id'])
+                if client_tokens.count() != 1:
+                    raise MeRESTAPIv1AAACreateUserTokenClientNotFoundError(f'Client with id {json_data["client_id"]} is not found')
+                
+                # Get the APIUserToken
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
+                # Create a new UserToken
+                new_user_token = APIUserToken(
+                    user = user_token_object.user,
+                    client_token = json_data['client_id']
+                )
+
+                # Generate a random token
+                new_user_token.generate_random_token()
+
+                # Add the token
+                session.add(new_user_token)
+
+                # Set the token in the response
+                response.data = new_user_token
+
+                # Do a intermediate commit so the user token gets added and a 'id' is given
+                session.commit()
+
+                # Copy all permissions from the client token to the user token
+                for permission in client_tokens.first().client_permissions:
+                    user_permission = APIUserPermission()
+                    user_permission.permission = permission.permission
+                    user_permission.user_token = new_user_token.id
+                    user_permission.granted = permission.granted
+                    session.add(user_permission)
+            
+            # Return the response
+            return response
 
         if request.method.upper() == 'GET':
             # Create an empty response object

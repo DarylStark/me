@@ -82,6 +82,14 @@ class MeRESTAPIv1AAAUpdateUserTokenMissingNotFoundError(MeRESTAPIv1PageNotFoundE
     """ Error when a user tries to update a user token that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAACreateUserTokenMissingClientIDError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to create a user token without a client ID """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAACreateUserTokenClientNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to create a user token for a client that doesn't exist """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
