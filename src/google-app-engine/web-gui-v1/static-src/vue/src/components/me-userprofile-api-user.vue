@@ -8,7 +8,7 @@
           <p v-if='!user_token.expiration'>This token will not expire</p>
       </div>
       <div class='spacer'></div>
-      <div class='actions' v-if='!renaming'>
+      <div class='actions' v-show='!renaming'>
         <span data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled'>
           <me-button icon='power off' class='red' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='disable_token'></me-button>
         </span>
@@ -18,7 +18,7 @@
         <span data-tooltip='Reveal token' data-position='top left'>
           <me-button icon='key' v-on:click='show_token = !show_token' v-bind:class='{ "green": show_token }'></me-button>
         </span>
-        <span data-tooltip='Rename token' data-position='top center'>
+        <span data-tooltip='Rename token' data-position='top left'>
           <me-button icon='edit' v-on:click='rename_token'></me-button>
         </span>
         <div class='inline'>
@@ -28,6 +28,9 @@
             </span>
           </div>
         </div>
+        <span data-tooltip='Set to not expire' data-position='top right'>
+          <me-button icon='infinity' v-bind:loading='loading_infinity' v-bind:disabled='loading_infinity || !user_token.expiration' v-on:click='set_token_infinite'></me-button>
+        </span>
         <span data-tooltip='Remove token' data-position='top right'>
           <me-button icon='trash' class='red' v-on:click='delete_token' v-bind:loading='loading_delete' v-bind:disabled='loading_delete'></me-button>
         </span>
@@ -83,7 +86,8 @@ export default {
       loading_disable: false,
       renaming: false,
       description: null,
-      loading_delete: false
+      loading_delete: false,
+      loading_infinity: false
     }
   },
   methods: {
@@ -231,7 +235,45 @@ export default {
           enabled: true,
           id: this.user_token.id,
         }
-      })
+      });
+    },
+    set_token_infinite: function() {
+      // Method that actually updates the tokenname
+      this.loading_infinity = true;
+
+      // Local this
+      let vue_this = this;
+
+      // We have the time, let's update the user token
+      this.$store.commit('api_update_api_user_token', {
+        success: function() {
+          vue_this.loading_infinity = false;
+          vue_this.renaming = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Set token to not expire',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
+        },
+        failed: function() {
+          vue_this.loading_infinity = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Something went wrong while setting the token to not expire',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        },
+        fields: {
+          expire: null,
+          id: this.user_token.id,
+        }
+      });
     },
     delete_token: function() {
       // Local this

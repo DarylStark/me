@@ -320,15 +320,17 @@ export default new Vuex.Store({
             });
 
             // Make sure the 'expire' date is a dateformat that the API understands
-            if (api_options.fields.expire) {
+            if ('expire' in api_options.fields) {
                 // Save the old expire date-object to a temporary variable
                 var old_expire = api_options.fields.expire;
 
-                // Convert to UTC and replace the characters we don't need
-                api_options.fields.expire = api_options.fields.expire.toISOString();
-                api_options.fields.expire = api_options.fields.expire.replace('T', ' ');
-                api_options.fields.expire = api_options.fields.expire.replace('Z', '');
-                api_options.fields.expire = api_options.fields.expire.replace('.000', '');
+                if (api_options.fields.expire != null) {
+                    // Convert to UTC and replace the characters we don't need
+                    api_options.fields.expire = api_options.fields.expire.toISOString();
+                    api_options.fields.expire = api_options.fields.expire.replace('T', ' ');
+                    api_options.fields.expire = api_options.fields.expire.replace('Z', '');
+                    api_options.fields.expire = api_options.fields.expire.replace('.000', '');
+                }
             }
 
             // Send the request
@@ -340,7 +342,7 @@ export default new Vuex.Store({
                 // Update the local fields
 
                 // Update the expiration date
-                if (api_options.fields.expire) {
+                if ('expire' in api_options.fields) {
                     user_token.expiration = old_expire;
                 }
 

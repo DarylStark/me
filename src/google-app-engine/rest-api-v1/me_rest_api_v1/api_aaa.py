@@ -648,8 +648,11 @@ class APIAAA:
                 if 'expire' in json_data.keys():
                     try:
                         # Verify the expire
-                        expire_datetime = datetime.datetime.fromisoformat(json_data['expire'])
-                        token_object.expiration = expire_datetime
+                        if json_data['expire'] is None:
+                            token_object.expiration = None
+                        else:
+                            expire_datetime = datetime.datetime.fromisoformat(json_data['expire'])
+                            token_object.expiration = expire_datetime
                     except ValueError:
                         raise MeRESTAPIv1AAAUpdateUserTokenWrongFieldFormatError(f'The date "{json_data["expire"]}" is not in the correct format')
                 
