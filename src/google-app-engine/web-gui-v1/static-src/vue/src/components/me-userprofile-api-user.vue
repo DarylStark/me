@@ -1,13 +1,12 @@
 <template>
   <div class='user_token'>
     <me-flexline class='ui segment'>
-      <div>
+      <div class='grower client_title'>
           <p v-if='user_token.description' class='title'>{{ user_token.description }}</p>
           <p v-if='!user_token.description' class='title'>No title given</p>
           <p v-if='user_token.expiration'>Will expire on: {{ expire }} <span v-if='expired' class='expired'>(expired)</span></p>
           <p v-if='!user_token.expiration'>This token will not expire</p>
       </div>
-      <div class='spacer'></div>
       <div class='actions' v-show='!renaming'>
         <span data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled'>
           <me-button icon='power off' class='red' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='disable_token'></me-button>
