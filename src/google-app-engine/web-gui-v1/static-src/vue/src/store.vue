@@ -361,6 +361,56 @@ export default new Vuex.Store({
                 // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
+        },
+        api_update_api_add_user_token: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    client_id: null
+                }
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Check if a 'id' is given
+            if (api_options.fields.client_id == null) {
+                // TODO: Error message
+                return;
+            }
+
+            // Find the client in the local cache
+            let client = state.api_data.api_clients.clients.find(function(client) {
+                return client.id == api_options.fields.client_id;
+            });
+            if (client == undefined) {
+                // TODO: Error message
+                return;
+            }
+            
+            // Send the request
+            me_api_call({
+                group: 'aaa', endpoint: 'user_token',
+                method: 'POST',
+                data: api_options.fields
+            }).then(function(data) {
+                // Add the new object to the local cache
+                let new_object = data.data.object;
+                client.user_tokens.push(new_object);
+
+                // Execute the callback
+                if (api_options.success) { api_options.success(data); }
+            }).catch(function(error) {
+                console.log(error);
+                // TODO: Error message
+                if (api_options.failed) { api_options.failed(error); }
+            });
         }
     }
 });
