@@ -546,7 +546,8 @@ class APIAAA:
         permissions = {
             'POST': 'aaa.create_user_token',
             'GET': 'aaa.retrieve_user_token',
-            'PATCH': 'aaa.update_user_token'
+            'PATCH': 'aaa.update_user_token',
+            'DELETE': 'aaa.delete_user_token'
         },
         user_token_needed = True
     )
@@ -638,7 +639,7 @@ class APIAAA:
 
                 # Check if we got a user token
                 if user_tokens.count() != 1:
-                    raise MeRESTAPIv1AAAUpdateUserTokenMissingNotFoundError(f'User with id {json_data["id"]} can not be found')
+                    raise MeRESTAPIv1AAAUpdateUserTokenMissingNotFoundError(f'Usertoken with id {json_data["id"]} can not be found')
 
                 # Get the token to update
                 token_object = user_tokens.first()
@@ -665,5 +666,40 @@ class APIAAA:
                 # Set the response to True so the caller knows everything went OK
                 response.data = True
             
+            return response
+
+        if request.method.upper() == 'DELETE':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+
+            # Get the given data
+            json_data = request.json
+
+            # Check if we got an 'id'
+            if not 'id' in json_data.keys():
+                raise MeRESTAPIv1AAADeleteUserTokenMissingIDError('Missing "id" in data')
+            
+            # Start a database session
+            with DatabaseSession(commit_on_end = True) as session:
+                # Find the given token
+                # TODO: Only for the current user
+                user_tokens = session.query(APIUserToken).filter(APIUserToken.id == json_data['id'])
+
+                # Check if we got a user token
+                if user_tokens.count() != 1:
+                    raise MeRESTAPIv1AAADeleteUserTokenMissingNotFoundError(f'User-tken with id {json_data["id"]} can not be found')
+
+                # Get the token to update
+                token_object = user_tokens.first()
+
+                # Delete all permission connected to this UserToken
+                for permission in token_object.user_permissions:
+                    session.delete(permission)
+
+                # Delete the token
+                session.delete(token_object)
+            
+            # Return the response
+            response.data = True
             return response
 #---------------------------------------------------------------------------------------------------
