@@ -12,7 +12,7 @@
         <span data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled'>
           <me-button icon='power off' class='red' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='disable_token'></me-button>
         </span>
-        <span data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled' v-on:click='enable_token'>
+        <span data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled'>
           <me-button icon='play' class='green' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='enable_token'></me-button>
         </span>
         <span data-tooltip='Reveal token' data-position='top left'>
