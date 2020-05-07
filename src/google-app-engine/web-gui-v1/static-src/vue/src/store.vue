@@ -411,6 +411,67 @@ export default new Vuex.Store({
                 // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
+        },
+        api_update_api_delete_user_token: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    id: null
+                }
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Check if a 'id' is given
+            if (api_options.fields.id == null) {
+                // TODO: Error message
+                return;
+            }
+
+            // Find the token in the local cache
+            let user_token = null;
+            let client_index = null;
+            let user_index = null
+            state.api_data.api_clients.clients.forEach(function(client, index_client) {
+                if (user_token == null) {
+                    user_token = client.user_tokens.find(function(user, index_user) {
+                        client_index = index_client;
+                        user_index = index_user;
+                        return user.id == api_options.fields.id;
+                    });
+                }
+            });
+            if (user_token == null) {
+                // TODO: Error message
+                return;
+            }
+
+            // Local this
+            let vue_this = this;
+            
+            // Send the request
+            me_api_call({
+                group: 'aaa', endpoint: 'user_token',
+                method: 'DELETE',
+                data: api_options.fields
+            }).then(function(data) {
+                // Remove the element from the state
+                Vue.delete(state.api_data.api_clients.clients[client_index].user_tokens, user_index);
+
+                // Execute the callback
+                if (api_options.success) { api_options.success(data); }
+            }).catch(function(error) {
+                console.log(error);
+                // TODO: Error message
+                if (api_options.failed) { api_options.failed(error); }
+            });
         }
     }
 });

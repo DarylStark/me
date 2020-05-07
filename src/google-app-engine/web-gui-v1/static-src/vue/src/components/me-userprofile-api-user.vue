@@ -29,7 +29,7 @@
           </div>
         </div>
         <span data-tooltip='Remove token' data-position='top right'>
-          <me-button icon='trash' class='red'></me-button>
+          <me-button icon='trash' class='red' v-on:click='delete_token' v-bind:loading='loading_delete' v-bind:disabled='loading_delete'></me-button>
         </span>
       </div>
     </me-flexline>
@@ -82,7 +82,8 @@ export default {
       loading_date: false,
       loading_disable: false,
       renaming: false,
-      description: null
+      description: null,
+      loading_delete: false
     }
   },
   methods: {
@@ -231,6 +232,60 @@ export default {
           id: this.user_token.id,
         }
       })
+    },
+    delete_token: function() {
+      // Local this
+      let vue_this = this;
+
+      this.loading_delete = true;
+
+      // Ask the user if he is sure to remove this token
+      $('body').toast({
+        message: 'Do you really want to remove this user token?',
+        displayTime: 0,
+        class: 'white',
+        position: 'top center',
+        actions:	[{
+          text: 'Yes',
+          icon: 'check',
+          class: 'green',
+          click: function() {
+              vue_this.$store.commit('api_update_api_delete_user_token', {
+                success: function() {
+                  vue_this.loading_delete = false;
+                  vue_this.renaming = false;
+                  $('body').toast({
+                    position: 'bottom center',
+                    message: 'Deleted token',
+                    closeIcon: true,
+                    displayTime: 'auto',
+                    showIcon: 'user',
+                    class: 'success'
+                  });
+                },
+                failed: function() {
+                  vue_this.loading_disable = false;
+                  $('body').toast({
+                    position: 'bottom center',
+                    message: 'Something went wrong while deleting the token',
+                    closeIcon: true,
+                    displayTime: 'auto',
+                    showIcon: 'user',
+                    class: 'error'
+                  });
+                },
+                fields: {
+                  enabled: true,
+                  id: vue_this.user_token.id,
+                }
+              })
+          }
+        },{
+          icon: 'ban',
+          text: 'No',
+          class: 'red'
+        }]
+      });
     },
     expire_date_set: function(date, mode) {
       if (mode == 'minute') {
