@@ -16,7 +16,7 @@
           <me-button icon='play' class='green' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='enable_token'></me-button>
         </span>
         <span data-tooltip='Reveal token' data-position='top left'>
-          <me-button icon='key' v-on:click='show_token = !show_token'></me-button>
+          <me-button icon='key' v-on:click='show_token = !show_token' v-bind:class='{ "green": show_token }'></me-button>
         </span>
         <span data-tooltip='Rename token' data-position='top center'>
           <me-button icon='edit' v-on:click='rename_token'></me-button>
