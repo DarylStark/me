@@ -600,6 +600,12 @@ class APIAAA:
                         token_object.expiration = expire_datetime
                     except ValueError:
                         raise MeRESTAPIv1AAAUpdateUserTokenWrongFieldFormatError(f'The date "{json_data["expire"]}" is not in the correct format')
+                
+                # Update the 'description' field
+                if 'description' in json_data.keys():
+                    token_object.description = json_data['description']
+                    if json_data['description'].strip() == "":
+                        token_object.description = None
 
                 # Set the response to True so the caller knows everything went OK
                 response.data = True

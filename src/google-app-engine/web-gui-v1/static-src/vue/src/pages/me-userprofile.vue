@@ -52,7 +52,7 @@
         <me-card raised wide class='clients'>
           <me-h1 inverted>Authorized clients</me-h1>
           <me-userprofile-api-client v-if='loaded_clients' v-for='client in $store.state.api_data.api_clients.clients' v-bind:key='client.id' v-bind:client='client'></me-userprofile-api-client>
-          <div class='loading' v-if='!loaded_clients'>
+          <div class='loading_text' v-if='!loaded_clients'>
             <div class='ui active inline loader'></div>
             Loading the API clients
           </div>

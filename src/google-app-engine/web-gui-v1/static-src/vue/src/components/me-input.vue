@@ -33,6 +33,10 @@ export default {
         this.$refs.input_field.focus()
       });
     },
+    select: function() {
+      // Method to select the text in the input
+      this.$refs.input_field.select();
+    },
     escape: function() {
       // When the user presses 'esc' while the input is focussed, we emit a event
       this.$emit('escape');

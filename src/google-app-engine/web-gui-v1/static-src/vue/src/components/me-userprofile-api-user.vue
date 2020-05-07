@@ -11,11 +11,11 @@
           <p v-if='!user_token.expiration'>This token will not expire</p>
       </div>
       <div class='spacer'></div>
-      <div class='actions'>
+      <div class='actions' v-if='!renaming'>
         <me-button icon='power off' data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled' class='red'></me-button>
         <me-button icon='play' data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled' class='green'></me-button>
         <me-button icon='key' data-tooltip='Reveal token' data-position='top left' v-on:click='show_token = !show_token'></me-button>
-        <me-button icon='edit' data-tooltip='Rename token' data-position='top center'></me-button>
+        <me-button data-tooltip='Rename token' data-position='top center' icon='edit' v-on:click='rename_token'></me-button>
         <div class='inline'>
           <div class='ui calendar' ref='expire_date_button'>
             <me-button icon='clock outline' data-tooltip='Set expire date and time' data-position='top right' class='calendar'></me-button>
@@ -33,12 +33,25 @@
         Copied to clipboard!
       </div>
     </me-flexline>
+    <me-flexline v-if='renaming' class='rename'>
+      <div class='grower'>
+        <me-input id='new_name' placeholder='Enter a name for this token' fluid v-model='description' ref='new_name' transparent v-on:enter='rename_token_send' v-on:escape='cancel_rename'></me-input>
+      </div>
+      <div>
+        <span data-tooltip='Save' data-position='top right'>
+          <me-button icon='times' class='red' v-on:click='cancel_rename' v-bind:loading='loading' v-bind:disabled='loading'></me-button>
+          <me-button icon='check' class='green' v-on:click='rename_token_send' v-bind:loading='loading' v-bind:disabled='loading'></me-button>
+        </span>
+      </div>
+    </me-flexline>
   </div>
 </template>
 
 <script>
 import me_flexline from './me-flexline'
 import me_button from './me-button'
+import me_input from './me-input'
+import Vue from 'vue'
 
 export default {
   name: 'me-userprofile-api-user',
@@ -56,7 +69,9 @@ export default {
     return {
       show_token: false,
       copied: false,
-      loading: false
+      loading: false,
+      renaming: false,
+      description: null
     }
   },
   methods: {
@@ -74,8 +89,60 @@ export default {
       });
     },
     rename_token: function() {
-      // TODO: Implement
-      console.log('renaming');
+      // Start the renaming
+      this.renaming = true;
+
+      // Local this
+      let vue_this = this;
+
+      // Focus the rename input
+      Vue.nextTick().then(function() {
+        vue_this.$refs.new_name.focus();
+        vue_this.$refs.new_name.select();
+      });
+    },
+    cancel_rename: function() {
+      // Cancel the renaming
+      this.renaming = false;
+      this.description = this.user_token.description;
+    },
+    rename_token_send: function() {
+      // Method that actually updates the tokenname
+      this.loading = true;
+
+      // Local this
+      let vue_this = this;
+
+      // We have the time, let's update the user token
+      this.$store.commit('api_update_api_user_token', {
+        success: function() {
+          vue_this.loading = false;
+          vue_this.renaming = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Updated description',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
+        },
+        failed: function() {
+          vue_this.loading = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Something went wrong while updating the description',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        },
+        fields: {
+          description: this.description,
+          id: this.user_token.id,
+        }
+      })
     },
     expire_date_set: function(date, mode) {
       if (mode == 'minute') {
@@ -118,10 +185,14 @@ export default {
   },
   components: {
     'me-flexline': me_flexline,
-    'me-button': me_button
+    'me-button': me_button,
+    'me-input': me_input
   },
   props: {
     user_token: { mandatory: true }
+  },
+  created: function(){
+    this.description = this.user_token.description;
   },
   mounted: function() {
     // Create the calendar object

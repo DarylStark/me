@@ -290,7 +290,8 @@ export default new Vuex.Store({
                 failed: null,
                 fields: {
                     id: null,
-                    expire: null
+                    expire: null,
+                    description: null
                 }
             }
 
@@ -317,9 +318,6 @@ export default new Vuex.Store({
                 }
             });
 
-            console.log(user_token);
-            console.log(user_token.expiration);
-
             // Make sure the 'expire' date is a dateformat that the API understands
             if (api_options.fields.expire) {
                 // Save the old expire date-object to a temporary variable
@@ -343,6 +341,11 @@ export default new Vuex.Store({
                 // Update the expiration date
                 if (api_options.fields.expire) {
                     user_token.expiration = old_expire;
+                }
+
+                // Update the description
+                if (api_options.fields.description != null) {
+                    user_token.description = api_options.fields.description;
                 }
 
                 // Execute the callback
