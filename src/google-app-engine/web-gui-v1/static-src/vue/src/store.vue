@@ -291,7 +291,8 @@ export default new Vuex.Store({
                 fields: {
                     id: null,
                     expire: null,
-                    description: null
+                    description: null,
+                    enabled: null
                 }
             }
 
@@ -346,6 +347,11 @@ export default new Vuex.Store({
                 // Update the description
                 if (api_options.fields.description != null) {
                     user_token.description = api_options.fields.description;
+                }
+
+                // Update the disabled state
+                if (api_options.fields.enabled != null) {
+                    user_token.enabled = api_options.fields.enabled;
                 }
 
                 // Execute the callback

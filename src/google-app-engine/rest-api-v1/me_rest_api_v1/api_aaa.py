@@ -606,6 +606,10 @@ class APIAAA:
                     token_object.description = json_data['description']
                     if json_data['description'].strip() == "":
                         token_object.description = None
+                
+                # Update the 'enabled' field
+                if 'enabled' in json_data.keys():
+                    token_object.enabled = json_data['enabled']
 
                 # Set the response to True so the caller knows everything went OK
                 response.data = True

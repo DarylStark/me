@@ -1,9 +1,6 @@
 <template>
   <div class='user_token'>
     <me-flexline class='ui segment'>
-      <div class='ui blue top attached fast filling indeterminate progress' ref='progressbar' v-if='loading'>
-        <div class='bar'></div>
-      </div>
       <div>
           <p v-if='user_token.description' class='title'>{{ user_token.description }}</p>
           <p v-if='!user_token.description' class='title'>No title given</p>
@@ -12,16 +9,28 @@
       </div>
       <div class='spacer'></div>
       <div class='actions' v-if='!renaming'>
-        <me-button icon='power off' data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled' class='red'></me-button>
-        <me-button icon='play' data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled' class='green'></me-button>
-        <me-button icon='key' data-tooltip='Reveal token' data-position='top left' v-on:click='show_token = !show_token'></me-button>
-        <me-button data-tooltip='Rename token' data-position='top center' icon='edit' v-on:click='rename_token'></me-button>
+        <span data-tooltip='Disable user token' data-position='top left' v-if='user_token.enabled'>
+          <me-button icon='power off' class='red' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='disable_token'></me-button>
+        </span>
+        <span data-tooltip='Enable user token' data-position='top left' v-if='!user_token.enabled' v-on:click='enable_token'>
+          <me-button icon='play' class='green' v-bind:loading='loading_disable' v-bind:disabled='loading_disable' v-on:click='enable_token'></me-button>
+        </span>
+        <span data-tooltip='Reveal token' data-position='top left'>
+          <me-button icon='key' v-on:click='show_token = !show_token'></me-button>
+        </span>
+        <span data-tooltip='Rename token' data-position='top center'>
+          <me-button icon='edit' v-on:click='rename_token'></me-button>
+        </span>
         <div class='inline'>
           <div class='ui calendar' ref='expire_date_button'>
-            <me-button icon='clock outline' data-tooltip='Set expire date and time' data-position='top right' class='calendar'></me-button>
+            <span data-tooltip='Set expire date and time' data-position='top right'>
+              <me-button icon='clock outline' class='calendar' v-bind:loading='loading_date' v-bind:disabled='loading_date'></me-button>
+            </span>
           </div>
         </div>
-        <me-button data-tooltip='Remove token' data-position='top right' icon='trash' class='red'></me-button>
+        <span data-tooltip='Remove token' data-position='top right'>
+          <me-button icon='trash' class='red'></me-button>
+        </span>
       </div>
     </me-flexline>
     <me-flexline  v-if='show_token' class='token_line'>
@@ -70,6 +79,8 @@ export default {
       show_token: false,
       copied: false,
       loading: false,
+      loading_date: false,
+      loading_disable: false,
       renaming: false,
       description: null
     }
@@ -144,9 +155,85 @@ export default {
         }
       })
     },
+    disable_token: function() {
+      // Method that actually updates the tokenname
+      this.loading_disable = true;
+
+      // Local this
+      let vue_this = this;
+
+      // We have the time, let's update the user token
+      this.$store.commit('api_update_api_user_token', {
+        success: function() {
+          vue_this.loading_disable = false;
+          vue_this.renaming = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Disabled token',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
+        },
+        failed: function() {
+          vue_this.loading_disable = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Something went wrong while disabling the token',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        },
+        fields: {
+          enabled: false,
+          id: this.user_token.id,
+        }
+      })
+    },
+    enable_token: function() {
+      // Method that actually updates the tokenname
+      this.loading_disable = true;
+
+      // Local this
+      let vue_this = this;
+
+      // We have the time, let's update the user token
+      this.$store.commit('api_update_api_user_token', {
+        success: function() {
+          vue_this.loading_disable = false;
+          vue_this.renaming = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Enabled token',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
+        },
+        failed: function() {
+          vue_this.loading_disable = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Something went wrong while enabeling the token',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        },
+        fields: {
+          enabled: true,
+          id: this.user_token.id,
+        }
+      })
+    },
     expire_date_set: function(date, mode) {
       if (mode == 'minute') {
-        this.loading = true;
+        this.loading_date = true;
 
         // Local this
         let vue_this = this;
@@ -154,7 +241,7 @@ export default {
         // We have the time, let's update the user token
         this.$store.commit('api_update_api_user_token', {
           success: function() {
-            vue_this.loading = false;
+            vue_this.loading_date = false;
             $('body').toast({
               position: 'bottom center',
               message: 'Updated expiration date and time',
@@ -165,7 +252,7 @@ export default {
             });
           },
           failed: function() {
-            vue_this.loading = false;
+            vue_this.loading_date = false;
             $('body').toast({
               position: 'bottom center',
               message: 'Something went wrong while updating the expiration date and time',
@@ -200,9 +287,6 @@ export default {
       firstDayOfWeek: 1,
       onSelect: this.expire_date_set
     });
-
-    // Create the progressbar-object
-    $(this.$refs.progressbar).progress();
   }
 }
 </script>
