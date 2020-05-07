@@ -46,6 +46,9 @@
     </me-grid>
     <me-page-title icon='key'>
       User tokens
+      <template v-slot:actions>
+        <me-button primary v-on:click='set_clients_forced' v-bind:disabled='!loaded_clients'>Reload</me-button>
+      </template>
     </me-page-title>
     <me-grid>
       <me-cell padding v-bind:span='12'>
@@ -131,7 +134,7 @@ export default {
       // Reset 'changed'
       this.changed = false;
     },
-    set_clients: function() {
+    set_clients: function(force = false) {
       // Method to set the API clients
 
       // Local this
@@ -141,11 +144,13 @@ export default {
       this.$store.commit('api_update_api_clients', {
           success: function(data) {
             vue_this.loaded_clients = true;
-          }
+          },
+          force: force
       });
-
-      // Reset 'changed'
-      this.changed = false;
+    },
+    set_clients_forced: function() {
+      this.loaded_clients = false;
+      this.set_clients(true);
     },
     save_profile: function() {
       // Method to save the profile
