@@ -48,7 +48,7 @@
       </div>
       <div>
         <span data-tooltip='Save' data-position='top right'>
-          <me-button icon='times' class='red' v-on:click='cancel_rename' v-bind:loading='loading' v-bind:disabled='loading'></me-button>
+          <me-button icon='times' class='red' v-on:click='cancel_rename' v-bind:disabled='loading'></me-button>
           <me-button icon='check' class='green' v-on:click='rename_token_send' v-bind:loading='loading' v-bind:disabled='loading'></me-button>
         </span>
       </div>
@@ -102,6 +102,7 @@ export default {
     rename_token: function() {
       // Start the renaming
       this.renaming = true;
+      this.show_token = false;
 
       // Local this
       let vue_this = this;
