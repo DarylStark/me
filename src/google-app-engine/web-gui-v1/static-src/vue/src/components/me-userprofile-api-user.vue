@@ -382,7 +382,8 @@ export default {
     // Create the calendar object
     $(this.$refs.expire_date_button).calendar({
       firstDayOfWeek: 1,
-      onSelect: this.expire_date_set
+      onSelect: this.expire_date_set,
+      selectAdjacentDays: true
     });
   }
 }
