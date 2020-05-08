@@ -324,7 +324,10 @@ export default {
         },{
           icon: 'ban',
           text: 'No',
-          class: 'red'
+          class: 'red',
+          click: function() {
+            vue_this.loading_delete = false;
+          }
         }]
       });
     },
