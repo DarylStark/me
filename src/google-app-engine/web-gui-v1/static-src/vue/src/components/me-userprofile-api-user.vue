@@ -386,7 +386,8 @@ export default {
     $(this.$refs.expire_date_button).calendar({
       firstDayOfWeek: 1,
       onSelect: this.expire_date_set,
-      selectAdjacentDays: true
+      selectAdjacentDays: true,
+      minTimeGap: 15
     });
   }
 }
