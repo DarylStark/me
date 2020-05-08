@@ -503,7 +503,7 @@ export default new Vuex.Store({
             let api_options = {
                 success: null,
                 failed: null,
-                newname: null
+                description: null
             }
 
             // Loop through the given object and set the values to the local object
@@ -514,7 +514,39 @@ export default new Vuex.Store({
             }
 
             // Execute the API
-            // TODO: Implement
+            // Local this
+            let vue_this = this;
+            
+            // Send the request
+            me_api_call({
+                group: 'aaa', endpoint: 'set_token_description',
+                method: 'PATCH',
+                data: { 'description': api_options.description }
+            }).then(function(data) {
+                // Update the local state
+                state.api_data.user_token_object.description = api_options.description;
+
+                // Search if there is a token in the cache that needs to be updated
+                if (state.api_data.api_clients._updated) {
+                    let current_token = null;
+                    state.api_data.api_clients.clients.forEach(function(client) {
+                        current_token = client.user_tokens.find(function(user_token) {
+                            return user_token.token == state.api_data.user_token_object.token
+                        })
+                    });
+
+                    if (current_token) {
+                        current_token.description = api_options.description;
+                    }
+                }
+
+                // Execute the callback
+                if (api_options.success) { api_options.success(data); }
+            }).catch(function(error) {
+                console.log(error);
+                // TODO: Error message
+                if (api_options.failed) { api_options.failed(error); }
+            });
         }
     }
 });

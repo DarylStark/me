@@ -737,7 +737,7 @@ class APIAAA:
             # Generate a new secret key and return it to the user
             user_token_object.description = json_data['description']
             if json_data['description'].strip() == '':
-                token_object.description = None
+                user_token_object.description = None
 
             response.data = True
         

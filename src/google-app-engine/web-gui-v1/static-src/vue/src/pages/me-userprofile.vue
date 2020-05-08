@@ -47,7 +47,8 @@
         <me-card raised wide>
           <me-h1 inverted>Session options</me-h1>
           <div class='action_button'>
-            <div>Your session is now named <b>My session name</b></div>
+            <div v-if='$store.state.api_data.user_token_object.description'>Your session is named <b>{{ $store.state.api_data.user_token_object.description }}</b></div>
+            <div v-if='!$store.state.api_data.user_token_object.description'>This session has <b>no name</b></div>
             <div><me-button v-on:click='rename_session'>Rename session</me-button></div>
           </div>
           <div class='action_button'>
