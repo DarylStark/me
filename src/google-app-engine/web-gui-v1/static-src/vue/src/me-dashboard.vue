@@ -14,6 +14,7 @@
     <me-modal-disable-2nd-factor></me-modal-disable-2nd-factor>
     <me-modal-enable-2nd-factor></me-modal-enable-2nd-factor>
     <me-modal-command-palette></me-modal-command-palette>
+    <me-modal-set-session-title></me-modal-set-session-title>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ import me_modal_changepassword from './modals/me-modal-changepassword'
 import me_modal_disable_2nd_factor from './modals/me-modal-disable-2nd-factor'
 import me_modal_enable_2nd_factor from './modals/me-modal-enable-2nd-factor'
 import me_modal_command_palette from './modals/me-modal-command-palette'
+import me_modal_set_session_title from './modals/me-modal-set-session-title'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
 import eventbus from './eventbus'
@@ -47,7 +49,8 @@ export default {
     'me-modal-changepassword': me_modal_changepassword,
     'me-modal-disable-2nd-factor': me_modal_disable_2nd_factor,
     'me-modal-enable-2nd-factor': me_modal_enable_2nd_factor,
-    'me-modal-command-palette': me_modal_command_palette
+    'me-modal-command-palette': me_modal_command_palette,
+    'me-modal-set-session-title': me_modal_set_session_title
   },
   methods: {
     set_media_type: function() {
@@ -80,7 +83,7 @@ export default {
     this.$store.commit('set_environment', $cookies.get('environment'));
 
     // Set the user token for the application. We retrieve this from a cookie
-    this.$store.commit('set_user_token', $cookies.get('user_token'));
+    this.$store.commit('set_user_token', { 'token': $cookies.get('user_token') });
 
     // Update the user object in the store. This is used to set the users name on the page
     this.$store.commit('api_update_user_object');
@@ -91,6 +94,9 @@ export default {
       group: 'aaa', endpoint: 'verify_user_token',
       method: 'GET'
     }).then(function(data) {
+      // Save the data in the store
+      vue_this.$store.commit('set_user_token', data['data']['object']);
+
       // We got the data. Check if the description for the session is filled in
       if (data['data']['object']['description'] == null) {
         $('body').toast({

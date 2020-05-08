@@ -43,6 +43,9 @@ export default {
           duration: 200,
           onHidden: function() {
             vue_this.$emit('hidden');
+          },
+          onShow: function() {
+            vue_this.$emit('showing');
           }
         }).modal('show');
       },

@@ -8,7 +8,7 @@
       </template>
     </me-page-title>
     <me-grid hcenter>
-      <me-cell padding v-bind:span='6'>
+      <me-cell padding v-bind:span='4'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
@@ -18,7 +18,7 @@
           </form>
         </me-card>
       </me-cell>
-      <me-cell padding v-bind:span='6'>
+      <me-cell padding v-bind:span='4'>
         <me-card raised wide>
           <me-h1 inverted>Authentication options</me-h1>
           <div class='action_button'>
@@ -40,6 +40,19 @@
             <div>
               <me-button v-on:click='show_enable_2nd_factor_dialog'>Enable</me-button>
             </div>
+          </div>
+        </me-card>
+      </me-cell>
+      <me-cell padding v-bind:span='4'>
+        <me-card raised wide>
+          <me-h1 inverted>Session options</me-h1>
+          <div class='action_button'>
+            <div>Your session is now named <b>My session name</b></div>
+            <div><me-button v-on:click='rename_session'>Rename session</me-button></div>
+          </div>
+          <div class='action_button'>
+            <div>Your session will expire in <b>21 hours</b></div>
+            <div><me-button>Refresh session</me-button></div>
           </div>
         </me-card>
       </me-cell>
@@ -224,6 +237,9 @@ export default {
     show_enable_2nd_factor_dialog: function() {
       // Show the enable 2nd factor dialog
       eventbus.$emit('show_modal', 'modal_enable_2nd_factor');
+    },
+    rename_session: function() {
+            eventbus.$emit('show_modal', 'modal_set_session_title');
     }
   },
   created: function() {

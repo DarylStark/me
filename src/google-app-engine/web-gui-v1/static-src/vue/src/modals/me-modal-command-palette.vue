@@ -12,6 +12,7 @@ import Vue from 'vue'
 import me_modal from './me-modal'
 import me_input from './../components/me-input'
 import me_flexline from './../components/me-flexline'
+import eventbus from '../eventbus'
 
 export default {
   name: 'me-modal-command-palette',
@@ -133,6 +134,15 @@ export default {
           type: 'action',
           action: function(vue_instance) {
             vue_instance.$store.commit('set_sidebar_state', 'toggle');
+          }
+        },
+        {
+          icon: 'edit',
+          category: 'Session',
+          title: 'Set session title',
+          type: 'action',
+          action: function(vue_instance) {
+            eventbus.$emit('show_modal', 'modal_set_session_title');
           }
         }
       ]

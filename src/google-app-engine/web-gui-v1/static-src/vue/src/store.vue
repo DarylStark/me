@@ -22,6 +22,12 @@ export default new Vuex.Store({
             sidebar_open: true
         },
         api_data: {
+            user_token_object: {
+                expiration: null,
+                created: null,
+                description: null,
+                token: null
+            },
             user_object: {
                 _updated: false,
                 username: null,
@@ -97,9 +103,16 @@ export default new Vuex.Store({
                 state.app.environment = environment;
             }
         },
-        set_user_token: function(state, user_token) {
+        set_user_token: function(state, token) {
             // Sets the user token for the app
-            state.app.user_token = user_token;
+            state.app.user_token = token.token;
+
+            // Set the fields in the local token object
+            for (let key of Object.keys(state.api_data.user_token_object)) {
+                if (key in token) {
+                    state.api_data.user_token_object[key] = token[key];
+                }
+            }
         },
         api_update_user_object: function(state, options = null) {
             // Method to update the user object
@@ -344,11 +357,21 @@ export default new Vuex.Store({
                 // Update the expiration date
                 if ('expire' in api_options.fields) {
                     user_token.expiration = old_expire;
+
+                    // Check if this is the local token
+                    if (user_token.token == state.api_data.user_token_object.token) {
+                        state.api_data.user_token_object.expiration = old_expire;
+                    }
                 }
 
                 // Update the description
                 if (api_options.fields.description != null) {
                     user_token.description = api_options.fields.description;
+
+                    // Check if this is the local token
+                    if (user_token.token == state.api_data.user_token_object.token) {
+                        state.api_data.user_token_object.description = api_options.fields.description;
+                    }
                 }
 
                 // Update the disabled state
@@ -474,6 +497,24 @@ export default new Vuex.Store({
                 // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
+        },
+        api_update_api_user_token_title: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                newname: null
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Execute the API
+            // TODO: Implement
         }
     }
 });
