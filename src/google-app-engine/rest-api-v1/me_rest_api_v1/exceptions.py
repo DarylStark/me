@@ -98,6 +98,11 @@ class MeRESTAPIv1AADeleteUserTokenMissingIDError(MeRESTAPIv1PageNotFoundError):
     """ Error when a user tries to delete a user token with a missing ID """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAASetTokenDescriptionMissingDescriptionError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to set a description for the current token without a new description
+    """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):

@@ -659,7 +659,7 @@ class APIAAA:
                 # Update the 'description' field
                 if 'description' in json_data.keys():
                     token_object.description = json_data['description']
-                    if json_data['description'].strip() == "":
+                    if json_data['description'].strip() == '':
                         token_object.description = None
                 
                 # Update the 'enabled' field
@@ -705,4 +705,42 @@ class APIAAA:
             # Return the response
             response.data = True
             return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'aaa',
+        name = 'set_token_description',
+        description = 'Set a session description for the current session for the current user',
+        permissions = {
+            'PATCH': 'aaa.set_token_description'
+        },
+        user_token_needed = True
+    )
+    def set_token_description(*args, **kwargs):
+        """ Endpoint for users to set a description to their current token """
+
+        # Create an empty response object
+        response = APIResponse(APIResponse.TYPE_DONE)
+
+        # Get the given data
+        json_data = request.json
+
+        # Check if we got an 'description'
+        if not 'description' in json_data.keys():
+            raise MeRESTAPIv1AAASetTokenDescriptionMissingDescriptionError('Missing "description" in data')
+
+        # Get the user object from the database
+        with DatabaseSession(commit_on_end = True) as session:
+            # Get the user object
+            user_token = kwargs['user_token']
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+
+            # Generate a new secret key and return it to the user
+            user_token_object.description = json_data['description']
+            if json_data['description'].strip() == '':
+                token_object.description = None
+
+            response.data = True
+        
+        # Return the response
+        return response
 #---------------------------------------------------------------------------------------------------
