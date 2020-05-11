@@ -627,9 +627,10 @@ class APIAAA:
             
             # Get all user tokens from the database
             with DatabaseSession() as session:
-                # Get the users tokens
-                # TODO: Make sure only the tokens for the current user are returned
-                user_tokens = session.query(APIUserToken)
+                # Get the users token that the user is using now so we can retrieve the user that
+                # belongs to it
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+                user_tokens = session.query(APIUserToken).filter(APIUserToken.user == user_token_object.user)
             
             # Set the return data
             response.data = user_tokens.all()
@@ -650,9 +651,12 @@ class APIAAA:
 
             # Start a database session
             with DatabaseSession(commit_on_end = True) as session:
+                # Get the users token that the user is using now so we can retrieve the user that
+                # belongs to it
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
                 # Find the given token
-                # TODO: Only for the current user
-                user_tokens = session.query(APIUserToken).filter(APIUserToken.id == json_data['id'])
+                user_tokens = session.query(APIUserToken).filter(and_(APIUserToken.id == json_data['id'], APIUserToken.user == user_token_object.user))
 
                 # Check if we got a user token
                 if user_tokens.count() != 1:
@@ -701,9 +705,12 @@ class APIAAA:
             
             # Start a database session
             with DatabaseSession(commit_on_end = True) as session:
+                # Get the users token that the user is using now so we can retrieve the user that
+                # belongs to it
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
                 # Find the given token
-                # TODO: Only for the current user
-                user_tokens = session.query(APIUserToken).filter(APIUserToken.id == json_data['id'])
+                user_tokens = session.query(APIUserToken).filter(and_(APIUserToken.id == json_data['id'], APIUserToken.user == user_token_object.user))
 
                 # Check if we got a user token
                 if user_tokens.count() != 1:
@@ -748,7 +755,6 @@ class APIAAA:
         # Get the user object from the database
         with DatabaseSession(commit_on_end = True) as session:
             # Get the user object
-            user_token = kwargs['user_token']
             user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
 
             # Generate a new secret key and return it to the user
