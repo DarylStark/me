@@ -46,7 +46,7 @@
     </me-flexline>
     <me-flexline v-if='renaming' class='rename'>
       <div class='grower'>
-        <me-input id='new_name' placeholder='Enter a name for this token' fluid v-model='description' ref='new_name' transparent v-on:enter='rename_token_send' v-on:escape='cancel_rename'></me-input>
+        <me-input id='new_name' v-bind:disabled='loading' placeholder='Enter a name for this token' fluid v-model='description' ref='new_name' transparent v-on:enter='rename_token_send' v-on:escape='cancel_rename'></me-input>
       </div>
       <div>
         <span data-tooltip='Save' data-position='top right'>
@@ -123,42 +123,44 @@ export default {
       this.description = this.user_token.description;
     },
     rename_token_send: function() {
-      // Method that actually updates the tokenname
-      this.loading = true;
+      if (!this.loading) {
+        // Method that actually updates the tokenname
+        this.loading = true;
 
-      // Local this
-      let vue_this = this;
+        // Local this
+        let vue_this = this;
 
-      // We have the time, let's update the user token
-      this.$store.commit('api_update_api_user_token', {
-        success: function() {
-          vue_this.loading = false;
-          vue_this.renaming = false;
-          $('body').toast({
-            position: 'bottom center',
-            message: 'Updated description',
-            closeIcon: true,
-            displayTime: 'auto',
-            showIcon: 'user',
-            class: 'success'
-          });
-        },
-        failed: function() {
-          vue_this.loading = false;
-          $('body').toast({
-            position: 'bottom center',
-            message: 'Something went wrong while updating the description',
-            closeIcon: true,
-            displayTime: 'auto',
-            showIcon: 'user',
-            class: 'error'
-          });
-        },
-        fields: {
-          description: this.description,
-          id: this.user_token.id,
-        }
-      })
+        // We have the time, let's update the user token
+        this.$store.commit('api_update_api_user_token', {
+          success: function() {
+            vue_this.loading = false;
+            vue_this.renaming = false;
+            $('body').toast({
+              position: 'bottom center',
+              message: 'Updated description',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'success'
+            });
+          },
+          failed: function() {
+            vue_this.loading = false;
+            $('body').toast({
+              position: 'bottom center',
+              message: 'Something went wrong while updating the description',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'error'
+            });
+          },
+          fields: {
+            description: this.description,
+            id: this.user_token.id,
+          }
+        })
+      }
     },
     disable_token: function() {
       // Method that actually updates the tokenname
