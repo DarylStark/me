@@ -8,7 +8,7 @@
       </template>
     </me-page-title>
     <me-grid hcenter>
-      <me-cell padding v-bind:span='4'>
+      <me-cell padding v-bind:span='4' class='tablet-span-8'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
           <form class='ui form'>
