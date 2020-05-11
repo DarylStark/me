@@ -52,8 +52,9 @@
             <div><me-button v-on:click='rename_session'>Rename session</me-button></div>
           </div>
           <div class='action_button'>
-            <div>Your session will expire in <b>21 hours</b></div>
-            <div><me-button>Refresh session</me-button></div>
+            <div v-if='$store.state.api_data.user_token_object.expiration'>Your session will expire in <b>{{ user_session_expire_period }}</b></div>
+            <div v-if='!$store.state.api_data.user_token_object.expiration'>This session will not expire</div>
+            <div><me-button v-bind:disabled='!$store.state.api_data.user_token_object.expiration' v-on:click='refresh_token' v-bind:loading='loading_refresh'>Refresh session</me-button></div>
           </div>
         </me-card>
       </me-cell>
@@ -117,10 +118,24 @@ export default {
       },
       changed: false,
       saving: false,
-      loaded_clients: false
+      loaded_clients: false,
+      loading_refresh: false
     }
   },
   computed: {
+    user_session_expire_period: function() {
+      // $store.state.api_data.user_token_object.expiration
+      let today = new Date();
+      let difference = (this.$store.state.api_data.user_token_object.expiration.getTime() - today.getTime()) / 1000;
+      let difference_minutes = Math.round(difference / 60);
+      let difference_hours = Math.round(difference / 3600);
+
+      if (difference_minutes > 59) {
+        return difference_hours + ' hours';
+      } else {
+        return difference_minutes + ' minutes';
+      }
+    },
     password_age: function() {
       // Computed property for the password age
       let today = new Date(new Date().toDateString());
@@ -130,6 +145,39 @@ export default {
     }
   },
   methods: {
+    refresh_token: function() {
+      // Local this
+      let vue_this = this;
+      this.loading_refresh = true;
+
+      // Send the API request to refresh the user token
+      me_api_call({
+        group: 'aaa', endpoint: 'refresh_user_token',
+        method: 'PATCH'
+      }).then(function(data) {
+        vue_this.loading_refresh = false;
+        vue_this.$store.commit('set_user_token', data['data']['object']);
+
+        // Display a success toast
+        $('body').toast({
+          position: 'bottom center',
+          message: 'Your usersession is refreshed',
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user',
+          class: 'success'
+        });
+      }).catch(function(data) {
+        $('body').toast({
+          position: 'bottom center',
+          message: 'Something went wrong while refreshing your usersession',
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user',
+          class: 'error'
+        });
+      });
+    },
     set_field_values: function() {
       // Method to reset the form to the default values
 
