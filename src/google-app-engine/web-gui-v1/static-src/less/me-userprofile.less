@@ -11,14 +11,14 @@
     .clients {
         > div {
             .client {
-                background-color: #ffffff; // TODO: Colorsheet
+                background-color: @user-profile-client-bg;
                 
                 > .me-flexline {
                     padding: 12px 16px 12px 16px;
-                    border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
+                    border-bottom: 1px solid @user-profile-client-border;
 
                     &.client_title {
-                        background-color: #f3f4f7; // TODO: Colorsheet
+                        background-color: @user-profile-client-title-bg;
                     }
 
                     p.title {
@@ -34,7 +34,7 @@
                     }
 
                     p.version {
-                        color: #cccccc; // TODO: colorsheet
+                        color: @user-profile-client-version-fg;
                         font-style: italic;
                     }
                 }
@@ -43,7 +43,7 @@
                     .me-flexline {
                         padding: 12px 16px 12px 16px;
                         border: 0px;
-                        border-bottom: 1px solid rgba(34,36,38,.15);   // TODO: colorsheet
+                        border-bottom: 1px solid @user-profile-user-border;
                         border-radius: 0;
                         box-shadow: none;
                         -webkit-box-shadow: none;
@@ -77,14 +77,14 @@
                         }
 
                         .expired {
-                            color: #ff0000; // TODO: Colorsheet
+                            color: @user-profile-user-expired-fg;
                         }
                     }
 
                     .token_line {
                         padding: 12px 16px 12px 16px;
-                        background-color: rgba(255, 0, 0, .20);   // TODO: colorsheer
-                        font-family: Roboto Mono;       // TODO: Colorsheet
+                        background-color: @user-profile-user-token-bg;
+                        font-family: @font-code-block;
                         font-size: 1em;
                         font-weight: 400;
 
@@ -95,9 +95,9 @@
                 }
 
                 div.rename {
-                    border-bottom: 1px solid rgba(34,36,38,.15) !important;   // TODO: colorsheet
+                    border-bottom: 1px solid @user-profile-user-rename-border !important;
                     padding: 0px !important;
-                    background-color: #f3f4f7; // TODO: colorsheet
+                    background-color: @user-profile-user-rename-bg;
 
                     > div {
                         padding: 12px 16px 12px 0px;

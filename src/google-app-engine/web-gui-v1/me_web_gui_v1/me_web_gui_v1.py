@@ -138,7 +138,7 @@ class MeWebGUIv1:
     
     @flask_app.route('/', defaults = { 'path': '' }, methods = ['GET', 'POST'])
     @flask_app.route('/<path:path>', methods = ['GET', 'POST'])
-    def api_endpoint(path):
+    def gui_page(path):
         """ Show the correct page for the GUI """
         # Because we use services in Google App Engine with a dispatch.yaml file, we still have the
         # route from the dispatcher in the URL. In the configuration file, this URL is set and we
@@ -179,18 +179,12 @@ class MeWebGUIv1:
                     # Nothing given, return the dashboard
                     return MeWebGUIv1.page_dashboard()
             else:
-                # TODO: Redirect the user or something?
+                # No page found, redirect the user to the loginpage
                 MeWebGUIv1.logger.debug('User didn\'t specify a page')
-                return 'Redirect should be done'
-        except MeWebGUIv1PageNotFoundError as e:
-            # TODO: Custom error pages
-            return str(e), 404
-        except MeWebGUIv1PermissionDeniedError as e:
-            # TODO: Custom error pages
-            return str(e), 403
+                return flask.redirect('/ui/login', code = 302)
         except Exception as e:
-            # TODO: Custom error pages
-            return str(e), 500
+            # Oops, a error occured. Let's display a error page
+            return MeWebGUIv1.page_error()
     
     @classmethod
     def get_static_file(cls, filetype, filename):
@@ -336,6 +330,15 @@ class MeWebGUIv1:
 
         # Return the dashboard page
         return main_page
+    
+    def page_error():
+        """ The method that returns the error-page """
+
+        # Get the error page static file
+        error_page = MeWebGUIv1.get_static_file('html', 'error.html')
+
+        # Return the dashboard page
+        return error_page
     
     @classmethod
     def client_login(cls):
