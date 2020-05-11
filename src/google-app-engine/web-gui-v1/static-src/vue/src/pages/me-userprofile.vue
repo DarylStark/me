@@ -54,7 +54,7 @@
           <div class='action_button'>
             <div v-if='$store.state.api_data.user_token_object.expiration'>Your session will expire in <b>{{ user_session_expire_period }}</b></div>
             <div v-if='!$store.state.api_data.user_token_object.expiration'>This session will not expire</div>
-            <div><me-button v-bind:disabled='!$store.state.api_data.user_token_object.expiration' v-on:click='refresh_token' v-bind:loading='loading_refresh'>Refresh session</me-button></div>
+            <div><me-button v-bind:disabled='!user_session_refreshable' v-on:click='refresh_token' v-bind:loading='loading_refresh'>Refresh session</me-button></div>
           </div>
         </me-card>
       </me-cell>
@@ -136,6 +136,21 @@ export default {
         return difference_minutes + ' minutes';
       }
     },
+    user_session_refreshable: function() {
+      // Method to check if a user-session is refreshable
+      if (this.$store.state.api_data.user_token_object.expiration) {
+        let today = new Date();
+        let difference = (this.$store.state.api_data.user_token_object.expiration.getTime() - today.getTime()) / 1000;
+        let difference_hours = difference / 3600;
+
+        console.log(difference_hours);
+        
+        return difference_hours < 23;
+      }
+
+      // Return false if all of above wasn't true
+      return false;
+    },
     password_age: function() {
       // Computed property for the password age
       let today = new Date(new Date().toDateString());
@@ -168,6 +183,7 @@ export default {
           class: 'success'
         });
       }).catch(function(data) {
+        vue_this.loading_refresh = false;
         $('body').toast({
           position: 'bottom center',
           message: 'Something went wrong while refreshing your usersession',

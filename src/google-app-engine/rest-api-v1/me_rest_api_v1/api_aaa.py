@@ -144,9 +144,12 @@ class APIAAA:
         user_token_needed = True
     )
     def refresh_user_token(*args, **kwargs):
-        """ Endpoint for users to refresh their user token. This can be used by webclients to
-            refresh the user token before it expires. If the token has no expirationdate prior to
-            this endpoint, a expirationdate will be set.
+        """ Endpoint for users to refresh their user token. This can be used by (web-) clients to
+            refresh the user token before it expires. If the token has no expiration date, this API
+            call fails. The token will be refreshed by the amound of hours that is set in the value
+            for 'retrieved_user_key_refresh_lifetime' in the API configuration. If the current
+            lifetime of the token is greater then the value of this configuration, this API call will
+            fail.
 
             The request doesn't need a body. The API will use the provided User Token to update it.
         """
@@ -154,16 +157,30 @@ class APIAAA:
         # Create an empty response object
         response = APIResponse(APIResponse.TYPE_RECORD)
 
+        # Get the value for the configuration-item
+        expire_hours = MeRESTAPIv1.get_configuration('api', 'retrieved_user_key_refresh_lifetime')
+
         # Get the APIUserToken-object and update the expire time
         with DatabaseSession(commit_on_end = True, expire_on_commit = False) as session:
             # Get the APIUserToken
             user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
 
-            # Update the expiration-date
-            expirationdate = None
-            expire_hours = MeRESTAPIv1.get_configuration('api', 'retrieved_user_key_refresh_lifetime')
-            if expire_hours > 0:
-                expirationdate = datetime.datetime.utcnow() + datetime.timedelta(hours = expire_hours)
+            # Check if the current expiration is far away enough
+            if user_token_object.expiration is None:
+                raise MeRESTAPIv1AARefreshUserTokenInfiniteTokenError('The expirationdate for this token is set to "not expire" and cannot be refreshed')
+
+            # Check how long this token is still valid
+            now = datetime.datetime.utcnow()
+            difference = user_token_object.expiration - now
+            difference_hours = difference.total_seconds() / 3600
+
+            # Check if the difference in hours is greater then the configured time to refresh the
+            # token. If it is, we raise an error cause that is not permitted.
+            if difference_hours > expire_hours:
+                raise MeRESTAPIv1AARefreshUserTokenNotExpiringYetTokenError(f'The expirationdate for this token is still {difference_hours} valid and therefor not a candidate to be refreshed')
+
+            # Calculate the new expirationdate
+            expirationdate = datetime.datetime.utcnow() + datetime.timedelta(hours = expire_hours)
             user_token_object.expiration = expirationdate
 
             # Set the token in the response

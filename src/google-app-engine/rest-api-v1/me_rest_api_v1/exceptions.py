@@ -191,6 +191,15 @@ class MeRESTAPIv1AAAVerifyTwoFactorAlreadyEnabledError(MeRESTAPIv1PermissionDeni
 class MeRESTAPIv1AAAUpdateUserTokenWrongFieldFormatError(MeRESTAPIv1PermissionDeniedError):
     """ Error for when a user tries to update the expire field for a user token with a invalid date
     """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AARefreshUserTokenInfiniteTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error for when a user tries to refresh a user token that has a infinite expire date """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AARefreshUserTokenNotExpiringYetTokenError(MeRESTAPIv1PermissionDeniedError):
+    """ Error for when a user tries to refresh a user token that is not about to expire """
+    pass
 #---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
