@@ -45,6 +45,10 @@ class MeWebGUIStaticPageNotFoundError(MeWebGUIv1PageNotFoundError):
     """ Error when the user opens a static page that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeWebGUIClientWrongMethodError(MeWebGUIv1PageNotFoundError):
+    """ Error when the user tries to open the /client-url with a wrong HTTP method """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen when a user is not authorized to open a specific page
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError(MeWebGUIv1PermissionDeniedError):

@@ -184,7 +184,7 @@ class MeWebGUIv1:
                 return flask.redirect('/ui/login', code = 302)
         except Exception as e:
             # Oops, a error occured. Let's display a error page
-            return MeWebGUIv1.page_error()
+            return MeWebGUIv1.page_error(e)
     
     @classmethod
     def get_static_file(cls, filetype, filename):
@@ -331,14 +331,21 @@ class MeWebGUIv1:
         # Return the dashboard page
         return main_page
     
-    def page_error():
+    def page_error(error):
         """ The method that returns the error-page """
 
         # Get the error page static file
         error_page = MeWebGUIv1.get_static_file('html', 'error.html')
 
+        # Find the error code to give
+        status = 500
+        if issubclass(error.__class__, MeWebGUIv1PermissionDeniedError):
+            status = 403
+        elif issubclass(error.__class__, MeWebGUIv1PageNotFoundError):
+            status = 404
+
         # Return the dashboard page
-        return error_page
+        return flask.Response(error_page, status = status, mimetype = 'text/html')
     
     @classmethod
     def client_login(cls):
@@ -347,52 +354,55 @@ class MeWebGUIv1:
             Python method instead of in JavaScript so the client is not obligated to make his
             client token publically available """
         
-        # Get the given username and password
-        json_data = request.json
+        if request.method == 'POST':
+            # Get the given username and password
+            json_data = request.json
 
-        # Check if the needed values are given
-        if not 'username' in json_data.keys() or not 'password' in json_data.keys():
-            raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password not specified in request')
+            # Check if the needed values are given
+            if not 'username' in json_data.keys() or not 'password' in json_data.keys():
+                raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password not specified in request')
 
-        # Check if the values are filled in
-        if json_data['username'] in (None, '') or json_data['password'] in (None, ''):
-            raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password were empty in request')
-            
-        # Alright, we have the correct values. Let's retrieve a user token. To do this, we first
-        # have to gather some information about the API;
-        api_options = cls.get_configuration('api')
-        api_url = f'{api_options["base_url"]}/aaa/retrieve_user_token_with_credentials'
+            # Check if the values are filled in
+            if json_data['username'] in (None, '') or json_data['password'] in (None, ''):
+                raise MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError('Username or password were empty in request')
+                
+            # Alright, we have the correct values. Let's retrieve a user token. To do this, we first
+            # have to gather some information about the API;
+            api_options = cls.get_configuration('api')
+            api_url = f'{api_options["base_url"]}/aaa/retrieve_user_token_with_credentials'
 
-        # Create the data for the API
-        api_data = {
-            'username': json_data['username'],
-            'password': json_data['password']
-        }
+            # Create the data for the API
+            api_data = {
+                'username': json_data['username'],
+                'password': json_data['password']
+            }
 
-        # If the user supplied a 2nd-token, we can add it to the data
-        if 'second_factor' in json_data.keys():
-            api_data['2nd_factor'] = json_data['second_factor']
+            # If the user supplied a 2nd-token, we can add it to the data
+            if 'second_factor' in json_data.keys():
+                api_data['2nd_factor'] = json_data['second_factor']
 
-        # Do the actual POST request to the api
-        api_return = requests.post(url = api_url, json = api_data, headers = {
-            'X-Me-Auth-Client': api_options['api_token']
-        })
+            # Do the actual POST request to the api
+            api_return = requests.post(url = api_url, json = api_data, headers = {
+                'X-Me-Auth-Client': api_options['api_token']
+            })
 
-        # Check the response code.
-        if api_return.status_code == 403:
-            raise MeWebGUIv1LoginFailedError('Login failed; credentials are wrong')
-        elif api_return.status_code != 200:
-            raise MeWebGUIv1LoginAPIResponseError(f'API responded with code {api_return.status_code} and data: {api_return.json()}')
+            # Check the response code
+            if api_return.status_code == 403:
+                raise MeWebGUIv1LoginFailedError('Login failed; credentials are wrong')
+            elif api_return.status_code != 200:
+                raise MeWebGUIv1LoginAPIResponseError(f'API responded with code {api_return.status_code} and data: {api_return.json()}')
 
-        # Looks like everything went fine. Check the response
-        response_json = api_return.json()
-        if response_json['object']['_type'] == '2nd_factor':
-            # User needs to supply a second factor
-            return_object = { '2nd_factor_required': True }
-        elif response_json['object']['_type'] == 'api_user_token':
-            # We have a valid user token. Let's use it!
-            return_object = { 'user_token': response_json['object']['token'] }
+            # Looks like everything went fine. Check the response
+            response_json = api_return.json()
+            if response_json['object']['_type'] == '2nd_factor':
+                # User needs to supply a second factor
+                return_object = { '2nd_factor_required': True }
+            elif response_json['object']['_type'] == 'api_user_token':
+                # We have a valid user token. Let's use it!
+                return_object = { 'user_token': response_json['object']['token'] }
 
-        # Return the result to the Web UI
-        return flask.Response(json.dumps(return_object), mimetype = 'application/json')
+            # Return the result to the Web UI
+            return flask.Response(json.dumps(return_object), mimetype = 'application/json')
+        else:
+            raise MeWebGUIClientWrongMethodError(f'Method "{request.method}" is not accepted')
 #---------------------------------------------------------------------------------------------------
