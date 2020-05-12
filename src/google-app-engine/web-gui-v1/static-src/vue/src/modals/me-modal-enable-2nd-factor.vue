@@ -100,8 +100,14 @@ export default {
 
           QRCode.toCanvas(document.getElementById('canvas'), data_url, function(error) {
             if (error) {
-              // TODO: Good error
-              console.log(error);
+              $('body').toast({
+                position: 'bottom center',
+                message: 'Something went wrong while creating a QR code',
+                closeIcon: true,
+                displayTime: 'auto',
+                showIcon: 'user',
+                class: 'error'
+              });
             }
           });
         }).catch(function(error) {

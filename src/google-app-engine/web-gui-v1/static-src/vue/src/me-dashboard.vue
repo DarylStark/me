@@ -54,8 +54,6 @@ export default {
   },
   methods: {
     set_media_type: function() {
-      // TODO: Maybe move this to the store? Discussable...
-
       // Function to set the window size in the Vue-object and the 'device-type'. The 'device-type' can
       // be either 'desktop', 'table' or 'phone'.
       let media_type = null;
@@ -108,10 +106,14 @@ export default {
         });
       }
     }).catch(function(data) {
-      // Something went wrong
-      console.log(data);
-
-      // TODO: Error message
+      $('body').toast({
+        position: 'bottom center',
+        message: 'Couldn\'t retrieve your user token',
+        closeIcon: true,
+        displayTime: 'auto',
+        showIcon: 'user',
+        class: 'error'
+      });
     });
 
     // Add a handler to the resize-event of the 'window' object so we can see when the user resized

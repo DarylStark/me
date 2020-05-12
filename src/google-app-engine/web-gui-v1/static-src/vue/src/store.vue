@@ -167,11 +167,6 @@ export default new Vuex.Store({
                   // Run the callback (if there is any)
                   if (api_options.success) { api_options.success(state.api_data.user_object); }
                 }).catch(function(data) {
-                  // Something went wrong
-                  console.log(data);
-
-                  // TODO: Error message
-
                   // Run the callback (if there is any)
                   if (api_options.failed) { api_options.failed(data); }
                 });
@@ -293,20 +288,10 @@ export default new Vuex.Store({
                       // Run the callback (if there is any)
                       if (api_options.success) { api_options.success(state.api_data.api_clients.clients); }
                   }).catch(function(data){
-                    // Something went wrong
-                    console.log(data);
-
-                    // TODO: Error message
-
                     // Run the callback (if there is any)
                     if (api_options.failed) { api_options.failed(data); }
                   });
                 }).catch(function(data) {
-                  // Something went wrong
-                  console.log(data);
-
-                  // TODO: Error message
-
                   // Run the callback (if there is any)
                   if (api_options.failed) { api_options.failed(data); }
                 });
@@ -336,7 +321,7 @@ export default new Vuex.Store({
 
             // Check if a 'id' is given
             if (api_options.fields.id == null) {
-                // TODO: Error message
+                if (api_options.failed) { api_options.failed('No id given'); }
                 return;
             }
 
@@ -400,8 +385,6 @@ export default new Vuex.Store({
                 // Execute the callback
                 if (api_options.success) { api_options.success(data); }
             }).catch(function(error) {
-                console.log(error);
-                // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
         },
@@ -424,7 +407,7 @@ export default new Vuex.Store({
 
             // Check if a 'id' is given
             if (api_options.fields.client_id == null) {
-                // TODO: Error message
+                if (api_options.failed) { api_options.failed('No ID given'); }
                 return;
             }
 
@@ -433,7 +416,7 @@ export default new Vuex.Store({
                 return client.id == api_options.fields.client_id;
             });
             if (client == undefined) {
-                // TODO: Error message
+                if (api_options.failed) { api_options.failed('No client found'); }
                 return;
             }
             
@@ -450,8 +433,6 @@ export default new Vuex.Store({
                 // Execute the callback
                 if (api_options.success) { api_options.success(data); }
             }).catch(function(error) {
-                console.log(error);
-                // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
         },
@@ -474,7 +455,7 @@ export default new Vuex.Store({
 
             // Check if a 'id' is given
             if (api_options.fields.id == null) {
-                // TODO: Error message
+                if (api_options.failed) { api_options.failed('No ID given'); }
                 return;
             }
 
@@ -492,7 +473,7 @@ export default new Vuex.Store({
                 }
             });
             if (user_token == null) {
-                // TODO: Error message
+                if (api_options.failed) { api_options.failed('No user token given'); }
                 return;
             }
 
@@ -511,8 +492,6 @@ export default new Vuex.Store({
                 // Execute the callback
                 if (api_options.success) { api_options.success(data); }
             }).catch(function(error) {
-                console.log(error);
-                // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
         },
@@ -561,8 +540,6 @@ export default new Vuex.Store({
                 // Execute the callback
                 if (api_options.success) { api_options.success(data); }
             }).catch(function(error) {
-                console.log(error);
-                // TODO: Error message
                 if (api_options.failed) { api_options.failed(error); }
             });
         }

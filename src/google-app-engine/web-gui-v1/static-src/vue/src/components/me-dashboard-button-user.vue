@@ -4,7 +4,6 @@
 
     <div class="ui pointing dropdown top right" ref='dropdown'>
       <i class='user icon'></i>
-      <!-- TODO: Display the name of the user instead of a static name -->
       <span v-if='$store.state.ui.media_type != "phone"'>{{ $store.state.api_data.user_object.fullname }}</span>
       <div class="menu">
         <div class="header" v-if='$store.state.ui.media_type == "phone"'>
@@ -55,10 +54,14 @@ export default {
         // Redirect the user to the loginpage
         location.href = '/ui/login';
       }).catch(function(data) {
-        // Something went wrong
-        console.log(data);
-
-        // TODO: Error message
+        $('body').toast({
+          position: 'bottom center',
+          message: 'Couldn\'t remove your session',
+          closeIcon: true,
+          displayTime: 'auto',
+          showIcon: 'user',
+          class: 'error'
+        });
       });
     }
   }

@@ -4,8 +4,8 @@ import store from './store'
 import router from './router'
 import me_dashboard from './me-dashboard.vue'
 
-// TODO: Remove this before deploying to production
-Vue.config.devtools = true;
+// We disable development tools
+Vue.config.devtools = false;
 
 // Create the Vue object for the 'me-dashboard'
 var vue_dashboard = new Vue({
