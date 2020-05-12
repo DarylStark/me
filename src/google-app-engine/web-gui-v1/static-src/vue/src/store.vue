@@ -113,21 +113,23 @@ export default new Vuex.Store({
                     state.api_data.user_token_object[key] = token[key];
                     if (key == 'expiration') {
                       // Prepare the date object so JavaScript knows it is in UTC
-                      token[key] = token[key].replace(' ', 'T');
-                      token[key] = new Date(token[key] + 'Z');
-                      state.api_data.user_token_object[key] = token[key];
-                      if (state.api_data.api_clients._updated) {
-                          let current_token = null;
-                          state.api_data.api_clients.clients.forEach(function(client) {
-                              current_token = client.user_tokens.find(function(user_token) {
-                                  return user_token.token == state.api_data.user_token_object.token
-                              })
-                          });
+                        if (token[key]) {
+                            token[key] = token[key].replace(' ', 'T');
+                            token[key] = new Date(token[key] + 'Z');
+                            state.api_data.user_token_object[key] = token[key];
+                            if (state.api_data.api_clients._updated) {
+                                let current_token = null;
+                                state.api_data.api_clients.clients.forEach(function(client) {
+                                    current_token = client.user_tokens.find(function(user_token) {
+                                        return user_token.token == state.api_data.user_token_object.token
+                                    })
+                                });
 
-                          if (current_token) {
-                              current_token.expiration = token[key];
-                          }
-                      }
+                                if (current_token) {
+                                    current_token.expiration = token[key];
+                                }
+                            }
+                        }
                     }
                 }
             }
