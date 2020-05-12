@@ -304,7 +304,7 @@ export default {
       eventbus.$emit('show_modal', 'modal_enable_2nd_factor');
     },
     rename_session: function() {
-            eventbus.$emit('show_modal', 'modal_set_session_title');
+      eventbus.$emit('show_modal', 'modal_set_session_title');
     }
   },
   created: function() {

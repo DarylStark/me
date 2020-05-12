@@ -14,7 +14,7 @@
           <i class="user circle icon"></i>
           Profile
         </router-link>
-        <div class="item">
+        <div class="item" v-on:click.prevent='rename_session'>
           <i class="pen icon"></i>
           Rename session
         </div>
@@ -33,6 +33,7 @@
 
 import '../../semantic/dist/semantic'
 import '../../semantic/dist/components/dropdown'
+import eventbus from '../eventbus'
 import me_api_call from '../me/api_call'
 
 export default {
@@ -63,6 +64,9 @@ export default {
           class: 'error'
         });
       });
+    },
+    rename_session: function() {
+      eventbus.$emit('show_modal', 'modal_set_session_title');
     }
   }
 }

@@ -755,7 +755,7 @@ class APIAAA:
         # Get the user object from the database
         with DatabaseSession(commit_on_end = True) as session:
             # Get the user object
-            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
 
             # Generate a new secret key and return it to the user
             user_token_object.description = json_data['description']
