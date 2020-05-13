@@ -12,12 +12,15 @@
 from me_web_gui_v1.exceptions import *
 from flask import request
 from flask import Response
+from werkzeug.exceptions import BadRequestKeyError
 import flask
 import logging
 import datetime
 import json
 import re
 import requests
+import firebase_admin
+from firebase_admin import firestore
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1:
     """ Main class for the Web GUI. Should be used as a static class """
@@ -37,12 +40,14 @@ class MeWebGUIv1:
     # - The 'starttime' is the starttime of the application (in UTC)
     # - The 'static_file_cache' is a dict that will contain static-files in a cache. This way, the
     #   files have to be retrieved from disk just one time.
+    # - The 'firestore_client' is a client for Firestore databases
 
     configfile = 'webv1-configuration.json'
     config = None
     environment = None
     starttime = datetime.datetime.utcnow()
     static_file_cache = dict()
+    firestore_client = None
 
     # We create a logger for application-level logging. This logger is meant to log application
     # events, not accounting details for API clients.
@@ -124,6 +129,20 @@ class MeWebGUIv1:
         if cls.config is None:
             cls.load_config()
         
+        # Get the Firestore configuration and set-up a Firestore client
+        firestore_config = cls.get_configuration('firestore')
+
+        try:
+            if firestore_config['service_account_file'] is None:
+                credentials = firebase_admin.credentials.ApplicationDefault()
+            else:
+                credentials = firebase_admin.credentials.Certificate(firestore_config['service_account_file'])
+        except:
+            raise MeWebGUIv1FirestoreInitiationError('Firestore couldn\'t be initiated')
+        
+        firebase_admin.initialize_app(credentials)
+        cls.firestore_client = firestore.client()
+        
         # Configure the logger
         cls.logger.info('Logging started')
 
@@ -175,6 +194,8 @@ class MeWebGUIv1:
                     return MeWebGUIv1.static_page(requested_page)
                 elif re.match('^client/login', requested_page):
                     return MeWebGUIv1.client_login()
+                elif re.match('^client/user_settings', requested_page):
+                    return MeWebGUIv1.client_user_settings()
                 else:
                     # Nothing given, return the dashboard
                     return MeWebGUIv1.page_dashboard()
@@ -343,6 +364,9 @@ class MeWebGUIv1:
             status = 403
         elif issubclass(error.__class__, MeWebGUIv1PageNotFoundError):
             status = 404
+        
+        # Log the error
+        MeWebGUIv1.logger.error(error)
 
         # Return the dashboard page
         return flask.Response(error_page, status = status, mimetype = 'text/html')
@@ -405,4 +429,43 @@ class MeWebGUIv1:
             return flask.Response(json.dumps(return_object), mimetype = 'application/json')
         else:
             raise MeWebGUIClientWrongMethodError(f'Method "{request.method}" is not accepted')
+    
+    @classmethod
+    def client_user_settings(cls):
+        """ Method to retrieve and update user settings. When used as 'GET', the user settings are
+            retrieved from the Google Firestore. When used as 'POST', new settings are written to
+            Google Firestore. """
+        
+        # Retrieve the user ID for the currently logged on user
+        try:
+            user_token = request.cookies['user_token']
+        except BadRequestKeyError:
+            raise MeWebGUIv1ClientUserSettingsNoTokenError('No user token was specified')
+
+        # Get the user profile for this user
+        api_options = cls.get_configuration('api')
+        api_url = f'{api_options["base_url"]}/aaa/verify_user_token'
+
+        # Do the actual POST request to the api
+        api_return = requests.get(url = api_url, headers = {
+            'X-Me-Auth-User': request.cookies['user_token']
+        })
+
+        # Check the terturn code
+        if api_return.status_code != 200:
+            raise MeWebGUIv1ClientUserSettingsInvalidTokenError(f'The token "{request.cookies["user_token"]}" is not a valid token')
+
+        # Save the user object
+        user_object = api_return.json()['object']
+        
+        # If the user did a GET request, he wants to retrieve the client settings
+        if request.method == 'GET':
+            # Create a string with the correct document name
+            document_name = f'user-{user_object["user"]}'
+
+            # Retrieve the document from Firestore
+            document = cls.firestore_client.collection('user-settings').document(document_name).get()
+
+            # Return the settings for the user
+            return Response(json.dumps(document.to_dict()), mimetype = 'application/json')
 #---------------------------------------------------------------------------------------------------

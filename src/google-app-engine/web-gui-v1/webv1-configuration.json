@@ -30,6 +30,9 @@
     "api": {
       "base_url": "http://localhost:2610/api/v1",
       "api_token": "nwlnk4lqxsh97knqdxclh8ngahn3tsn4"
+    },
+    "firestore": {
+      "service_account_file": "/home/dast/Development/me/google-service-accounts/development-firestore@me-dstark-nl-test.json"
     }
   },
   "production": {
@@ -63,6 +66,9 @@
     "api": {
       "base_url": "https://me-dstark-nl-test.appspot.com/api/v1",
       "api_token": "6xedum3h1jx8en8ogvemgs2qeo93d44y"
+    },
+    "firestore": {
+      "service_account_file": null
     }
   }
 }

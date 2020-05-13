@@ -35,6 +35,10 @@ class MeWebGUIv1ConfigFileError(MeWebGUIv1CriticalError):
         a valid configfile, or the file doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeWebGUIv1FirestoreInitiationError(MeWebGUIv1CriticalError):
+    """ Error that gets raised when Firestore cannot be initiated """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PageNotFoundErrors: errors that happen when a page or resource is requested that doesn't exists
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1WrongBaseURLError(MeWebGUIv1PageNotFoundError):
@@ -57,6 +61,14 @@ class MeWebGUIv1LoginUsernameOrPasswordNotSpecifiedError(MeWebGUIv1PermissionDen
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1LoginFailedError(MeWebGUIv1PermissionDeniedError):
     """ Error when the user tries to login with a wrong username or password """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1ClientUserSettingsNoTokenError(MeWebGUIv1PermissionDeniedError):
+    """ Error when the user tries to retrieve user settings without a token """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeWebGUIv1ClientUserSettingsInvalidTokenError(MeWebGUIv1PermissionDeniedError):
+    """ Error when the user tries to retrieve user settings with a invalid token """
     pass
 #---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
