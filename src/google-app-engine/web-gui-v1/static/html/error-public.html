@@ -41,18 +41,6 @@
             text-align: center;
             text-transform: uppercase;
         }
-
-        div.error {
-            width: 500px;
-            max-width: 100%;
-            background-color: #ffffff;
-            font-family: 'Roboto Mono';
-        }
-
-        div.error p {
-            padding: 10px;
-            text-align: center;
-        }
     </style>
 </head>
 
@@ -61,11 +49,6 @@
         <div>
             <h1>Error <span>{{ status }}</span></h1>
             <h2>{{ text }}</h2>
-            <div class='error'>
-                <p>
-                    {{ error }}
-                </p>
-            </div>
         </div>
     </div>
 </body>

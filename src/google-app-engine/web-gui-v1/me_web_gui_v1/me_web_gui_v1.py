@@ -356,14 +356,25 @@ class MeWebGUIv1:
         """ The method that returns the error-page """
 
         # Get the error page static file
-        error_page = MeWebGUIv1.get_static_file('html', 'error.html')
+        template = 'error-public.html'
+        if MeWebGUIv1.environment == 'development':
+            template = 'error.html'
+        error_page = MeWebGUIv1.get_static_file('html', template)
 
         # Find the error code to give
         status = 500
+        status_text = 'Unknown error'
         if issubclass(error.__class__, MeWebGUIv1PermissionDeniedError):
             status = 403
+            status_text = 'Permission denied'
         elif issubclass(error.__class__, MeWebGUIv1PageNotFoundError):
             status = 404
+            status_text = 'Page not found'
+
+        # Replace the variables in the error page
+        error_page = error_page.replace('{{ status }}', str(status))
+        error_page = error_page.replace('{{ text }}', str(status_text))
+        error_page = error_page.replace('{{ error }}', str(error))
         
         # Log the error
         MeWebGUIv1.logger.error(error)
