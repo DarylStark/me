@@ -105,6 +105,21 @@ export default {
           showIcon: 'user'
         });
       }
+
+      // The user-token was correct. That means we can now retrieve the user settings from the
+      // client API
+      vue_this.$store.commit('update_user_settings', {
+        failed: function() {
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Couldn\'t retrieve your user settings',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        }
+      });
     }).catch(function(data) {
       $('body').toast({
         position: 'bottom center',

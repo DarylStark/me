@@ -465,7 +465,9 @@ class MeWebGUIv1:
 
         # Retrieve the user ID for the currently logged on user
         try:
-            user_token = request.cookies['user_token']
+            user_token = request.args.get('user_token')
+            if user_token is None:
+                user_token = request.cookies['user_token']
         except BadRequestKeyError:
             raise MeWebGUIv1ClientUserSettingsNoTokenError('No user token was specified')
 
@@ -475,7 +477,7 @@ class MeWebGUIv1:
 
         # Do the actual POST request to the api
         api_return = requests.get(url = api_url, headers = {
-            'X-Me-Auth-User': request.cookies['user_token']
+            'X-Me-Auth-User': user_token
         })
 
         # Check the terturn code

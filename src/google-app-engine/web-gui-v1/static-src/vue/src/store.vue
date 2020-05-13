@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import me_api_call from './me/api_call'
+import me_client_call from './me/client_call'
 
 // Make sure Vue knows to use Vuex
 Vue.use(Vuex);
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     state: {
         app: {
             environment: null,
-            user_token: null
+            user_token: null,
+            user_config: {}
         },
         ui: {
             media_type: null,
@@ -543,6 +545,30 @@ export default new Vuex.Store({
                 if (api_options.success) { api_options.success(data); }
             }).catch(function(error) {
                 if (api_options.failed) { api_options.failed(error); }
+            });
+        },
+        update_user_settings: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            // Do the call
+            me_client_call({
+                endpoint: 'user_settings'
+            }).then(function(data) {
+                state.app.user_config = data.data;
+                if (api_options.success) { api_options.success(); }
+            }).catch(function(error) {
+                if (api_options.failed) { api_options.failed(); }
             });
         }
     }
