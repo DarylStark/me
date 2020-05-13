@@ -374,7 +374,7 @@ class MeWebGUIv1:
         # Replace the variables in the error page
         error_page = error_page.replace('{{ status }}', str(status))
         error_page = error_page.replace('{{ text }}', str(status_text))
-        error_page = error_page.replace('{{ error }}', str(error))
+        error_page = error_page.replace('{{ error }}', f'{error.__class__.__name__}: {str(error)}')
         
         # Log the error
         MeWebGUIv1.logger.error(error)
@@ -446,7 +446,23 @@ class MeWebGUIv1:
         """ Method to retrieve and update user settings. When used as 'GET', the user settings are
             retrieved from the Google Firestore. When used as 'POST', new settings are written to
             Google Firestore. """
-        
+
+        def set_defaults(source, destination):
+            """ Method to merge two dicts with each other. We define this method within the scope of
+                the 'client_user_settings' method because we only need it here """
+
+            # Loop through the items in the source dict recursively and update the vlues of the
+            # destination dict
+            for key, value in source.items():
+                if type(value) is dict:
+                    if key in destination.keys():
+                        set_defaults(value, destination[key])
+                    else:
+                        destination[key] = value
+                else:
+                    if not key in destination.keys():
+                        destination[key] = value
+
         # Retrieve the user ID for the currently logged on user
         try:
             user_token = request.cookies['user_token']
@@ -476,7 +492,29 @@ class MeWebGUIv1:
 
             # Retrieve the document from Firestore
             document = cls.firestore_client.collection('user-settings').document(document_name).get()
+            config = document.to_dict()
+
+            # Set the defaults for the configuration
+            config_defaults = {
+                'formats': {
+                    '24h': True,
+                    'long_date': 'mmm dd, yyyy',
+                    'short_date': 'yyyy-mm-dd',
+                    'time': 'HH:MM:SS'
+                }
+            }
+
+            # Set the defaults in the config dict. If we have a config dict, we sync it with the
+            # defaults. If that fails for some reason (like a field is a different type then it is
+            # in the defaults dict), we set the config to all defaults
+            if config is None:
+                config = config_defaults
+            else:
+                try:
+                    set_defaults(config_defaults, config)
+                except AttributeError:
+                    config = config_defaults
 
             # Return the settings for the user
-            return Response(json.dumps(document.to_dict()), mimetype = 'application/json')
+            return Response(json.dumps(config), mimetype = 'application/json')
 #---------------------------------------------------------------------------------------------------
