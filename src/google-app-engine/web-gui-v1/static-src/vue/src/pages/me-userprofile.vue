@@ -68,14 +68,19 @@
     </me-page-title>
     <me-grid>
       <me-cell padding v-bind:span='4' class='tablet-span-8'>
-        <me-card raised wide>
+        <me-card raised wide class='date_formats'>
           <me-h1 inverted>Date and time formats</me-h1>
           <form class='ui form'>
-            <me-input :disabled='saving_user_settings' v-on:input='user_settings_changed = true' label='Datetime format' id='datetime_format' placeholder='Datetime format' icon='clock outline' v-model='user_settings.datetime_formats.datetime_format'></me-input>
-            <div>{{ example_datetime_format }}</div>
-            <div class='ui slider checkbox'>
-              <input :disabled='saving_user_settings' type='checkbox' name='24h'  v-on:input='user_settings_changed = true' v-model='user_settings.datetime_formats.show_24h'>
-              <label>Use 24h notation in timepickers</label>
+            <div class='setting_field'>
+              <me-input :disabled='saving_user_settings' v-on:input='user_settings_changed = true' label='Datetime format' id='datetime_format' placeholder='Datetime format' icon='clock outline' v-model='user_settings.datetime_formats.datetime_format'></me-input>
+              <p class='example_title'>Example</p>
+              <div class='dateformat_example'>{{ example_datetime_format }}</div>
+            </div>
+            <div class='setting_field'>
+              <div class='ui slider checkbox'>
+                <input :disabled='saving_user_settings' type='checkbox' name='24h'  v-on:input='user_settings_changed = true' v-model='user_settings.datetime_formats.show_24h'>
+                <label>Use 24h notation in timepickers</label>
+              </div>
             </div>
           </form>
         </me-card>
