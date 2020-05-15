@@ -69,7 +69,6 @@ export default {
   name: 'me-userprofile-api-user',
   computed: {
     expire: function() {
-      console.log(this);
       let format = this.$store.state.app.user_config.config.datetime_formats.datetime_format;
       if (format) {
         return strftime(format, this.user_token.expiration);
@@ -375,6 +374,17 @@ export default {
           }
         })
       }
+    },
+    init_calendar: function() {
+      // Create the calendar object
+      $(this.$refs.expire_date_button).calendar({
+        firstDayOfWeek: 1,
+        onSelect: this.expire_date_set,
+        selectAdjacentDays: true,
+        minTimeGap: 15,
+        ampm: !this.$store.state.app.user_config.config.datetime_formats.show_24h,
+        initialDate: this.user_token.expiration
+      });
     }
   },
   components: {
@@ -389,14 +399,11 @@ export default {
     this.description = this.user_token.description;
   },
   mounted: function() {
-    // Create the calendar object
-    $(this.$refs.expire_date_button).calendar({
-      firstDayOfWeek: 1,
-      onSelect: this.expire_date_set,
-      selectAdjacentDays: true,
-      minTimeGap: 15,
-      ampm: !this.$store.state.app.user_config.config.datetime_formats.show_24h
-    });
+    // Local this
+    let vue_this = this;
+
+    // Initiate the calendar
+    this.init_calendar();
   }
 }
 </script>
