@@ -14,7 +14,10 @@ export default new Vuex.Store({
         app: {
             environment: null,
             user_token: null,
-            user_config: {}
+            user_config: {
+                _updated: false,
+                config: {}
+            }
         },
         ui: {
             media_type: null,
@@ -551,7 +554,38 @@ export default new Vuex.Store({
             // Set the object
             let api_options = {
                 success: null,
-                failed: null
+                failed: null,
+                force: false
+            }
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                  api_options[key] = options[key];
+                }
+            }
+
+            if (api_options.force || !state.app.user_config._updated) {
+                // Do the call
+                me_client_call({
+                    endpoint: 'user_settings'
+                }).then(function(data) {
+                    state.app.user_config.config = data.data;
+                    state.app.user_config._updated = true;
+                    if (api_options.success) { api_options.success(data.data); }
+                }).catch(function(error) {
+                    if (api_options.failed) { api_options.failed(); }
+                });
+            } else {
+                if (api_options.success) { api_options.success(state.app.user_config.config); }
+            }
+        },
+        save_user_settings: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                config: state.app.user_config.config
             }
 
             // Loop through the given object and set the values to the local object
@@ -563,9 +597,12 @@ export default new Vuex.Store({
 
             // Do the call
             me_client_call({
-                endpoint: 'user_settings'
+                endpoint: 'user_settings',
+                method: 'POST',
+                data: api_options.config
             }).then(function(data) {
-                state.app.user_config = data.data;
+                state.app.user_config.config = JSON.parse(JSON.stringify(api_options.config));
+                state.app.user_config._updated = true;
                 if (api_options.success) { api_options.success(); }
             }).catch(function(error) {
                 if (api_options.failed) { api_options.failed(); }

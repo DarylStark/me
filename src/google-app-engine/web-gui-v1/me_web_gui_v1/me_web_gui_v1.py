@@ -487,36 +487,49 @@ class MeWebGUIv1:
         # Save the user object
         user_object = api_return.json()['object']
         
+        # Create a string with the correct document name
+        document_name = f'user-{user_object["user"]}'
+
+        # Retrieve the document from Firestore
+        document = cls.firestore_client.collection('user-settings').document(document_name)
+        document_get = document.get()
+        config = document_get.to_dict()
+
+        # Set the defaults for the configuration
+        config_defaults = {
+            'datetime_formats': {
+                'show_24h': True,
+                'datetime_format': '%b %e, %Y at %H:%M:%S'
+            }
+        }
+
+        # Set the defaults in the config dict. If we have a config dict, we sync it with the
+        # defaults. If that fails for some reason (like a field is a different type then it is
+        # in the defaults dict), we set the config to all defaults
+        if config is None:
+            config = config_defaults
+        else:
+            try:
+                set_defaults(config_defaults, config)
+            except AttributeError:
+                config = config_defaults
+        
         # If the user did a GET request, he wants to retrieve the client settings
         if request.method == 'GET':
-            # Create a string with the correct document name
-            document_name = f'user-{user_object["user"]}'
-
-            # Retrieve the document from Firestore
-            document = cls.firestore_client.collection('user-settings').document(document_name).get()
-            config = document.to_dict()
-
-            # Set the defaults for the configuration
-            config_defaults = {
-                'formats': {
-                    '24h': True,
-                    'long_date': 'mmm dd, yyyy',
-                    'short_date': 'yyyy-mm-dd',
-                    'time': 'HH:MM:SS'
-                }
-            }
-
-            # Set the defaults in the config dict. If we have a config dict, we sync it with the
-            # defaults. If that fails for some reason (like a field is a different type then it is
-            # in the defaults dict), we set the config to all defaults
-            if config is None:
-                config = config_defaults
-            else:
-                try:
-                    set_defaults(config_defaults, config)
-                except AttributeError:
-                    config = config_defaults
-
             # Return the settings for the user
             return Response(json.dumps(config), mimetype = 'application/json')
+        
+        if request.method == 'POST':
+            # Merge the old-config with the new-config
+            new_config = request.json
+            try:
+                set_defaults(config, new_config)
+            except AttributeError:
+                raise MeWebGUIv1ClientUserSettingsInvalidConfigError('The config is not correct')
+
+            # Save the config
+            document.set(new_config)
+
+            # Return the new object
+            return Response(json.dumps(new_config), mimetype = 'application/json')
 #---------------------------------------------------------------------------------------------------

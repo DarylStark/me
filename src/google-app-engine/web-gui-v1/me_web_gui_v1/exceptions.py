@@ -71,6 +71,10 @@ class MeWebGUIv1ClientUserSettingsInvalidTokenError(MeWebGUIv1PermissionDeniedEr
     """ Error when the user tries to retrieve user settings with a invalid token """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeWebGUIv1ClientUserSettingsInvalidConfigError(MeWebGUIv1PermissionDeniedError):
+    """ Error when the user tries to save user settings with a invalid item """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeWebGUIv1StaticFileTypeError(MeWebGUIv1ServerError):

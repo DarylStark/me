@@ -63,13 +63,18 @@ import me_flexline from './me-flexline'
 import me_button from './me-button'
 import me_input from './me-input'
 import Vue from 'vue'
+import strftime from 'strftime'
 
 export default {
   name: 'me-userprofile-api-user',
   computed: {
     expire: function() {
-      let date_options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return this.user_token.expiration.toLocaleTimeString(undefined, date_options);
+      console.log(this);
+      let format = this.$store.state.app.user_config.config.datetime_formats.datetime_format;
+      if (format) {
+        return strftime(format, this.user_token.expiration);
+      }
+      return undefined;
     },
     expired: function() {
       let today = new Date();
@@ -389,7 +394,8 @@ export default {
       firstDayOfWeek: 1,
       onSelect: this.expire_date_set,
       selectAdjacentDays: true,
-      minTimeGap: 15
+      minTimeGap: 15,
+      ampm: !this.$store.state.app.user_config.config.datetime_formats.show_24h
     });
   }
 }

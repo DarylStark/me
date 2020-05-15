@@ -7,7 +7,7 @@
         <me-button :disabled='!changed' v-on:click='set_field_values'>Cancel</me-button>
       </template>
     </me-page-title>
-    <me-grid hcenter>
+    <me-grid>
       <me-cell padding v-bind:span='4' class='tablet-span-8'>
         <me-card raised wide>
           <me-h1 inverted>User profile</me-h1>
@@ -59,6 +59,28 @@
         </me-card>
       </me-cell>
     </me-grid>
+    <me-page-title icon='user circle'>
+      GUI settings
+      <template v-slot:actions>
+        <me-button primary :disabled='!user_settings_changed' :loading='saving_user_settings' v-on:click='save_user_settings'>Save</me-button>
+        <me-button :disabled='!user_settings_changed' v-on:click='set_user_settings_field_values'>Cancel</me-button>
+      </template>
+    </me-page-title>
+    <me-grid>
+      <me-cell padding v-bind:span='4' class='tablet-span-8'>
+        <me-card raised wide>
+          <me-h1 inverted>Date and time formats</me-h1>
+          <form class='ui form'>
+            <me-input :disabled='saving_user_settings' v-on:input='user_settings_changed = true' label='Datetime format' id='datetime_format' placeholder='Datetime format' icon='clock outline' v-model='user_settings.datetime_formats.datetime_format'></me-input>
+            <div>{{ example_datetime_format }}</div>
+            <div class='ui slider checkbox'>
+              <input :disabled='saving_user_settings' type='checkbox' name='24h'  v-on:input='user_settings_changed = true' v-model='user_settings.datetime_formats.show_24h'>
+              <label>Use 24h notation in timepickers</label>
+            </div>
+          </form>
+        </me-card>
+      </me-cell>
+    </me-grid>
     <me-page-title icon='key'>
       User tokens
       <template v-slot:actions>
@@ -91,6 +113,7 @@ import me_button from '../components/me-button'
 import me_api_call from '../me/api_call'
 import eventbus from '../eventbus'
 import me_userprofile_api_client from '../components/me-userprofile-api-client'
+import strftime from 'strftime'
 
 export default {
   name: 'me-content-userprofile',
@@ -116,8 +139,16 @@ export default {
         fullname_error: false,
         email_error: false
       },
+      user_settings: {
+        datetime_formats: {
+          datetime_format: null,
+          show_24h: false
+        }
+      },
       changed: false,
+      user_settings_changed: false,
       saving: false,
+      saving_user_settings: false,
       loaded_clients: false,
       loading_refresh: false
     }
@@ -142,9 +173,6 @@ export default {
         let today = new Date();
         let difference = (this.$store.state.api_data.user_token_object.expiration.getTime() - today.getTime()) / 1000;
         let difference_hours = difference / 3600;
-
-        console.log(difference_hours);
-        
         return difference_hours < 23;
       }
 
@@ -157,6 +185,14 @@ export default {
       let pw_date = new Date(this.$store.state.api_data.user_object.password_date.toDateString())
       let age = (today - pw_date) / 1000 / 3600 / 24;
       return age;
+    },
+    example_datetime_format: function() {
+      let format = this.user_settings.datetime_formats.datetime_format;
+      if (format) {
+        return strftime(format);
+      } else {
+        return 'Please fill in a datetime format'
+      }
     }
   },
   methods: {
@@ -305,11 +341,72 @@ export default {
     },
     rename_session: function() {
       eventbus.$emit('show_modal', 'modal_set_session_title');
+    },
+    set_user_settings_field_values: function() {
+      // Local this
+      let vue_this = this;
+
+      // Set the user settings
+      this.$store.commit('update_user_settings', {
+        success: function(data) {
+          // Set the local settings
+          vue_this.user_settings.datetime_formats.show_24h = data.datetime_formats['show_24h'];
+          vue_this.user_settings.datetime_formats.datetime_format = data.datetime_formats.datetime_format;
+        },
+        failed: function() {
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Couldn\'t retrieve your user settings',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        }
+      });
+    },
+    save_user_settings: function() {
+      // Local this
+      let vue_this = this;
+
+      this.saving_user_settings = true;
+      this.user_settings_changed = false;
+
+      // Save the user settings
+      this.$store.commit('save_user_settings', {
+        config: this.user_settings,
+        success: function(data) {
+          vue_this.saving_user_settings = false;
+          // Set the local settings
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Saved user settings',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'success'
+          });
+        },
+        failed: function(error) {
+          vue_this.saving_user_settings = false;
+          $('body').toast({
+            position: 'bottom center',
+            message: 'Couldn\'t save your user settings',
+            closeIcon: true,
+            displayTime: 'auto',
+            showIcon: 'user',
+            class: 'error'
+          });
+        }
+      });
     }
   },
   created: function() {
     // Set the fields
     this.set_field_values();
+
+    // Set the user settings
+    this.set_user_settings_field_values();
 
     // Set the API clients
     this.set_clients();
