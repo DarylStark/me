@@ -14,6 +14,7 @@ export default new Vuex.Store({
         app: {
             environment: null,
             user_token: null,
+            loading_text: 'Loading dashboard',
             user_config: {
                 _updated: false,
                 config: {}

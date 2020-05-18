@@ -1,6 +1,10 @@
 <!-- Vue component for the login-form -->
 <template>
   <div id='me-dashboard'>
+    <!-- Splashscreen -->
+    <transition name='slide-fade'>
+      <me-splashscreen v-if='!done_loading'></me-splashscreen>
+    </transition>
     <!-- Header area -->
     <me-dashboard-header></me-dashboard-header>
     <div id='me-dashboard-menu-and-content'>
@@ -31,6 +35,7 @@ import me_modal_disable_2nd_factor from './modals/me-modal-disable-2nd-factor'
 import me_modal_enable_2nd_factor from './modals/me-modal-enable-2nd-factor'
 import me_modal_command_palette from './modals/me-modal-command-palette'
 import me_modal_set_session_title from './modals/me-modal-set-session-title'
+import me_splashscreen from './components/me-splashscreen'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
 import eventbus from './eventbus'
@@ -50,7 +55,38 @@ export default {
     'me-modal-disable-2nd-factor': me_modal_disable_2nd_factor,
     'me-modal-enable-2nd-factor': me_modal_enable_2nd_factor,
     'me-modal-command-palette': me_modal_command_palette,
-    'me-modal-set-session-title': me_modal_set_session_title
+    'me-modal-set-session-title': me_modal_set_session_title,
+    'me-splashscreen': me_splashscreen
+  },
+  data: function() {
+    return {
+      'done_loading': false,
+      'loading_watcher': 0,
+      'loading_state': {
+        'user_profile': false,
+        'user_settings': false,
+        'other': false
+      }
+    }
+  },
+  watch: {
+    loading_watcher: function() {
+      // Set counters to zero
+      let done = 0;
+      let not_done = 0;
+
+      // Check how far we are
+      for (let key in this.loading_state) {
+        if (this.loading_state[key] === true) {
+          done++;
+        } else {
+          not_done++;
+        }
+      }
+
+      // If we are done, set 'done_loading' to true so the splashscreen can go away
+      if (not_done == 0) { this.done_loading = true; }
+    }
   },
   methods: {
     set_media_type: function() {
@@ -88,10 +124,14 @@ export default {
 
     // Verify the user token. When we do this, we get the User Token object from the API in
     // response.
+    this.$store.state.app.loading_text = 'Verifying user token';
     me_api_call({
       group: 'aaa', endpoint: 'verify_user_token',
       method: 'GET'
     }).then(function(data) {
+      vue_this.loading_state.user_profile = true;
+      vue_this.loading_watcher++;
+      
       // Save the data in the store
       vue_this.$store.commit('set_user_token', data['data']['object']);
 
@@ -108,7 +148,12 @@ export default {
 
       // The user-token was correct. That means we can now retrieve the user settings from the
       // client API
+      vue_this.$store.state.app.loading_text = 'Retrieving user settings';
       vue_this.$store.commit('update_user_settings', {
+        success: function() {
+          vue_this.loading_state.user_settings = true;
+          vue_this.loading_watcher++;
+        },
         failed: function() {
           $('body').toast({
             position: 'bottom center',
@@ -130,6 +175,8 @@ export default {
         class: 'error'
       });
     });
+
+    this.$store.state.app.loading_text = 'Setting handlers';
 
     // Add a handler to the resize-event of the 'window' object so we can see when the user resized
     // the window
@@ -170,6 +217,9 @@ export default {
         vue_this.$store.commit('set_sidebar_state', 'toggle');
       }
     });
+
+    vue_this.loading_state.other = true;
+    vue_this.loading_watcher++;
   }
 }
 </script>
