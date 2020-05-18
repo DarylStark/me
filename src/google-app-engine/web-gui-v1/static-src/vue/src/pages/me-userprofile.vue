@@ -351,6 +351,8 @@ export default {
       // Local this
       let vue_this = this;
 
+      this.user_settings_changed = false;
+
       // Set the user settings
       this.$store.commit('update_user_settings', {
         success: function(data) {
@@ -422,7 +424,7 @@ export default {
   beforeRouteLeave: function(to, from, next) {
     // When the user tries to leave the page before saving or resetting the information, we give the
     // user a warning and a chance to save the form first
-    if (this.changed) {
+    if (this.changed || this.user_settings_changed) {
       $('body').toast({
         message: 'You haven\'t saved the form yet. Are you sure you want to leave?',
         displayTime: 0,
