@@ -9,12 +9,18 @@ export default function(options) {
   
   // Create a object with the default values
   let api_options = {
+      environment: null,           // The environment to use
       api_url: null,              // The URL of the client
       method: 'GET',              // The HTTP method to use for the request
       endpoint: null,             // The endpoint of the request
       data: null                  // The data to send
   }
   
+  // Loop through the given object and set the values to the local object
+  for (let key of Object.keys(options)) {
+    api_options[key] = options[key];
+  }
+
   // Object with API URLs
   let api_urls = {
       production: 'https://me-dstark-nl-test.appspot.com/ui/client',
@@ -22,17 +28,15 @@ export default function(options) {
   }
   
   // Set the correct API URL
-  let environment = store.state.app.environment;
+  let environment = api_options.environment; 
+  if (environment == null) {
+    environment = store.state.app.environment;
+  }
   if (environment in api_urls) {
       api_options.api_url = api_urls[environment];
   } else {
-      // If we cannot find the enviroment, we trow an error
+      // If we cannot find the environment, we trow an error
       throw 'Cannot find environment "' + environment + '"';
-  }
-  
-  // Loop through the given object and set the values to the local object
-  for (let key of Object.keys(options)) {
-      api_options[key] = options[key];
   }
 
   // Generate the full URL for the request

@@ -28,7 +28,7 @@ import vue_cookies from 'vue-cookies'
 import me_card from './components/me-card'
 import me_h1 from './components/me-h1'
 import me_input from './components/me-input'
-import axios from 'axios'
+import me_client_call from './me/client_call'
 
 // Export the form
 export default {
@@ -77,11 +77,19 @@ export default {
       // Local this
       let vue_this = this;
 
+      // Determine the environment
+      let environment = 'production';
+      let full_url = window.location.href;
+      if (full_url.includes('localhost') || full_url.includes('127.0.0.1')) {
+        environment = 'development'
+      }
+
       // Send the login-request
-      axios({
+      me_client_call({
         method: 'POST',
-        url: '/ui/client/login',
-        data: login_data
+          endpoint: 'login',
+          data: login_data,
+          environment: environment
       }).then(function(data) {
         if ('2nd_factor_required' in data.data) {
           // A second factor is needed. Present the correct form to the user
