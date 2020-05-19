@@ -195,6 +195,7 @@ export default {
           // If the device is phone, close the menu again
           vue_this.$store.commit('set_menu_state', false);
           vue_this.$store.commit('set_sidebar_state', false);
+          vue_this.$store.commit('set_search_state', false);
         }
       }
     });

@@ -23,7 +23,7 @@ export default {
   methods: {
     toggle_search: function() {
       // Method to activate or deactive the search bar
-      this.$store.state.ui.search_active = !this.$store.state.ui.search_active;
+      this.$store.commit('set_search_state', 'toggle');
 
       // Set focus to the search-input. Because Vue doesn't update the DOM immidiatly, we have to
       // wait for it to do so with the 'nextTick' method.

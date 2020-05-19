@@ -102,6 +102,16 @@ export default new Vuex.Store({
             // be disabled to not confuse the user
             state.ui.sidebar_available = new_availability;
         },
+        set_search_state: function(state, new_state) {
+            // Method to set the state of the searchbar; open or closed. When the 'new_state' is set
+            // to true, the searchbar should be open. Whe the 'new_state' is set to false, the bar
+            // should be closed. If the state is set to 'toggle', we 'toggle' the searchbar
+            if (new_state == true || new_state == false) {
+                state.ui.search_active = new_state;
+            } else if(new_state == 'toggle') {
+                state.ui.search_active = !state.ui.search_active;
+            }
+        },
         set_environment: function(state, environment) {
             // Sets the environment for the app. If the environment is empty, we assume production
             state.app.environment = 'production';
