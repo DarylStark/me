@@ -264,6 +264,17 @@ export default {
           success: function(data) {
             vue_this.loaded_clients = true;
           },
+          failed: function() {
+            vue_this.loaded_clients = true;
+            $('body').toast({
+              position: 'bottom center',
+              message: 'Something went wrong while retrieving the API clients',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'error'
+            });
+          },
           force: force
       });
     },
