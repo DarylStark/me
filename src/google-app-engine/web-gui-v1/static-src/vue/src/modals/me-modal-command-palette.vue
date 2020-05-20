@@ -53,99 +53,60 @@ export default {
   },
   computed: {
     command_list: function() {
+      // Create a empty return list
       let return_list = [];
 
-      this.commands.forEach(function(command) {
-        if (command.type == 'link') {
-          command.title = 'Go to <b>' + command.title + '</b>';
-        }
-        return_list.push(command);
+      // Create a empty list for the items
+      let commands = new Array();
+
+      // Get the items from the main menu
+      this.$store.state.ui.menus.main.forEach(function(menu) {
+        menu.items.forEach(function(menu_item) {
+          // Create a new item
+          let new_item = {
+            title: menu_item.title,
+            category: 'Main menu',
+            icon: menu_item.icon,
+            type: 'link',
+            uri: menu_item.dst
+          }
+
+          // Add the item to the commands
+          commands.push(new_item);
+        });
       });
 
-      return return_list;
+      // Get the actions from the store
+      this.$store.state.ui.actions.forEach(function(action) {
+        // Create a new item
+          let new_item = {
+            title: action.title,
+            category: 'Global action',
+            icon: action.icon,
+            type: action.type,
+            uri: action.dst,
+            action: action.action
+          }
+
+          // Add the item to the commands
+          commands.push(new_item);
+      });
+
+      // Return the list
+      return commands.sort(function(item_a, item_b) {
+        if (item_a.title > item_b.title) { 
+          return 1;
+        }
+        if (item_a.title < item_b.title) { 
+          return -1;
+        }
+        return 0;
+      });
     }
   },
   data: function() {
     return {
-      query: '',
-      commands: [
-        {
-          icon: 'columns',
-          category: 'Pages',
-          title: 'Dashboard',
-          type: 'link',
-          uri: '/dashboard'
-        },
-        {
-          icon: 'list',
-          category: 'Pages',
-          title: 'Feed',
-          type: 'link',
-          uri: '/feed'
-        },
-        {
-          icon: 'clipboard outline',
-          category: 'Pages',
-          title: 'Notes',
-          type: 'link',
-          uri: '/notes'
-        },
-        {
-          icon: 'music',
-          category: 'Pages',
-          title: 'Events',
-          type: 'link',
-          uri: '/events'
-        },
-        {
-          icon: 'guitar',
-          category: 'Pages',
-          title: 'Making music',
-          type: 'link',
-          uri: '/making_music'
-        },
-        {
-          icon: 'user circle',
-          category: 'Pages',
-          title: 'User profile',
-          type: 'link',
-          uri: '/userprofile'
-        },
-        {
-          icon: 'sign out alternate',
-          category: 'User account',
-          title: 'Logout',
-          type: 'action',
-          action: function() { console.log('Command to logout'); }
-        },
-        {
-          icon: 'bars',
-          category: 'Layout',
-          title: 'Toggle menu',
-          type: 'action',
-          action: function(vue_instance) {
-            vue_instance.$store.commit('set_menu_state', 'toggle');
-          }
-        },
-        {
-          icon: 'bars',
-          category: 'Layout',
-          title: 'Toggle sidebar',
-          type: 'action',
-          action: function(vue_instance) {
-            vue_instance.$store.commit('set_sidebar_state', 'toggle');
-          }
-        },
-        {
-          icon: 'edit',
-          category: 'Session',
-          title: 'Set session title',
-          type: 'action',
-          action: function(vue_instance) {
-            eventbus.$emit('show_modal', 'modal_set_session_title');
-          }
-        }
-      ]
+      query: ''
     }
   },
   methods: {

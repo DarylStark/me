@@ -4,6 +4,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import me_api_call from './me/api_call'
 import me_client_call from './me/client_call'
+import eventbus from './eventbus'
 
 // Make sure Vue knows to use Vuex
 Vue.use(Vuex);
@@ -25,7 +26,64 @@ export default new Vuex.Store({
             search_active: false,
             menu_open: true,
             sidebar_available: true,
-            sidebar_open: true
+            sidebar_open: true,
+            menus: {
+                'main': [
+                    {
+                        group: 'Menu',
+                        display_group_title: false,
+                        items: [
+                            { title: 'Dashboard', icon: 'columns', dst: '/home' },
+                            { title: 'Feed', icon: 'list', dst: '/feed' },
+                            { title: 'Notes', icon: 'clipboard outline', dst: '/notes' }
+                        ]
+                    },
+                    {
+                        group: 'Music',
+                        display_group_title: true,
+                        items: [
+                            { title: 'Events', icon: 'music', dst: '/events' },
+                            { title: 'Making music', icon: 'guitar', dst: '/making_music' }
+                        ]
+                    }
+                ]
+            },
+            actions: [
+                {
+                    icon: 'sign out alternate',
+                    category: 'User account',
+                    title: 'Logout',
+                    type: 'action',
+                    action: function() { console.log('Command to logout'); }
+                },
+                {
+                    icon: 'bars',
+                    category: 'Layout',
+                    title: 'Toggle menu',
+                    type: 'action',
+                    action: function(vue_instance) {
+                        vue_instance.$store.commit('set_menu_state', 'toggle');
+                    }
+                },
+                {
+                    icon: 'bars',
+                    category: 'Layout',
+                    title: 'Toggle sidebar',
+                    type: 'action',
+                    action: function(vue_instance) {
+                        vue_instance.$store.commit('set_sidebar_state', 'toggle');
+                    }
+                },
+                {
+                    icon: 'edit',
+                    category: 'Session',
+                    title: 'Rename session',
+                    type: 'action',
+                    action: function(vue_instance) {
+                        eventbus.$emit('show_modal', 'modal_set_session_title');
+                    }
+                }
+            ]
         },
         api_data: {
             user_token_object: {
