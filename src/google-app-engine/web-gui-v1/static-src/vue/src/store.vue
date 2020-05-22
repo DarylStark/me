@@ -51,39 +51,43 @@ export default new Vuex.Store({
             actions: [
                 {
                     icon: 'sign out alternate',
-                    category: 'User account',
                     title: 'Logout',
                     type: 'action',
-                    action: function() { console.log('Command to logout'); }
+                    action: function() {
+                        // Implement
+                        console.log('Command to logout');
+                    },
+                    show: true
                 },
                 {
                     icon: 'bars',
-                    category: 'Layout',
                     title: 'Toggle menu',
                     type: 'action',
                     action: function(vue_instance) {
                         vue_instance.$store.commit('set_menu_state', 'toggle');
-                    }
+                    },
+                    show: true
                 },
                 {
                     icon: 'bars',
-                    category: 'Layout',
                     title: 'Toggle sidebar',
                     type: 'action',
                     action: function(vue_instance) {
                         vue_instance.$store.commit('set_sidebar_state', 'toggle');
-                    }
+                    },
+                    show: true
                 },
                 {
                     icon: 'edit',
-                    category: 'Session',
                     title: 'Rename session',
                     type: 'action',
                     action: function(vue_instance) {
                         eventbus.$emit('show_modal', 'modal_set_session_title');
-                    }
+                    },
+                    show: true
                 }
-            ]
+            ],
+            local_actions: new Array()
         },
         api_data: {
             user_token_object: {
@@ -676,6 +680,29 @@ export default new Vuex.Store({
             }).catch(function(error) {
                 if (api_options.failed) { api_options.failed(); }
             });
+        },
+        add_local_actions: function(state, actions) {
+            // Method to add local actions
+            if (Array.isArray(actions)) {
+                actions.forEach(function(action) {
+                    Vue.set(state.ui.local_actions, state.ui.local_actions.length, action);
+                });
+            }
+        },
+        local_actions_set_show: function(state, options) {
+            // Set the 'show' state for a specific local action. The options object should contain
+            // at least the following attributes:
+            // - id: the id of the local option to set
+            // - show: eiter true, false or 'toggle' to determine the new state of the option
+            state.ui.local_actions.forEach(function(action) {
+                if (action.id == options.id) {
+                    action.show = options.show;
+                }
+            });
+        },
+        remove_local_actions: function(state) {
+            // Method to remove all local actions
+            state.ui.local_actions = new Array();
         }
     }
 });

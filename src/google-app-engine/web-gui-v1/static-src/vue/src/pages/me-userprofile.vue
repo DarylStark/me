@@ -158,6 +158,24 @@ export default {
       loading_refresh: false
     }
   },
+  watch: {
+    changed: function() {
+      // Update the 'show' attribute of the 'save-account' item in the local-actions for the
+      // command palette
+      this.$store.commit('local_actions_set_show', {
+        id: 'save-account',
+        show: this.changed
+      })
+    },
+    user_settings_changed: function() {
+      // Update the 'show' attribute of the 'save-profile' item in the local-actions for the
+      // command palette
+      this.$store.commit('local_actions_set_show', {
+        id: 'save-profile',
+        show: this.user_settings_changed
+      })
+    }
+  },
   computed: {
     user_session_expire_period: function() {
       // $store.state.api_data.user_token_object.expiration
@@ -429,12 +447,45 @@ export default {
     // Set the API clients
     this.set_clients();
 
+    // Local this
+    let vue_this = this;
+
+    // Add the local actions for this page. These actions will be visible in the command palette
+    // TODO: Make sure these are only visible when there was a change
+    this.$store.commit('add_local_actions', [
+      {
+        id: 'save-account',
+        icon: 'save',
+        title: 'Save user account settings',
+        type: 'action',
+        action: function(vue_instance) {
+            vue_this.save_profile();
+        },
+        show: vue_this.changed
+      },
+      {
+        id: 'save-profile',
+        icon: 'save',
+        title: 'Save user profile settings',
+        type: 'action',
+        action: function(vue_instance) {
+            vue_this.save_user_settings();
+        },
+        show: vue_this.user_settings_changed
+      }
+    ]);
+
     // We don't need a sidebar on this page. Disable it.
     this.$store.commit('set_sidebar_availability', false);
   },
   beforeRouteLeave: function(to, from, next) {
     // When the user tries to leave the page before saving or resetting the information, we give the
     // user a warning and a chance to save the form first
+
+    // Local this
+    let vue_this = this;
+
+    // Check if something has changed
     if (this.changed || this.user_settings_changed) {
       $('body').toast({
         message: 'You haven\'t saved the form yet. Are you sure you want to leave?',
@@ -447,6 +498,7 @@ export default {
             text: 'Yes',
             class: 'green',
             click: function() {
+              vue_this.$store.commit('remove_local_actions');
               next(true);
             }
           }, {
@@ -460,6 +512,7 @@ export default {
       });
     }
     else {
+      this.$store.commit('remove_local_actions');
       next(true);
     }
   }

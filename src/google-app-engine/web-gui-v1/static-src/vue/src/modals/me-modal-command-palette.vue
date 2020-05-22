@@ -1,5 +1,5 @@
 <template>
-  <me-modal id='modal_command_palette' ref='modal' v-bind:content='false' v-bind:centered='false' v-on:hidden='reset'>
+  <me-modal id='modal_command_palette' ref='modal' v-bind:content='false' v-bind:centered='false' v-on:hidden='reset' v-on:showing='init'>
     <div class='ui fluid search'>
       <input class='prompt' type='text' placeholder='Enter a command' ref='q' v-model='query'>
       <div class='results'></div>
@@ -19,44 +19,12 @@ export default {
   components: {
     'me-modal': me_modal
   },
-  mounted: function() {
-    // Initialize the search-box for Fomantic UI
-    $('.ui.search').search({
-      source: this.command_list,
-      type: 'cmdpalette',
-      searchDelay: 0,
-      maxResults: 256,
-      selectFirstResult: true,
-      showNoResults: false,
-      searchFields: [ 'title', 'category' ],
-      onSelect: this.execute_command,
-      minCharacters: 0,
-      duration: 0,
-      templates: {
-        cmdpalette: function(response) {
-          // Create a empty string
-          let responses = '';
-
-          // Loop through the given responses and create divs form them
-          response.results.forEach(function(element) {
-            let response_div = '<a class="result"><div class="content"><div class="title"><i class="' + element.icon + ' icon"></i> ' + element.title + '</div><div class="category">' + element.category + '</div></div></a>';
-
-            // Add the new div to the response
-            responses += response_div;
-          });
-
-          // Return the response
-          return responses;
-        }
-      }
-    });
-  },
   computed: {
     command_list: function() {
       // Create a empty return list
       let return_list = [];
 
-      // Create a empty list for the items
+      // List with commands
       let commands = new Array();
 
       // Get the items from the main menu
@@ -76,10 +44,31 @@ export default {
         });
       });
 
+      // Get the local actions
+      this.$store.state.ui.local_actions.forEach(function(action) {
+        if (action.show) {
+          // Create a new item
+          let new_item = {
+            id: action.id,
+            title: action.title,
+            category: 'Local action',
+            icon: action.icon,
+            type: action.type,
+            uri: action.dst,
+            action: action.action
+          }
+
+          // Add the item to the commands
+          commands.push(new_item);
+        }
+      });
+
       // Get the actions from the store
       this.$store.state.ui.actions.forEach(function(action) {
-        // Create a new item
+        if (action.show) {
+          // Create a new item
           let new_item = {
+            id: action.id,
             title: action.title,
             category: 'Global action',
             icon: action.icon,
@@ -90,9 +79,10 @@ export default {
 
           // Add the item to the commands
           commands.push(new_item);
+        }
       });
 
-      // Return the list
+      // Return the sorted list
       return commands.sort(function(item_a, item_b) {
         if (item_a.title > item_b.title) { 
           return 1;
@@ -110,6 +100,39 @@ export default {
     }
   },
   methods: {
+    init: function() {
+      // Initialize the search-box for Fomantic UI
+      $('.ui.search').search({
+        source: this.command_list,
+        type: 'cmdpalette',
+        searchDelay: 0,
+        cache: false,
+        maxResults: 256,
+        selectFirstResult: true,
+        showNoResults: false,
+        searchFields: [ 'title', 'category' ],
+        onSelect: this.execute_command,
+        minCharacters: 0,
+        duration: 0,
+        templates: {
+          cmdpalette: function(response) {
+            // Create a empty string
+            let responses = '';
+
+            // Loop through the given responses and create divs form them
+            response.results.forEach(function(element) {
+              let response_div = '<a class="result"><div class="content"><div class="title"><i class="' + element.icon + ' icon"></i> ' + element.title + '</div><div class="category">' + element.category + '</div></div></a>';
+
+              // Add the new div to the response
+              responses += response_div;
+            });
+
+            // Return the response
+            return responses;
+          }
+        }
+      });
+    },
     execute_command: function(command, results) {
       // When a item is chosen, this method gets called and we can perform the needed action
 
