@@ -119,6 +119,7 @@ import me_api_call from '../me/api_call'
 import eventbus from '../eventbus'
 import me_userprofile_api_client from '../components/me-userprofile-api-client'
 import strftime from 'strftime'
+import { refresh_user_token } from '../me/global_actions'
 
 export default {
   name: 'me-content-userprofile',
@@ -178,7 +179,6 @@ export default {
   },
   computed: {
     user_session_expire_period: function() {
-      // $store.state.api_data.user_token_object.expiration
       let today = new Date();
       let difference = (this.$store.state.api_data.user_token_object.expiration.getTime() - today.getTime()) / 1000;
       let difference_minutes = Math.round(difference / 60);
@@ -224,33 +224,30 @@ export default {
       let vue_this = this;
       this.loading_refresh = true;
 
-      // Send the API request to refresh the user token
-      me_api_call({
-        group: 'aaa', endpoint: 'refresh_user_token',
-        method: 'PATCH'
-      }).then(function(data) {
-        vue_this.loading_refresh = false;
-        vue_this.$store.commit('set_user_token', data['data']['object']);
-
-        // Display a success toast
-        $('body').toast({
-          position: 'bottom center',
-          message: 'Your usersession is refreshed',
-          closeIcon: true,
-          displayTime: 'auto',
-          showIcon: 'user',
-          class: 'success'
-        });
-      }).catch(function(data) {
-        vue_this.loading_refresh = false;
-        $('body').toast({
-          position: 'bottom center',
-          message: 'Something went wrong while refreshing your usersession',
-          closeIcon: true,
-          displayTime: 'auto',
-          showIcon: 'user',
-          class: 'error'
-        });
+      refresh_user_token({
+        success: function() {
+          // Display a success toast
+          vue_this.loading_refresh = false;
+          $('body').toast({
+              position: 'bottom center',
+              message: 'Your usersession is refreshed',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'success'
+          });
+        },
+        failed: function() {
+          vue_this.loading_refresh = false;
+          $('body').toast({
+              position: 'bottom center',
+              message: 'Something went wrong while refreshing your usersession',
+              closeIcon: true,
+              displayTime: 'auto',
+              showIcon: 'user',
+              class: 'error'
+          });
+        },
       });
     },
     set_field_values: function() {

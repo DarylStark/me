@@ -54,7 +54,7 @@ export default new Vuex.Store({
                     title: 'Logout',
                     type: 'action',
                     action: function() {
-                        // Implement
+                        // TODO: Implement
                         console.log('Command to logout');
                     },
                     show: true
@@ -695,6 +695,17 @@ export default new Vuex.Store({
             // - id: the id of the local option to set
             // - show: eiter true, false or 'toggle' to determine the new state of the option
             state.ui.local_actions.forEach(function(action) {
+                if (action.id == options.id) {
+                    action.show = options.show;
+                }
+            });
+        },
+        global_actions_set_show: function(state, options) {
+            // Set the 'show' state for a specific local action. The options object should contain
+            // at least the following attributes:
+            // - id: the id of the local option to set
+            // - show: eiter true, false or 'toggle' to determine the new state of the option
+            state.ui.actions.forEach(function(action) {
                 if (action.id == options.id) {
                     action.show = options.show;
                 }

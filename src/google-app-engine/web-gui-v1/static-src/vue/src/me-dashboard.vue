@@ -39,6 +39,7 @@ import me_splashscreen from './components/me-splashscreen'
 import vue_cookies from 'vue-cookies'
 import me_api_call from './me/api_call'
 import eventbus from './eventbus'
+import { refresh_user_token } from './me/global_actions'
 
 // Enable the use of the Vue Cookies module
 Vue.use(vue_cookies);
@@ -101,6 +102,42 @@ export default {
 
       // Set the media type in the store
       this.$store.commit('set_media_type', media_type);
+    },
+    check_token_expire: function() {
+      // Check if this session is about to expire
+      let today = new Date();
+      let difference = (this.$store.state.api_data.user_token_object.expiration.getTime() - today.getTime()) / 1000;
+      let difference_minutes = Math.round(difference / 60);
+
+      // If the session will expire in 20 hours, we refresh it
+      if (difference_minutes < (20 * 60)) {
+        refresh_user_token({
+          success: function() {
+            // Display a success toast
+            $('body').toast({
+                position: 'bottom center',
+                message: 'Your usersession is refreshed',
+                closeIcon: true,
+                displayTime: 'auto',
+                showIcon: 'user',
+                class: 'success'
+            });
+          },
+          failed: function() {
+            $('body').toast({
+                position: 'bottom center',
+                message: 'Something went wrong while refreshing your usersession',
+                closeIcon: true,
+                displayTime: 'auto',
+                showIcon: 'user',
+                class: 'error'
+            });
+          },
+        });
+      }
+
+      // Rerun the method in 15minutes
+      setTimeout(this.check_token_expire, (15 * 60 * 1000));
     }
   },
   created: function() {
@@ -221,6 +258,11 @@ export default {
 
     vue_this.loading_state.other = true;
     vue_this.loading_watcher++;
+    
+    // Start a method that gets run every 15 minutes that will refresh the token for the user when
+    // it is about to expire. We start it in 30s to make sure everything is done that needs to be
+    // done before refreshing the token.
+    setTimeout(vue_this.check_token_expire, 30000);
   }
 }
 </script>
