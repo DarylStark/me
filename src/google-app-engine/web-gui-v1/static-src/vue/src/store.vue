@@ -2,9 +2,9 @@
 /* A global store for Vue. Will be used to store state information about the application */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import me_api_call from './me/api_call'
-import me_client_call from './me/client_call'
-import eventbus from './eventbus'
+import me_api_call from './me/api_call';
+import me_client_call from './me/client_call';
+import eventbus from './eventbus';
 
 // Make sure Vue knows to use Vuex
 Vue.use(Vuex);
@@ -28,14 +28,22 @@ export default new Vuex.Store({
             sidebar_available: true,
             sidebar_open: true,
             menus: {
-                'main': [
+                main: [
                     {
                         group: 'Menu',
                         display_group_title: false,
                         items: [
-                            { title: 'Dashboard', icon: 'columns', dst: '/home' },
+                            {
+                                title: 'Dashboard',
+                                icon: 'columns',
+                                dst: '/home'
+                            },
                             { title: 'Feed', icon: 'list', dst: '/feed' },
-                            { title: 'Notes', icon: 'clipboard outline', dst: '/notes' }
+                            {
+                                title: 'Notes',
+                                icon: 'clipboard outline',
+                                dst: '/notes'
+                            }
                         ]
                     },
                     {
@@ -43,7 +51,11 @@ export default new Vuex.Store({
                         display_group_title: true,
                         items: [
                             { title: 'Events', icon: 'music', dst: '/events' },
-                            { title: 'Making music', icon: 'guitar', dst: '/making_music' }
+                            {
+                                title: 'Making music',
+                                icon: 'guitar',
+                                dst: '/making_music'
+                            }
                         ]
                     }
                 ]
@@ -73,7 +85,10 @@ export default new Vuex.Store({
                     title: 'Toggle sidebar',
                     type: 'action',
                     action: function(vue_instance) {
-                        vue_instance.$store.commit('set_sidebar_state', 'toggle');
+                        vue_instance.$store.commit(
+                            'set_sidebar_state',
+                            'toggle'
+                        );
                     },
                     show: true
                 },
@@ -119,7 +134,10 @@ export default new Vuex.Store({
             state.ui.media_type = media_type;
 
             // Then decide if we should hide or show the menu.
-            if (state.ui.media_type == 'phone' || state.ui.media_type == 'tablet') {
+            if (
+                state.ui.media_type == 'phone' ||
+                state.ui.media_type == 'tablet'
+            ) {
                 state.ui.menu_open = false;
                 state.ui.sidebar_open = false;
             } else {
@@ -133,13 +151,17 @@ export default new Vuex.Store({
             // be closed. If the state is set to 'toggle', we 'toggle' the menu
             if (new_state == true || new_state == false) {
                 state.ui.menu_open = new_state;
-            } else if(new_state == 'toggle') {
+            } else if (new_state == 'toggle') {
                 state.ui.menu_open = !state.ui.menu_open;
             }
 
             // When we are on mobile, the state of the menu is set to open AND the sidebar is
             // already open, we have to close the sidebar. Otherwise, they are in eachothers way
-            if (state.ui.media_type == 'phone' && state.ui.sidebar_open && new_state) {
+            if (
+                state.ui.media_type == 'phone' &&
+                state.ui.sidebar_open &&
+                new_state
+            ) {
                 state.ui.sidebar_open = false;
             }
         },
@@ -149,13 +171,17 @@ export default new Vuex.Store({
             // should be closed. If the state is set to 'toggle', we 'toggle' the menu
             if (new_state == true || new_state == false) {
                 state.ui.sidebar_open = new_state;
-            } else if(new_state == 'toggle') {
+            } else if (new_state == 'toggle') {
                 state.ui.sidebar_open = !state.ui.sidebar_open;
             }
 
             // When we are on mobile, the state of the sidebar is set to open AND the menu is
             // already open, we have to close the menu. Otherwise, they are in eachothers way
-            if (state.ui.media_type == 'phone' && state.ui.menu_open && new_state) {
+            if (
+                state.ui.media_type == 'phone' &&
+                state.ui.menu_open &&
+                new_state
+            ) {
                 state.ui.menu_open = false;
             }
         },
@@ -170,7 +196,7 @@ export default new Vuex.Store({
             // should be closed. If the state is set to 'toggle', we 'toggle' the searchbar
             if (new_state == true || new_state == false) {
                 state.ui.search_active = new_state;
-            } else if(new_state == 'toggle') {
+            } else if (new_state == 'toggle') {
                 state.ui.search_active = !state.ui.search_active;
             }
         },
@@ -190,18 +216,26 @@ export default new Vuex.Store({
                 if (key in token) {
                     state.api_data.user_token_object[key] = token[key];
                     if (key == 'expiration') {
-                      // Prepare the date object so JavaScript knows it is in UTC
+                        // Prepare the date object so JavaScript knows it is in UTC
                         if (token[key]) {
                             token[key] = token[key].replace(' ', 'T');
                             token[key] = new Date(token[key] + 'Z');
                             state.api_data.user_token_object[key] = token[key];
                             if (state.api_data.api_clients._updated) {
                                 let current_token = null;
-                                state.api_data.api_clients.clients.forEach(function(client) {
-                                    current_token = client.user_tokens.find(function(user_token) {
-                                        return user_token.token == state.api_data.user_token_object.token
-                                    })
-                                });
+                                state.api_data.api_clients.clients.forEach(
+                                    function(client) {
+                                        current_token = client.user_tokens.find(
+                                            function(user_token) {
+                                                return (
+                                                    user_token.token ==
+                                                    state.api_data
+                                                        .user_token_object.token
+                                                );
+                                            }
+                                        );
+                                    }
+                                );
 
                                 if (current_token) {
                                     current_token.expiration = token[key];
@@ -220,12 +254,12 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 force: false
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
@@ -233,23 +267,36 @@ export default new Vuex.Store({
             if (api_options.force || !state.api_data.user_object._updated) {
                 // Retrieve the user object
                 me_api_call({
-                  group: 'aaa', endpoint: 'user_object',
-                  method: 'GET'
-                }).then(function(data) {
-                  // Data received
-                  state.api_data.user_object._updated = true;
-                  state.api_data.user_object.fullname = data.data.object.fullname;
-                  state.api_data.user_object.username = data.data.object.username;
-                  state.api_data.user_object.email = data.data.object.email;
-                  state.api_data.user_object.password_date = new Date(data.data.object.password_date + ' UTC');
-                  state.api_data.user_object.second_factor_enabled = data.data.object.second_factor_enabled;
+                    group: 'aaa',
+                    endpoint: 'user_object',
+                    method: 'GET'
+                })
+                    .then(function(data) {
+                        // Data received
+                        state.api_data.user_object._updated = true;
+                        state.api_data.user_object.fullname =
+                            data.data.object.fullname;
+                        state.api_data.user_object.username =
+                            data.data.object.username;
+                        state.api_data.user_object.email =
+                            data.data.object.email;
+                        state.api_data.user_object.password_date = new Date(
+                            data.data.object.password_date + ' UTC'
+                        );
+                        state.api_data.user_object.second_factor_enabled =
+                            data.data.object.second_factor_enabled;
 
-                  // Run the callback (if there is any)
-                  if (api_options.success) { api_options.success(state.api_data.user_object); }
-                }).catch(function(data) {
-                  // Run the callback (if there is any)
-                  if (api_options.failed) { api_options.failed(data); }
-                });
+                        // Run the callback (if there is any)
+                        if (api_options.success) {
+                            api_options.success(state.api_data.user_object);
+                        }
+                    })
+                    .catch(function(data) {
+                        // Run the callback (if there is any)
+                        if (api_options.failed) {
+                            api_options.failed(data);
+                        }
+                    });
             } else {
                 api_options.success(state.api_data.user_object);
             }
@@ -260,38 +307,48 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 user_object: null
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
             me_api_call({
-                group: 'aaa', endpoint: 'user_object',
+                group: 'aaa',
+                endpoint: 'user_object',
                 method: 'PATCH',
                 data: api_options.user_object
-            }).then(function(data) {
-                if (data.data.success) {
-                    // Update the store
-                    state.api_data.user_object.fullname = api_options.user_object.fullname;
-                    state.api_data.user_object.username = api_options.user_object.username;
-                    state.api_data.user_object.email = api_options.user_object.email;
+            })
+                .then(function(data) {
+                    if (data.data.success) {
+                        // Update the store
+                        state.api_data.user_object.fullname =
+                            api_options.user_object.fullname;
+                        state.api_data.user_object.username =
+                            api_options.user_object.username;
+                        state.api_data.user_object.email =
+                            api_options.user_object.email;
+
+                        // Run the callback (if there is any)
+                        if (api_options.success) {
+                            api_options.success(state.api_data.user_object);
+                        }
+                    } else {
+                        // API was not a succes
+                        return Promise.reject(data.data.data_text);
+                    }
+                })
+                .catch(function(data) {
+                    // Something went wrong
 
                     // Run the callback (if there is any)
-                    if (api_options.success) { api_options.success(state.api_data.user_object); }
-                } else {
-                    // API was not a succes
-                    return Promise.reject(data.data.data_text);
-                }
-            }).catch(function(data) {
-                // Something went wrong
-                
-                // Run the callback (if there is any)
-                if (api_options.failed) { api_options.failed(data); }
-            });
+                    if (api_options.failed) {
+                        api_options.failed(data);
+                    }
+                });
         },
         api_save_user_object_password_date: function(state) {
             // Sets the password-date for the user object to now
@@ -310,12 +367,12 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 force: false
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
@@ -323,58 +380,83 @@ export default new Vuex.Store({
             if (api_options.force || !state.api_data.api_clients._updated) {
                 // Retrieve the user object
                 me_api_call({
-                  group: 'api_clients', endpoint: 'client',
-                  method: 'GET'
-                }).then(function(data) {
-                  // Data received. First, we remove all data from the current list
-                  state.api_data.api_clients.clients = []
+                    group: 'api_clients',
+                    endpoint: 'client',
+                    method: 'GET'
+                })
+                    .then(function(data) {
+                        // Data received. First, we remove all data from the current list
+                        state.api_data.api_clients.clients = [];
 
-                  // Add the new data to the current list
-                  data.data.dataset.data.forEach(function(element) {
-                      // Add a 'user tokens' property to the element
-                      element.user_tokens = [];
+                        // Add the new data to the current list
+                        data.data.dataset.data.forEach(function(element) {
+                            // Add a 'user tokens' property to the element
+                            element.user_tokens = [];
 
-                      // Add the element to the list
-                      state.api_data.api_clients.clients.push(element);
-                  });
-
-                  // Now that we have the clients, we can retrieve the user tokens for this client
-                  me_api_call({
-                      group: 'aaa', endpoint: 'user_token',
-                      method: 'GET'
-                  }).then(function(data) {
-                      // Set 'updated' to true so it won't update again if needed
-                      state.api_data.api_clients._updated = true;
-
-                      // Add the user-tokens to the client-objects
-                      data.data.dataset.data.forEach(function(element) {
-                        // Convert the date-fields to a Date object
-                        element.created = new Date(element.created + ' UTC');
-                        if (element.expiration) {
-                            element.expiration = new Date(element.expiration + ' UTC');
-                        }
-
-                        // Find the client token that belongs to this one
-                        let api_client = state.api_data.api_clients.clients.find(function(client) {
-                            return client.id == element.client_token;
+                            // Add the element to the list
+                            state.api_data.api_clients.clients.push(element);
                         });
 
-                        if (api_client) {
-                            // Add the user token to the client-object
-                            api_client.user_tokens.push(element);
-                        }
-                      });
+                        // Now that we have the clients, we can retrieve the user tokens for this client
+                        me_api_call({
+                            group: 'aaa',
+                            endpoint: 'user_token',
+                            method: 'GET'
+                        })
+                            .then(function(data) {
+                                // Set 'updated' to true so it won't update again if needed
+                                state.api_data.api_clients._updated = true;
 
-                      // Run the callback (if there is any)
-                      if (api_options.success) { api_options.success(state.api_data.api_clients.clients); }
-                  }).catch(function(data){
-                    // Run the callback (if there is any)
-                    if (api_options.failed) { api_options.failed(data); }
-                  });
-                }).catch(function(data) {
-                  // Run the callback (if there is any)
-                  if (api_options.failed) { api_options.failed(data); }
-                });
+                                // Add the user-tokens to the client-objects
+                                data.data.dataset.data.forEach(function(
+                                    element
+                                ) {
+                                    // Convert the date-fields to a Date object
+                                    element.created = new Date(
+                                        element.created + ' UTC'
+                                    );
+                                    if (element.expiration) {
+                                        element.expiration = new Date(
+                                            element.expiration + ' UTC'
+                                        );
+                                    }
+
+                                    // Find the client token that belongs to this one
+                                    let api_client = state.api_data.api_clients.clients.find(
+                                        function(client) {
+                                            return (
+                                                client.id ==
+                                                element.client_token
+                                            );
+                                        }
+                                    );
+
+                                    if (api_client) {
+                                        // Add the user token to the client-object
+                                        api_client.user_tokens.push(element);
+                                    }
+                                });
+
+                                // Run the callback (if there is any)
+                                if (api_options.success) {
+                                    api_options.success(
+                                        state.api_data.api_clients.clients
+                                    );
+                                }
+                            })
+                            .catch(function(data) {
+                                // Run the callback (if there is any)
+                                if (api_options.failed) {
+                                    api_options.failed(data);
+                                }
+                            });
+                    })
+                    .catch(function(data) {
+                        // Run the callback (if there is any)
+                        if (api_options.failed) {
+                            api_options.failed(data);
+                        }
+                    });
             } else {
                 api_options.success(state.api_data.api_clients.clients);
             }
@@ -390,18 +472,20 @@ export default new Vuex.Store({
                     description: null,
                     enabled: null
                 }
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
             // Check if a 'id' is given
             if (api_options.fields.id == null) {
-                if (api_options.failed) { api_options.failed('No id given'); }
+                if (api_options.failed) {
+                    api_options.failed('No id given');
+                }
                 return;
             }
 
@@ -423,50 +507,73 @@ export default new Vuex.Store({
                 if (api_options.fields.expire != null) {
                     // Convert to UTC and replace the characters we don't need
                     api_options.fields.expire = api_options.fields.expire.toISOString();
-                    api_options.fields.expire = api_options.fields.expire.replace('T', ' ');
-                    api_options.fields.expire = api_options.fields.expire.replace('Z', '');
-                    api_options.fields.expire = api_options.fields.expire.replace('.000', '');
+                    api_options.fields.expire = api_options.fields.expire.replace(
+                        'T',
+                        ' '
+                    );
+                    api_options.fields.expire = api_options.fields.expire.replace(
+                        'Z',
+                        ''
+                    );
+                    api_options.fields.expire = api_options.fields.expire.replace(
+                        '.000',
+                        ''
+                    );
                 }
             }
 
             // Send the request
             me_api_call({
-                group: 'aaa', endpoint: 'user_token',
+                group: 'aaa',
+                endpoint: 'user_token',
                 method: 'PATCH',
                 data: api_options.fields
-            }).then(function(data) {
-                // Update the local fields
+            })
+                .then(function(data) {
+                    // Update the local fields
 
-                // Update the expiration date
-                if ('expire' in api_options.fields) {
-                    user_token.expiration = old_expire;
+                    // Update the expiration date
+                    if ('expire' in api_options.fields) {
+                        user_token.expiration = old_expire;
 
-                    // Check if this is the local token
-                    if (user_token.token == state.api_data.user_token_object.token) {
-                        state.api_data.user_token_object.expiration = old_expire;
+                        // Check if this is the local token
+                        if (
+                            user_token.token ==
+                            state.api_data.user_token_object.token
+                        ) {
+                            state.api_data.user_token_object.expiration = old_expire;
+                        }
                     }
-                }
 
-                // Update the description
-                if (api_options.fields.description != null) {
-                    user_token.description = api_options.fields.description;
+                    // Update the description
+                    if (api_options.fields.description != null) {
+                        user_token.description = api_options.fields.description;
 
-                    // Check if this is the local token
-                    if (user_token.token == state.api_data.user_token_object.token) {
-                        state.api_data.user_token_object.description = api_options.fields.description;
+                        // Check if this is the local token
+                        if (
+                            user_token.token ==
+                            state.api_data.user_token_object.token
+                        ) {
+                            state.api_data.user_token_object.description =
+                                api_options.fields.description;
+                        }
                     }
-                }
 
-                // Update the disabled state
-                if (api_options.fields.enabled != null) {
-                    user_token.enabled = api_options.fields.enabled;
-                }
+                    // Update the disabled state
+                    if (api_options.fields.enabled != null) {
+                        user_token.enabled = api_options.fields.enabled;
+                    }
 
-                // Execute the callback
-                if (api_options.success) { api_options.success(data); }
-            }).catch(function(error) {
-                if (api_options.failed) { api_options.failed(error); }
-            });
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         },
         api_update_api_add_user_token: function(state, options) {
             // Set the object
@@ -476,45 +583,58 @@ export default new Vuex.Store({
                 fields: {
                     client_id: null
                 }
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
             // Check if a 'id' is given
             if (api_options.fields.client_id == null) {
-                if (api_options.failed) { api_options.failed('No ID given'); }
+                if (api_options.failed) {
+                    api_options.failed('No ID given');
+                }
                 return;
             }
 
             // Find the client in the local cache
-            let client = state.api_data.api_clients.clients.find(function(client) {
+            let client = state.api_data.api_clients.clients.find(function(
+                client
+            ) {
                 return client.id == api_options.fields.client_id;
             });
             if (client == undefined) {
-                if (api_options.failed) { api_options.failed('No client found'); }
+                if (api_options.failed) {
+                    api_options.failed('No client found');
+                }
                 return;
             }
-            
+
             // Send the request
             me_api_call({
-                group: 'aaa', endpoint: 'user_token',
+                group: 'aaa',
+                endpoint: 'user_token',
                 method: 'POST',
                 data: api_options.fields
-            }).then(function(data) {
-                // Add the new object to the local cache
-                let new_object = data.data.object;
-                client.user_tokens.push(new_object);
+            })
+                .then(function(data) {
+                    // Add the new object to the local cache
+                    let new_object = data.data.object;
+                    client.user_tokens.push(new_object);
 
-                // Execute the callback
-                if (api_options.success) { api_options.success(data); }
-            }).catch(function(error) {
-                if (api_options.failed) { api_options.failed(error); }
-            });
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         },
         api_update_api_delete_user_token: function(state, options) {
             // Set the object
@@ -524,28 +644,36 @@ export default new Vuex.Store({
                 fields: {
                     id: null
                 }
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
             // Check if a 'id' is given
             if (api_options.fields.id == null) {
-                if (api_options.failed) { api_options.failed('No ID given'); }
+                if (api_options.failed) {
+                    api_options.failed('No ID given');
+                }
                 return;
             }
 
             // Find the token in the local cache
             let user_token = null;
             let client_index = null;
-            let user_index = null
-            state.api_data.api_clients.clients.forEach(function(client, index_client) {
+            let user_index = null;
+            state.api_data.api_clients.clients.forEach(function(
+                client,
+                index_client
+            ) {
                 if (user_token == null) {
-                    user_token = client.user_tokens.find(function(user, index_user) {
+                    user_token = client.user_tokens.find(function(
+                        user,
+                        index_user
+                    ) {
                         client_index = index_client;
                         user_index = index_user;
                         return user.id == api_options.fields.id;
@@ -553,27 +681,40 @@ export default new Vuex.Store({
                 }
             });
             if (user_token == null) {
-                if (api_options.failed) { api_options.failed('No user token given'); }
+                if (api_options.failed) {
+                    api_options.failed('No user token given');
+                }
                 return;
             }
 
             // Local this
             let vue_this = this;
-            
+
             // Send the request
             me_api_call({
-                group: 'aaa', endpoint: 'user_token',
+                group: 'aaa',
+                endpoint: 'user_token',
                 method: 'DELETE',
                 data: api_options.fields
-            }).then(function(data) {
-                // Remove the element from the state
-                Vue.delete(state.api_data.api_clients.clients[client_index].user_tokens, user_index);
+            })
+                .then(function(data) {
+                    // Remove the element from the state
+                    Vue.delete(
+                        state.api_data.api_clients.clients[client_index]
+                            .user_tokens,
+                        user_index
+                    );
 
-                // Execute the callback
-                if (api_options.success) { api_options.success(data); }
-            }).catch(function(error) {
-                if (api_options.failed) { api_options.failed(error); }
-            });
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         },
         api_update_api_user_token_title: function(state, options) {
             // Set the object
@@ -581,47 +722,62 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 description: null
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
             // Execute the API
             // Local this
             let vue_this = this;
-            
+
             // Send the request
             me_api_call({
-                group: 'aaa', endpoint: 'set_token_description',
+                group: 'aaa',
+                endpoint: 'set_token_description',
                 method: 'PATCH',
-                data: { 'description': api_options.description }
-            }).then(function(data) {
-                // Update the local state
-                state.api_data.user_token_object.description = api_options.description;
+                data: { description: api_options.description }
+            })
+                .then(function(data) {
+                    // Update the local state
+                    state.api_data.user_token_object.description =
+                        api_options.description;
 
-                // Search if there is a token in the cache that needs to be updated
-                if (state.api_data.api_clients._updated) {
-                    let current_token = null;
-                    state.api_data.api_clients.clients.forEach(function(client) {
-                        current_token = client.user_tokens.find(function(user_token) {
-                            return user_token.token == state.api_data.user_token_object.token
-                        })
-                    });
+                    // Search if there is a token in the cache that needs to be updated
+                    if (state.api_data.api_clients._updated) {
+                        let current_token = null;
+                        state.api_data.api_clients.clients.forEach(function(
+                            client
+                        ) {
+                            current_token = client.user_tokens.find(function(
+                                user_token
+                            ) {
+                                return (
+                                    user_token.token ==
+                                    state.api_data.user_token_object.token
+                                );
+                            });
+                        });
 
-                    if (current_token) {
-                        current_token.description = api_options.description;
+                        if (current_token) {
+                            current_token.description = api_options.description;
+                        }
                     }
-                }
 
-                // Execute the callback
-                if (api_options.success) { api_options.success(data); }
-            }).catch(function(error) {
-                if (api_options.failed) { api_options.failed(error); }
-            });
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         },
         update_user_settings: function(state, options) {
             // Set the object
@@ -629,12 +785,12 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 force: false
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
@@ -642,15 +798,23 @@ export default new Vuex.Store({
                 // Do the call
                 me_client_call({
                     endpoint: 'user_settings'
-                }).then(function(data) {
-                    state.app.user_config.config = data.data;
-                    state.app.user_config._updated = true;
-                    if (api_options.success) { api_options.success(data.data); }
-                }).catch(function(error) {
-                    if (api_options.failed) { api_options.failed(); }
-                });
+                })
+                    .then(function(data) {
+                        state.app.user_config.config = data.data;
+                        state.app.user_config._updated = true;
+                        if (api_options.success) {
+                            api_options.success(data.data);
+                        }
+                    })
+                    .catch(function(error) {
+                        if (api_options.failed) {
+                            api_options.failed();
+                        }
+                    });
             } else {
-                if (api_options.success) { api_options.success(state.app.user_config.config); }
+                if (api_options.success) {
+                    api_options.success(state.app.user_config.config);
+                }
             }
         },
         save_user_settings: function(state, options) {
@@ -659,12 +823,12 @@ export default new Vuex.Store({
                 success: null,
                 failed: null,
                 config: state.app.user_config.config
-            }
+            };
 
             // Loop through the given object and set the values to the local object
             if (options) {
                 for (let key of Object.keys(options)) {
-                  api_options[key] = options[key];
+                    api_options[key] = options[key];
                 }
             }
 
@@ -673,19 +837,31 @@ export default new Vuex.Store({
                 endpoint: 'user_settings',
                 method: 'POST',
                 data: api_options.config
-            }).then(function(data) {
-                state.app.user_config.config = JSON.parse(JSON.stringify(api_options.config));
-                state.app.user_config._updated = true;
-                if (api_options.success) { api_options.success(); }
-            }).catch(function(error) {
-                if (api_options.failed) { api_options.failed(); }
-            });
+            })
+                .then(function(data) {
+                    state.app.user_config.config = JSON.parse(
+                        JSON.stringify(api_options.config)
+                    );
+                    state.app.user_config._updated = true;
+                    if (api_options.success) {
+                        api_options.success();
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed();
+                    }
+                });
         },
         add_local_actions: function(state, actions) {
             // Method to add local actions
             if (Array.isArray(actions)) {
                 actions.forEach(function(action) {
-                    Vue.set(state.ui.local_actions, state.ui.local_actions.length, action);
+                    Vue.set(
+                        state.ui.local_actions,
+                        state.ui.local_actions.length,
+                        action
+                    );
                 });
             }
         },

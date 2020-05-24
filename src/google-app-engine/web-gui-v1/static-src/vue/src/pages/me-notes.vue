@@ -1,29 +1,31 @@
 <template>
-  <div id='me-content-notes'>
-    <me-h1>Notes</me-h1>
-    {{ changed }}
-    <button v-on:click='toggle'>Change</button>
-  </div>
+    <div id='me-content-notes'>
+        <me-h1>Notes</me-h1>
+        {{ changed }}
+        <button v-on:click='toggle'>Change</button>
+    </div>
 </template>
 
 <script>
-import me_h1 from '../components/me-h1'
+import me_h1 from '../components/me-h1';
 
 export default {
-  name: 'me-content-notes',
-  data: function() {
-    return {
-        changed: false
+    name: 'me-content-notes',
+    data: function() {
+        return {
+            changed: false
+        };
+    },
+    components: {
+        'me-h1': me_h1
+    },
+    methods: {
+        toggle: function() {
+            this.changed = !this.changed;
+        }
+    },
+    beforeRouteLeave: function(to, from, next) {
+        next(!this.changed);
     }
-  },
-  components: {
-    'me-h1': me_h1
-  },
-  methods: {
-    toggle: function() { this.changed = !this.changed; }
-  },
-  beforeRouteLeave: function(to, from, next) {
-    next(!this.changed);
-  }
-}
+};
 </script>

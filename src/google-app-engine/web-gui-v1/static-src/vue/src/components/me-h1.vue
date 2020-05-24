@@ -1,18 +1,18 @@
 <!-- Vue component for the a h1 -->
 <template>
-  <h1 class='ui header' v-bind:class="{ inverted: inverted }">
-    <slot></slot>
-  </h1>
+    <h1 class='ui header' v-bind:class='{ inverted: inverted }'>
+        <slot></slot>
+    </h1>
 </template>
 
 <!-- The script that gets exported from the file -->
 <script>
 export default {
-  name: 'me-h1',
-  props: {
-    inverted: {
-      type: Boolean
+    name: 'me-h1',
+    props: {
+        inverted: {
+            type: Boolean
+        }
     }
-  }
-}
+};
 </script>
