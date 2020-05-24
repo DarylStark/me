@@ -58,19 +58,57 @@ export default new Vuex.Store({
                             }
                         ]
                     }
+                ],
+                user: [
+                    {
+                        title: 'User profile and settings',
+                        icon: 'user circle',
+                        dst: '/userprofile',
+                        type: 'link'
+                    },
+                    {
+                        title: 'Rename session',
+                        icon: 'pen',
+                        action: function() {
+                            eventbus.$emit(
+                                'show_modal',
+                                'modal_set_session_title'
+                            );
+                        },
+                        type: 'action'
+                    },
+                    {
+                        title: 'Logout',
+                        icon: 'sign out alternate',
+                        action: function() {
+                            me_api_call({
+                                group: 'aaa',
+                                endpoint: 'remove_user_token',
+                                method: 'DELETE'
+                            })
+                                .then(function(data) {
+                                    // Logged out! Remove the cookie
+                                    $cookies.remove('user_token');
+
+                                    // Redirect the user to the loginpage
+                                    location.href = '/ui/login';
+                                })
+                                .catch(function(data) {
+                                    $('body').toast({
+                                        position: 'bottom center',
+                                        message: "Couldn't remove your session",
+                                        closeIcon: true,
+                                        displayTime: 'auto',
+                                        showIcon: 'user',
+                                        class: 'error'
+                                    });
+                                });
+                        },
+                        type: 'action'
+                    }
                 ]
             },
             actions: [
-                {
-                    icon: 'sign out alternate',
-                    title: 'Logout',
-                    type: 'action',
-                    action: function() {
-                        // TODO: Implement
-                        console.log('Command to logout');
-                    },
-                    show: true
-                },
                 {
                     icon: 'bars',
                     title: 'Toggle menu',
@@ -93,11 +131,11 @@ export default new Vuex.Store({
                     show: true
                 },
                 {
-                    icon: 'edit',
-                    title: 'Rename session',
+                    icon: 'redo',
+                    title: 'Reload page',
                     type: 'action',
                     action: function(vue_instance) {
-                        eventbus.$emit('show_modal', 'modal_set_session_title');
+                        location.reload();
                     },
                     show: true
                 }

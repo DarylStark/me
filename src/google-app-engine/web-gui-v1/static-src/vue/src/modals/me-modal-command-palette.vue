@@ -44,6 +44,22 @@ export default {
                 });
             });
 
+            // Get the items from the user menu
+            this.$store.state.ui.menus.user.forEach(function(menu_item) {
+                // Create a new item
+                let new_item = {
+                    title: menu_item.title,
+                    category: 'User menu',
+                    icon: menu_item.icon,
+                    type: menu_item.type,
+                    uri: menu_item.dst,
+                    action: menu_item.action
+                };
+
+                // Add the item to the commands
+                commands.push(new_item);
+            });
+
             // Get the local actions
             this.$store.state.ui.local_actions.forEach(function(action) {
                 if (action.show) {
