@@ -521,6 +521,16 @@ export default {
                     vue_this.save_user_settings();
                 },
                 show: vue_this.user_settings_changed
+            },
+            {
+                id: 'reload-user-tokens',
+                icon: 'redo',
+                title: 'Reload user tokens',
+                type: 'action',
+                action: function(vue_instance) {
+                    vue_this.set_clients_forced();
+                },
+                show: true
             }
         ]);
 
