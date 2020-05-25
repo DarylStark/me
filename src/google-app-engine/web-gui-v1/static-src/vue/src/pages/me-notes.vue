@@ -24,6 +24,10 @@ export default {
             this.changed = !this.changed;
         }
     },
+    created: function() {
+        // We do need a sidebar on this page. Enable it.
+        this.$store.commit('set_sidebar_availability', true);
+    },
     beforeRouteLeave: function(to, from, next) {
         next(!this.changed);
     }

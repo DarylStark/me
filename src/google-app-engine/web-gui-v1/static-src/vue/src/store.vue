@@ -119,6 +119,7 @@ export default new Vuex.Store({
                     show: true
                 },
                 {
+                    id: 'toggle_sidebar',
                     icon: 'bars',
                     title: 'Toggle sidebar',
                     type: 'action',
@@ -227,6 +228,13 @@ export default new Vuex.Store({
             // Enable or disable the sidebar. For some pages, the sidebar is not needed and has to
             // be disabled to not confuse the user
             state.ui.sidebar_available = new_availability;
+
+            // Hide or show the global action as well
+            state.ui.actions.forEach(function(action) {
+                if (action.id == 'toggle_sidebar') {
+                    action.show = new_availability;
+                }
+            });
         },
         set_search_state: function(state, new_state) {
             // Method to set the state of the searchbar; open or closed. When the 'new_state' is set
