@@ -1,48 +1,55 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------------------------
-# Script to deploy the 'Me' application to Google App Engine. The first argument of the script
-# should be the project to which the application is pushed, the second should be the version of the
-# services to be pushed. If the second one isn't set, we assume no version
+# Script to deploy the 'Me' application to Google App Engine. The syntax for the script is:
+#
+# deploy-to-google-app-engine.sh <service> <version> <project>
+#---------------------------------------------------------------------------------------------------
+# Verify given command line arguments
 #---------------------------------------------------------------------------------------------------
 if [ -z "$1" ]; then
-    echo "ERROR: Project not set. Set project first"
+    echo "ERROR: Service not set"
+    exit
 else
-    if [ -z "$2" ]; then
-        echo "WARNING: Using default version"
-    else
-        echo "Using version $2"
-        cmd_version=" --version $2"
-    fi
-
-    # Set the project in the gcloud config
-    gcloud config set project $1
-
-    # Create the basic command
-    cmd="gcloud app deploy"
-
-    # Add all the service files
-    for service in $(find -name service.yaml); do
-        cmd="$cmd $service"
-    done
-
-    # Add all cron files
-    for service in $(find -name cron.yaml); do
-        cmd="$cmd $service"
-    done
-
-    # Add all dispatch files
-    for service in $(find -name dispatch.yaml); do
-        cmd="$cmd $service"
-    done
-
-    # Add the version, if given
-    if [ "$cmd_version" != "" ]; then
-        cmd="$cmd $cmd_version"
-    fi
-
-    # Add the quiet flag
-    cmd="$cmd --quiet"
-
-    # Run the command
-    $cmd
+    cmd_service=$1
 fi
+if [ -z "$2" ]; then
+    echo "ERROR: Version not set"
+    exit
+else
+    cmd_version=$2
+fi
+if [ -z "$3" ]; then
+    echo "ERROR: Project not set."
+    exit
+else
+    cmd_project=$3
+fi
+#---------------------------------------------------------------------------------------------------
+# Set the project in the gcloud config
+#---------------------------------------------------------------------------------------------------
+echo "--> Setting project"
+echo -n "--> "
+gcloud config set project $cmd_project
+
+# Go to the correct directory
+echo "--> Moving to correct directory"
+cd $(dirname $0)
+if [ "$cmd_service" == "rest-api-v1" ]; then
+    cd ../src/google-app-engine/rest-api-v1
+elif [ "$cmd_service" == "web-gui-v1" ]; then
+    cd ../src/google-app-engine/web-gui-v1
+elif [ "$cmd_service" == "web-gui-v1" ]; then
+    cd ../src/google-app-engine/web-gui-v1
+else
+    echo "ERROR: Service doesn't exist"
+    exit
+fi
+
+# Add the quiet flag
+cmd="gcloud app deploy ./service.yaml --version $cmd_version --quiet"
+
+# Run the command
+echo "--> Executing command: $cmd"
+
+$cmd
+#---------------------------------------------------------------------------------------------------

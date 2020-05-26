@@ -4,12 +4,47 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Deploy to Google App Engine (testing, version v1)",
+            "label": "Deploy REST API v1 to Google App Engine - v1-testing",
             "type": "shell",
             "command": "tasks/deploy-to-google-app-engine.sh",
             "args": [
-                "me-dstark-nl-test",
-                "v1-testing"
+                "rest-api-v1",
+                "v1-testing",
+                "me-dstark-nl-test"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy Web GUI v1 to Google App Engine - v1-testing",
+            "type": "shell",
+            "command": "tasks/deploy-to-google-app-engine.sh",
+            "args": [
+                "web-gui-v1",
+                "v1-testing",
+                "me-dstark-nl-test"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy Default v1 to Google App Engine - v1-testing",
+            "type": "shell",
+            "command": "tasks/deploy-to-google-app-engine.sh",
+            "args": [
+                "default-v1",
+                "v1-testing",
+                "me-dstark-nl-test"
             ],
             "group": "build",
             "presentation": {
