@@ -139,7 +139,6 @@ import me_card from '../components/me-card';
 import me_input from '../components/me-input';
 import me_h1 from '../components/me-h1';
 import me_button from '../components/me-button';
-import me_api_call from '../me/api_call';
 import eventbus from '../eventbus';
 import me_userprofile_api_client from '../components/me-userprofile-api-client';
 import strftime from 'strftime';

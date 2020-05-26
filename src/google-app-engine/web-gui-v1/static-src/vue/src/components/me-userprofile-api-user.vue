@@ -10,9 +10,12 @@
                 </p>
                 <p v-if='!user_token.expiration'>This token will not expire</p>
             </div>
-            <div class='actions' v-show='!renaming'>
+            <div class='actions' v-show='!renaming && !permissions_available'>
                 <span data-position='top left' data-tooltip='Disable user token' v-if='user_token.enabled'>
                     <me-button class='red' icon='power off' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='disable_token'></me-button>
+                </span>
+                <span data-position='top left' data-tooltip='Token permissions'>
+                    <me-button icon='list' v-on:click='show_permissions'></me-button>
                 </span>
                 <span data-position='top left' data-tooltip='Enable user token' v-if='!user_token.enabled'>
                     <me-button class='green' icon='play' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='enable_token'></me-button>
@@ -20,7 +23,7 @@
                 <span data-position='top left' data-tooltip='Reveal token'>
                     <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
                 </span>
-                <span data-position='top left' data-tooltip='Rename token'>
+                <span data-position='top center' data-tooltip='Rename token'>
                     <me-button icon='edit' v-on:click='rename_token'></me-button>
                 </span>
                 <div class='inline'>
@@ -56,6 +59,7 @@
                 </span>
             </div>
         </me-flexline>
+        <me-token-permissions type='user' v-bind:token_id='user_token.id' v-if='permissions_available'>Permissions are going here</me-token-permissions>
     </div>
 </template>
 
@@ -63,6 +67,7 @@
 import me_flexline from './me-flexline';
 import me_button from './me-button';
 import me_input from './me-input';
+import me_token_permissions from './me-token-permissions';
 import Vue from 'vue';
 import strftime from 'strftime';
 
@@ -92,10 +97,14 @@ export default {
             renaming: false,
             description: null,
             loading_delete: false,
-            loading_infinity: false
+            loading_infinity: false,
+            permissions_available: false
         };
     },
     methods: {
+        show_permissions: function() {
+            this.permissions_available = true;
+        },
         copy_token: function() {
             // Copy the token code to the clipboard
 
@@ -409,7 +418,8 @@ export default {
     components: {
         'me-flexline': me_flexline,
         'me-button': me_button,
-        'me-input': me_input
+        'me-input': me_input,
+        'me-token-permissions': me_token_permissions
     },
     props: {
         user_token: { mandatory: true }
