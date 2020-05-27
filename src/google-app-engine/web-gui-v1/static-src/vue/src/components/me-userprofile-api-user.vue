@@ -40,6 +40,11 @@
                     <me-button class='red' icon='trash' v-bind:disabled='loading_delete' v-bind:loading='loading_delete' v-on:click='delete_token'></me-button>
                 </span>
             </div>
+            <div class='actions' v-show='permissions_available'>
+                <span data-position='top right' data-tooltip='Close permission view'>
+                    <me-button icon='close' v-on:click='hide_permissions'></me-button>
+                </span>
+            </div>
         </me-flexline>
         <me-flexline class='token_line' v-if='show_token'>
             <div class='grower' ref='token'>{{ user_token.token }}</div>
@@ -104,6 +109,9 @@ export default {
     methods: {
         show_permissions: function() {
             this.permissions_available = true;
+        },
+        hide_permissions: function() {
+            this.permissions_available = false;
         },
         copy_token: function() {
             // Copy the token code to the clipboard

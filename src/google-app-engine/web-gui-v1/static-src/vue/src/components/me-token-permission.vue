@@ -1,5 +1,5 @@
 <template>
-    <me-flexline>
+    <me-flexline class='permission'>
         <div class='grower description'>
             {{ permission.description }}
             <p>{{ permission.section }}.{{ permission.subject }}</p>
