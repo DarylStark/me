@@ -279,7 +279,7 @@ class APIAAA:
         elif request.method == 'PATCH':
             json_data = request.json
             if 'user_token' in json_data.keys():
-                user_token = request.args.get('user_token')
+                user_token = json_data['user_token']
         
         if user_token is None:
             user_token = kwargs['user_token']

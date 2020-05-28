@@ -7,10 +7,10 @@
             </div>
         </me-flexline>
         <div class='permissions' v-if='loaded'>
-            <me-token-permission v-bind:key='permission.id' v-bind:permission='permission' v-for='permission in selected_permissions'></me-token-permission>
+            <me-token-permission type='user' v-bind:key='permission.id' v-bind:permission='permission' v-bind:token='token' v-for='permission in selected_permissions'></me-token-permission>
         </div>
         <div class='loading_text' v-if='!loaded'>
-            <div class='ui active inline loader'></div>Loading the API clients
+            <div class='ui active inline loader'></div>Loading the API permissions
         </div>
     </div>
 </template>
@@ -89,7 +89,6 @@ export default {
             }
         })
             .then(function(data) {
-                console.log(data);
                 vue_this.permissions = data.data.dataset.data;
                 vue_this.loaded = true;
             })
