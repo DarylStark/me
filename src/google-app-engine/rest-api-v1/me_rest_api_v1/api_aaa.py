@@ -258,74 +258,81 @@ class APIAAA:
     
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',
-        name = 'list_user_permissions',
-        description = 'Retrieve a users permissions',
+        name = 'user_permissions',
+        description = 'Retrieve and update a users permissions',
         permissions = {
-            'GET': 'aaa.list_user_permissions'
+            'GET': 'aaa.retrieve_user_permissions',
+            'PATCH': 'aaa.update_user_permissions'
         },
         user_token_needed = True
     )
-    def list_user_permissions(*args, **kwargs):
-        """ Endpoint for users to retrieve its permissions. This endpoint will list all
-            permissions that are enabled for this user """
-        
-        # Create an empty response object
-        response = APIResponse(APIResponse.TYPE_DATASET)
+    def user_permissions(*args, **kwargs):
+        """ Endpoint for users to retrieve and update its permissions. This endpoint will list all
+            permissions that are enabled for this user, or set permissions to granted or not granted
+        """
 
-        # Get the token from the URL (if given)
-        user_token_url = request.args.get('user_token')
-        
-        # Get all permissions from the database
-        with DatabaseSession() as session:
-            # Find the current user
-            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+        if request.method == 'GET':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DATASET)
 
-            # Find the user token
-            if user_token_url is None:
-                user_token = kwargs['user_token']
-            else:
-                user_token = user_token_url
-
-            # Get the token
-            user_token_object = session.query(APIUserToken).filter(and_(APIUserToken.token == user_token, APIUserToken.user == user_token_object.user)).first()
-
-            # If we didn't get a token, either because it doesn't exists or is not for the current
-            # user, we raise an error
-            if user_token_object is None:
-                raise MeRESTAPIv1AAAUpdateListUserPermissionsTokenNotFoundError(f'Usertoken with {user_token} can not be found')
+            # Get the token from the URL (if given)
+            user_token_url = request.args.get('user_token')
             
-            # Get the permissions objects from the user token object
-            token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in user_token_object.user_permissions ]
+            # Get all permissions from the database
+            with DatabaseSession() as session:
+                # Find the current user
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
 
-            # Get all IDs in the token_permission_objects
-            token_permission_objects_ids = [ permission['permission'].id for permission in token_permission_objects ]
+                # Find the user token
+                if user_token_url is None:
+                    user_token = kwargs['user_token']
+                else:
+                    user_token = user_token_url
 
-            # Get all available permissions
-            permission_objects = session.query(APIPermission).all()
+                # Get the token
+                user_token_object = session.query(APIUserToken).filter(and_(APIUserToken.token == user_token, APIUserToken.user == user_token_object.user)).first()
 
-            # Get the missing permissions
-            missing_permissions = [ { 'permission': permission, 'granted': False } for permission in permission_objects if not permission.id in token_permission_objects_ids ]
+                # If we didn't get a token, either because it doesn't exists or is not for the
+                # current user, we raise an error
+                if user_token_object is None:
+                    raise MeRESTAPIv1AAAUpdateUserPermissionsTokenNotFoundError(f'Usertoken with {user_token} can not be found')
+                
+                # Get the permissions objects from the user token object
+                token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in user_token_object.user_permissions ]
 
-            # Create a list with all the permissions combined
-            return_list = list()
+                # Get all IDs in the token_permission_objects
+                token_permission_objects_ids = [ permission['permission'].id for permission in token_permission_objects ]
+
+                # Get all available permissions
+                permission_objects = session.query(APIPermission).all()
+
+                # Get the missing permissions
+                missing_permissions = [ { 'permission': permission, 'granted': False } for permission in permission_objects if not permission.id in token_permission_objects_ids ]
+
+                # Create a list with all the permissions combined
+                return_list = list()
+                
+                # Add the permission objects from the token
+                combined = token_permission_objects + missing_permissions
+                for permission in  combined:
+                    return_list.append({
+                        'id': permission['permission'].id,
+                        'description': permission['permission'].description,
+                        'section': permission['permission'].section,
+                        'subject': permission['permission'].subject,
+                        'granted': permission['granted'],
+                    })
             
-            # Add the permission objects from the token
-            combined = token_permission_objects + missing_permissions
-            for permission in  combined:
-                return_list.append({
-                    'id': permission['permission'].id,
-                    'description': permission['permission'].description,
-                    'section': permission['permission'].section,
-                    'subject': permission['permission'].subject,
-                    'granted': permission['granted'],
-                })
-        
-        # Set the sorted return data
-        return_list.sort(key = lambda x: x['section'] + '.' + x['subject'])
-        response.data = return_list
+            # Set the sorted return data
+            return_list.sort(key = lambda x: x['section'] + '.' + x['subject'])
+            response.data = return_list
 
-        # Return the object
-        return response
+            # Return the object
+            return response
+        
+        if request.method == 'PATCH':
+            # TODO: Implement
+            pass
     
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',

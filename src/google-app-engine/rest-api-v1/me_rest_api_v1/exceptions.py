@@ -103,7 +103,7 @@ class MeRESTAPIv1AAASetTokenDescriptionMissingDescriptionError(MeRESTAPIv1PageNo
     """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUpdateListUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
+class MeRESTAPIv1AAAUpdateUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
     """ Error when a user tries to retrieve User API permissions for a token that doesn't exists or
         is not his """
     pass

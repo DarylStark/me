@@ -82,7 +82,8 @@ export default {
         // Get the permissions from the API
         me_api_call({
             group: 'aaa',
-            endpoint: 'list_user_permissions',
+            endpoint: 'user_permissions',
+            method: 'GET',
             data: {
                 user_token: this.token
             }
