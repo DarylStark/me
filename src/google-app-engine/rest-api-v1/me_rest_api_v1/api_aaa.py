@@ -13,6 +13,7 @@ from me_rest_api_v1.exceptions import *
 from database import DatabaseSession
 from database import User
 from database import APIUserToken
+from database import APIPermission
 from database import APIClientToken
 from database import APIUserPermission
 import datetime
@@ -270,18 +271,58 @@ class APIAAA:
         
         # Create an empty response object
         response = APIResponse(APIResponse.TYPE_DATASET)
+
+        # Get the token from the URL (if given)
+        user_token_url = request.args.get('user_token')
         
         # Get all permissions from the database
         with DatabaseSession() as session:
+            # Find the current user
+            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
             # Find the user token
-            user_token = kwargs['user_token']
-            user_token_object = session.query(APIUserToken).filter(APIUserToken.token == user_token).first()
+            if user_token_url is None:
+                user_token = kwargs['user_token']
+            else:
+                user_token = user_token_url
+
+            # Get the token
+            user_token_object = session.query(APIUserToken).filter(and_(APIUserToken.token == user_token, APIUserToken.user == user_token_object.user)).first()
+
+            # If we didn't get a token, either because it doesn't exists or is not for the current
+            # user, we raise an error
+            if user_token_object is None:
+                raise MeRESTAPIv1AAAUpdateListUserPermissionsTokenNotFoundError(f'Usertoken with {user_token} can not be found')
             
-            # Get the permissions objects
-            permission_objects = [ permission.permission_object for permission in user_token_object.user_permissions if permission.granted ]
+            # Get the permissions objects from the user token object
+            token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in user_token_object.user_permissions ]
+
+            # Get all IDs in the token_permission_objects
+            token_permission_objects_ids = [ permission['permission'].id for permission in token_permission_objects ]
+
+            # Get all available permissions
+            permission_objects = session.query(APIPermission).all()
+
+            # Get the missing permissions
+            missing_permissions = [ { 'permission': permission, 'granted': False } for permission in permission_objects if not permission.id in token_permission_objects_ids ]
+
+            # Create a list with all the permissions combined
+            return_list = list()
+            
+            # Add the permission objects from the token
+            combined = token_permission_objects + missing_permissions
+            for permission in  combined:
+                return_list.append({
+                    'id': permission['permission'].id,
+                    'description': permission['permission'].description,
+                    'section': permission['permission'].section,
+                    'subject': permission['permission'].subject,
+                    'granted': permission['granted'],
+                })
         
-        # Set the return data
-        response.data = permission_objects
+        # Set the sorted return data
+        return_list.sort(key = lambda x: x['section'] + '.' + x['subject'])
+        response.data = return_list
 
         # Return the object
         return response
