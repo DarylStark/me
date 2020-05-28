@@ -14,11 +14,11 @@
                 <span data-position='top left' data-tooltip='Disable user token' v-if='user_token.enabled'>
                     <me-button class='red' icon='power off' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='disable_token'></me-button>
                 </span>
-                <span data-position='top left' data-tooltip='Token permissions'>
-                    <me-button icon='list' v-on:click='show_permissions'></me-button>
-                </span>
                 <span data-position='top left' data-tooltip='Enable user token' v-if='!user_token.enabled'>
                     <me-button class='green' icon='play' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='enable_token'></me-button>
+                </span>
+                <span data-position='top left' data-tooltip='Token permissions'>
+                    <me-button icon='list' v-on:click='show_permissions'></me-button>
                 </span>
                 <span data-position='top left' data-tooltip='Reveal token'>
                     <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
