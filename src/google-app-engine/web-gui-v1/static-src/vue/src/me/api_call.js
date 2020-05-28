@@ -52,6 +52,20 @@ export default function(options) {
         '/' +
         api_options.endpoint;
 
+    // If this is a GET request, and there is data, we have to add it to the url
+    if (api_options.method == 'GET' && api_options.data) {
+        // Get the options
+        let url_options = new Array();
+        Object.keys(api_options.data).forEach(function(element) {
+            url_options.push(
+                element + '=' + encodeURI(api_options.data[element])
+            );
+        });
+
+        // Add them to the URL
+        full_url += '?' + url_options.join('&');
+    }
+
     // Return a Promise that does the correct code
     return axios({
         method: api_options.method,

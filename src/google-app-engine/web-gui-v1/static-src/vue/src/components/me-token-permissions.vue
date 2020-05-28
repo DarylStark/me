@@ -6,8 +6,11 @@
                 <me-input icon='search' icon_position='right' id='search' placeholder='search' v-model='query'></me-input>
             </div>
         </me-flexline>
-        <div class='permissions'>
+        <div class='permissions' v-if='loaded'>
             <me-token-permission v-bind:key='permission.id' v-bind:permission='permission' v-for='permission in selected_permissions'></me-token-permission>
+        </div>
+        <div class='loading_text' v-if='!loaded'>
+            <div class='ui active inline loader'></div>Loading the API clients
         </div>
     </div>
 </template>
@@ -32,8 +35,8 @@ export default {
                 return ['client', 'user'].indexOf(value) !== -1;
             }
         },
-        token_id: {
-            type: Number,
+        token: {
+            type: String,
             required: true
         }
     },
@@ -68,105 +71,37 @@ export default {
     data: function() {
         return {
             query: null,
-            permissions: [
-                {
-                    id: 1,
-                    section: 'aaa',
-                    subject: 'retrieve_user_token_with_credentials',
-                    description:
-                        'Retrieving a user token using the users credentials',
-                    granted: true
-                },
-                {
-                    id: 2,
-                    section: 'aaa',
-                    subject: 'refresh_user_token',
-                    description: 'Refreshing a user token before it expires',
-                    granted: true
-                },
-                {
-                    id: 3,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 4,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 5,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 6,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 7,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 8,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 9,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 10,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 11,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 12,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                },
-                {
-                    id: 13,
-                    section: 'api_clients',
-                    subject: 'retrieve_clients',
-                    description: 'Retrieve API clients',
-                    granted: true
-                }
-            ]
+            permissions: null,
+            loaded: false
         };
     },
-    mounted: function() {
+    created: function() {
+        // Local this
+        let vue_this = this;
+
         // Get the permissions from the API
-        // TODO: Implement
+        me_api_call({
+            group: 'aaa',
+            endpoint: 'list_user_permissions',
+            data: {
+                user_token: this.token
+            }
+        })
+            .then(function(data) {
+                console.log(data);
+                vue_this.permissions = data.data.dataset.data;
+                vue_this.loaded = true;
+            })
+            .catch(function(error) {
+                $('body').toast({
+                    position: 'bottom center',
+                    message: "Coundn't retrieve token permissions",
+                    closeIcon: true,
+                    displayTime: 'auto',
+                    showIcon: 'user',
+                    class: 'error'
+                });
+            });
     }
 };
 </script>
