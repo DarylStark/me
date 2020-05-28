@@ -271,32 +271,37 @@ class APIAAA:
             permissions that are enabled for this user, or set permissions to granted or not granted
         """
 
+        # Get the token that the user wants to see the permissions from or edit from
+        user_token = None
+        if request.method == 'GET':
+            if not request.args.get('user_token') is None:
+                user_token = request.args.get('user_token')
+        elif request.method == 'PATCH':
+            json_data = request.json
+            if 'user_token' in json_data.keys():
+                user_token = request.args.get('user_token')
+        
+        if user_token is None:
+            user_token = kwargs['user_token']
+
+        # We got the correct token, let's execute the API endpoint
         if request.method == 'GET':
             # Create an empty response object
             response = APIResponse(APIResponse.TYPE_DATASET)
-
-            # Get the token from the URL (if given)
-            user_token_url = request.args.get('user_token')
             
             # Get all permissions from the database
             with DatabaseSession() as session:
                 # Find the current user
                 user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
 
-                # Find the user token
-                if user_token_url is None:
-                    user_token = kwargs['user_token']
-                else:
-                    user_token = user_token_url
-
-                # Get the token
+                # Get the token object
                 user_token_object = session.query(APIUserToken).filter(and_(APIUserToken.token == user_token, APIUserToken.user == user_token_object.user)).first()
 
                 # If we didn't get a token, either because it doesn't exists or is not for the
                 # current user, we raise an error
                 if user_token_object is None:
-                    raise MeRESTAPIv1AAAUpdateUserPermissionsTokenNotFoundError(f'Usertoken with {user_token} can not be found')
-                
+                    raise MeRESTAPIv1AAAUserPermissionsTokenNotFoundError(f'Usertoken "{user_token}" can not be found')
+
                 # Get the permissions objects from the user token object
                 token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in user_token_object.user_permissions ]
 
@@ -331,8 +336,69 @@ class APIAAA:
             return response
         
         if request.method == 'PATCH':
-            # TODO: Implement
-            pass
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+
+            # Verify that we have all the needed options in the request data
+            if not 'permission' in json_data.keys() or not 'granted' in json_data.keys():
+                raise MeRESTAPIv1AAAUserPermissionsNotAllFieldsError('Not all fields are specified. Fields "permission" and "granted" should be given')
+            
+            if not type(json_data['permission']) is str or not type(json_data['granted']) is bool:
+                raise MeRESTAPIv1AAAUserPermissionsNotAllFieldsError('Field "permission" should be a string and "granted" a boolean')
+
+            if not re.match('[a-z0-9_]+\.[a-z0-9_]+', json_data['permission']):
+                raise MeRESTAPIv1AAAUserPermissionsNotAllFieldsError('Field "permission" should be a in form "<section>.<subject>')
+            
+            # Get all permissions from the database
+            with DatabaseSession(commit_on_end = True) as session:
+                # Find the current user
+                user_token_object = session.query(APIUserToken).filter(APIUserToken.token == kwargs['user_token']).first()
+
+                # Get the token object
+                user_token_object = session.query(APIUserToken).filter(and_(APIUserToken.token == user_token, APIUserToken.user == user_token_object.user)).first()
+
+                # If we didn't get a token, either because it doesn't exists or is not for the
+                # current user, we raise an error
+                if user_token_object is None:
+                    raise MeRESTAPIv1AAAUserPermissionsTokenNotFoundError(f'Usertoken "{user_token}" can not be found')
+                
+                # Find the permissions
+                section, subject = re.findall('^([a-z0-9_]+)\.([a-z0-9_]+)$', json_data['permission'])[0]
+                permission_objects = session.query(APIPermission).filter(and_(
+                    APIPermission.section == section,
+                    APIPermission.subject == subject
+                ))
+
+                # Give an error if we don't have one permissions
+                if permission_objects.count() != 1:
+                    raise MeRESTAPIv1AAAUserPermissionsPermissionNotFoundError(f'Permission "{section}.{subject}" can not be found')
+                
+                # Get the object
+                permission_object = permission_objects.first()
+
+                # Find the APIUserPermission object
+                api_user_permission_object = session.query(APIUserPermission).filter(and_(
+                    APIUserPermission.user_token == user_token_object.id,
+                    APIUserPermission.permission == permission_object.id
+                )).first()
+
+                # Check if we have any
+                if not api_user_permission_object is None:
+                    api_user_permission_object.granted = json_data['granted']
+                else:
+                    # Permission didn't exist. Let's create it
+                    api_user_permission_object = APIUserPermission(
+                        user_token = user_token_object.id,
+                        permission = permission_object.id,
+                        granted = json_data['granted']
+                    )
+                    session.add(api_user_permission_object)
+                
+            # Set the response data
+            response.data = True
+
+            # Return the object
+            return response
     
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',

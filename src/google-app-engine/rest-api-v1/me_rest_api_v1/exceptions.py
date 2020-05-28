@@ -103,11 +103,6 @@ class MeRESTAPIv1AAASetTokenDescriptionMissingDescriptionError(MeRESTAPIv1PageNo
     """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUpdateUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
-    """ Error when a user tries to retrieve User API permissions for a token that doesn't exists or
-        is not his """
-    pass
-#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
@@ -204,6 +199,21 @@ class MeRESTAPIv1AARefreshUserTokenInfiniteTokenError(MeRESTAPIv1PermissionDenie
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1AARefreshUserTokenNotExpiringYetTokenError(MeRESTAPIv1PermissionDeniedError):
     """ Error for when a user tries to refresh a user token that is not about to expire """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUserPermissionsNotAllFieldsError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve updata a User API permissions without specifying all the
+        needed options """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve User API permissions for a token that doesn't exists or
+        is not his """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUserPermissionsPermissionNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to update a API User Permissions for a permission that doesn't
+        exist """
     pass
 #---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
