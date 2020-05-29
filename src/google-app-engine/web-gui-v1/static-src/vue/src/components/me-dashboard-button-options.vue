@@ -14,6 +14,7 @@
                     <i class='desktop icon'></i>
                     API clients
                 </div>
+                <div class='divider'></div>
                 <div class='item' v-on:click='command_palette'>
                     <i class='terminal icon'></i>
                     Command palette
