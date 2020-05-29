@@ -10,6 +10,10 @@
                     <span v-if='$store.state.ui.sidebar_open'>Hide sidebar</span>
                 </div>
                 <div class='divider' v-if='$store.state.ui.sidebar_available'></div>
+                <div class='item' v-on:click='api_clients'>
+                    <i class='desktop icon'></i>
+                    API clients
+                </div>
                 <div class='item' v-on:click='command_palette'>
                     <i class='terminal icon'></i>
                     Command palette
@@ -47,6 +51,10 @@ export default {
         command_palette: function() {
             // Show the enable 2nd factor dialog
             eventbus.$emit('show_modal', 'modal_command_palette');
+        },
+        api_clients: function() {
+            // Go to the API clients page
+            this.$router.push('/api_clients');
         }
     }
 };

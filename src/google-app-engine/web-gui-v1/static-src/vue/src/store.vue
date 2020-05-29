@@ -160,6 +160,7 @@ export default new Vuex.Store({
             },
             api_clients: {
                 _updated: false,
+                _updated_user_tokens: false,
                 clients: []
             }
         }
@@ -412,7 +413,8 @@ export default new Vuex.Store({
             let api_options = {
                 success: null,
                 failed: null,
-                force: false
+                force: false,
+                get_user_tokens: true
             };
 
             // Loop through the given object and set the values to the local object
@@ -423,7 +425,12 @@ export default new Vuex.Store({
             }
 
             // Update the object, if needed
-            if (api_options.force || !state.api_data.api_clients._updated) {
+            if (
+                api_options.force ||
+                !state.api_data.api_clients._updated ||
+                (!state.api_data.api_clients._updated_user_tokens &&
+                    api_options.get_user_tokens)
+            ) {
                 // Retrieve the user object
                 me_api_call({
                     group: 'api_clients',
@@ -431,6 +438,8 @@ export default new Vuex.Store({
                     method: 'GET'
                 })
                     .then(function(data) {
+                        state.api_data.api_clients._updated = true;
+
                         // Data received. First, we remove all data from the current list
                         state.api_data.api_clients.clients = [];
 
@@ -443,59 +452,70 @@ export default new Vuex.Store({
                             state.api_data.api_clients.clients.push(element);
                         });
 
-                        // Now that we have the clients, we can retrieve the user tokens for this client
-                        me_api_call({
-                            group: 'aaa',
-                            endpoint: 'user_token',
-                            method: 'GET'
-                        })
-                            .then(function(data) {
-                                // Set 'updated' to true so it won't update again if needed
-                                state.api_data.api_clients._updated = true;
+                        if (api_options.get_user_tokens) {
+                            // Now that we have the clients, we can retrieve the user tokens for this client
+                            me_api_call({
+                                group: 'aaa',
+                                endpoint: 'user_token',
+                                method: 'GET'
+                            })
+                                .then(function(data) {
+                                    // Set 'updated' to true so it won't update again if needed
+                                    state.api_data.api_clients._updated_user_tokens = true;
 
-                                // Add the user-tokens to the client-objects
-                                data.data.dataset.data.forEach(function(
-                                    element
-                                ) {
-                                    // Convert the date-fields to a Date object
-                                    element.created = new Date(
-                                        element.created + ' UTC'
-                                    );
-                                    if (element.expiration) {
-                                        element.expiration = new Date(
-                                            element.expiration + ' UTC'
+                                    // Add the user-tokens to the client-objects
+                                    data.data.dataset.data.forEach(function(
+                                        element
+                                    ) {
+                                        // Convert the date-fields to a Date object
+                                        element.created = new Date(
+                                            element.created + ' UTC'
                                         );
-                                    }
-
-                                    // Find the client token that belongs to this one
-                                    let api_client = state.api_data.api_clients.clients.find(
-                                        function(client) {
-                                            return (
-                                                client.id ==
-                                                element.client_token
+                                        if (element.expiration) {
+                                            element.expiration = new Date(
+                                                element.expiration + ' UTC'
                                             );
                                         }
-                                    );
 
-                                    if (api_client) {
-                                        // Add the user token to the client-object
-                                        api_client.user_tokens.push(element);
+                                        // Find the client token that belongs to this one
+                                        let api_client = state.api_data.api_clients.clients.find(
+                                            function(client) {
+                                                return (
+                                                    client.id ==
+                                                    element.client_token
+                                                );
+                                            }
+                                        );
+
+                                        if (api_client) {
+                                            // Add the user token to the client-object
+                                            api_client.user_tokens.push(
+                                                element
+                                            );
+                                        }
+                                    });
+
+                                    // Run the callback (if there is any)
+                                    if (api_options.success) {
+                                        api_options.success(
+                                            state.api_data.api_clients.clients
+                                        );
+                                    }
+                                })
+                                .catch(function(data) {
+                                    // Run the callback (if there is any)
+                                    if (api_options.failed) {
+                                        api_options.failed(data);
                                     }
                                 });
-
-                                // Run the callback (if there is any)
-                                if (api_options.success) {
-                                    api_options.success(
-                                        state.api_data.api_clients.clients
-                                    );
-                                }
-                            })
-                            .catch(function(data) {
-                                // Run the callback (if there is any)
-                                if (api_options.failed) {
-                                    api_options.failed(data);
-                                }
-                            });
+                        } else {
+                            // Run the callback (if there is any)
+                            if (api_options.success) {
+                                api_options.success(
+                                    state.api_data.api_clients.clients
+                                );
+                            }
+                        }
                     })
                     .catch(function(data) {
                         // Run the callback (if there is any)
@@ -936,6 +956,66 @@ export default new Vuex.Store({
         remove_local_actions: function(state) {
             // Method to remove all local actions
             state.ui.local_actions = new Array();
+        },
+        api_update_api_client_token: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    id: null,
+                    enabled: null
+                }
+            };
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                    api_options[key] = options[key];
+                }
+            }
+
+            // Check if a 'id' is given
+            if (api_options.fields.id == null) {
+                if (api_options.failed) {
+                    api_options.failed('No id given');
+                }
+                return;
+            }
+
+            // Find the local object
+            var client_token = null;
+            client_token = state.api_data.api_clients.clients.find(function(
+                client
+            ) {
+                return client.id == api_options.fields.id;
+            });
+
+            // Send the request
+            me_api_call({
+                group: 'api_clients',
+                endpoint: 'client',
+                method: 'PATCH',
+                data: api_options.fields
+            })
+                .then(function(data) {
+                    // Update the local fields
+
+                    // Update the disabled state
+                    if (api_options.fields.enabled != null) {
+                        client_token.enabled = api_options.fields.enabled;
+                    }
+
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         }
     }
 });

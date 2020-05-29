@@ -191,7 +191,7 @@ export default {
             }
         },
         disable_token: function() {
-            // Method that actually updates the tokenname
+            // Method that disables the token
             this.loading_disable = true;
 
             // Local this
@@ -201,7 +201,6 @@ export default {
             this.$store.commit('api_update_api_user_token', {
                 success: function() {
                     vue_this.loading_disable = false;
-                    vue_this.renaming = false;
                     $('body').toast({
                         position: 'bottom center',
                         message: 'Disabled token',
@@ -230,7 +229,7 @@ export default {
             });
         },
         enable_token: function() {
-            // Method that actually updates the tokenname
+            // Method that enables the token
             this.loading_disable = true;
 
             // Local this
@@ -240,7 +239,6 @@ export default {
             this.$store.commit('api_update_api_user_token', {
                 success: function() {
                     vue_this.loading_disable = false;
-                    vue_this.renaming = false;
                     $('body').toast({
                         position: 'bottom center',
                         message: 'Enabled token',
@@ -269,7 +267,7 @@ export default {
             });
         },
         set_token_infinite: function() {
-            // Method that actually updates the tokenname
+            // Method that sets the token to infinite
             this.loading_infinity = true;
 
             // Local this
