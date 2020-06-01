@@ -64,7 +64,7 @@
                 </span>
             </div>
         </me-flexline>
-        <me-token-permissions type='user' v-bind:token='user_token.token' v-if='permissions_available'>Permissions are going here</me-token-permissions>
+        <me-token-permissions type='user' v-bind:token='user_token.token' v-if='permissions_available'></me-token-permissions>
     </div>
 </template>
 
