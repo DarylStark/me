@@ -7,7 +7,7 @@
             </div>
         </me-flexline>
         <div class='permissions' v-if='loaded'>
-            <me-token-permission type='user' v-bind:key='permission.id' v-bind:permission='permission' v-bind:token='token' v-for='permission in selected_permissions'></me-token-permission>
+            <me-token-permission v-bind:key='permission.id' v-bind:permission='permission' v-bind:token='token' v-bind:type='type' v-for='permission in selected_permissions'></me-token-permission>
         </div>
         <div class='loading_text' v-if='!loaded'>
             <div class='ui active inline loader'></div>Loading the API permissions
@@ -79,14 +79,26 @@ export default {
         // Local this
         let vue_this = this;
 
+        // Determine the API endpoint
+        let group = 'api_clients';
+        let endpoint = 'permissions';
+        let data = {
+            token: this.token
+        };
+        if (this.type == 'user') {
+            group = 'aaa';
+            endpoint = 'user_permissions';
+            data = {
+                user_token: this.token
+            };
+        }
+
         // Get the permissions from the API
         me_api_call({
-            group: 'aaa',
-            endpoint: 'user_permissions',
+            group: group,
+            endpoint: endpoint,
             method: 'GET',
-            data: {
-                user_token: this.token
-            }
+            data: data
         })
             .then(function(data) {
                 vue_this.permissions = data.data.dataset.data;

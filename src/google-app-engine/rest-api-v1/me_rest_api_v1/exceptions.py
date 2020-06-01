@@ -111,9 +111,34 @@ class MeRESTAPIv1APIClientUpdateClientTokenNotFoundError(MeRESTAPIv1PageNotFound
     """ Error when a user tries to update a client token that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1APIClientsClientPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
-    """ Error when a user tries to retrieve Client API permissions for a token that doesn't exist
+class MeRESTAPIv1AAAUserPermissionsNotAllFieldsError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve update a User API permissions without specifying all the
+        needed options """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve User API permissions for a token that doesn't exists or
+        is not his """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1AAAUserPermissionsPermissionNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to update a API User Permissions for a permission that doesn't
+        exist """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1APIClientsPermissionsNotAllFieldsError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve updata a Client API permissions without specifying all the
+        needed options """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1APIClientsPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve client API permissions for a token that doesn't exists
     """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1APIClientsPermissionsPermissionNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to update a API Client Permissions for a permission that doesn't
+        exist """
     pass
 #---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
@@ -212,21 +237,6 @@ class MeRESTAPIv1AARefreshUserTokenInfiniteTokenError(MeRESTAPIv1PermissionDenie
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1AARefreshUserTokenNotExpiringYetTokenError(MeRESTAPIv1PermissionDeniedError):
     """ Error for when a user tries to refresh a user token that is not about to expire """
-    pass
-#---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUserPermissionsNotAllFieldsError(MeRESTAPIv1PageNotFoundError):
-    """ Error when a user tries to retrieve updata a User API permissions without specifying all the
-        needed options """
-    pass
-#---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUserPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
-    """ Error when a user tries to retrieve User API permissions for a token that doesn't exists or
-        is not his """
-    pass
-#---------------------------------------------------------------------------------------------------
-class MeRESTAPIv1AAAUserPermissionsPermissionNotFoundError(MeRESTAPIv1PageNotFoundError):
-    """ Error when a user tries to update a API User Permissions for a permission that doesn't
-        exist """
     pass
 #---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault

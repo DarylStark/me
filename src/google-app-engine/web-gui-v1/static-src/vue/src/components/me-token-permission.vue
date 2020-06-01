@@ -72,6 +72,17 @@ export default {
                 };
             }
 
+            if (this.type == 'client') {
+                group = 'api_clients';
+                endpoint = 'permissions';
+                data = {
+                    token: this.token,
+                    permission:
+                        this.permission.section + '.' + this.permission.subject,
+                    granted: this.value
+                };
+            }
+
             // Send the API to update the permission
             me_api_call({
                 group: group,

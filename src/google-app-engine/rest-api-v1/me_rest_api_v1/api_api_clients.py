@@ -6,13 +6,16 @@
 """
 #---------------------------------------------------------------------------------------------------
 # Imports
+import re
 from flask import request
 from me_rest_api_v1 import MeRESTAPIv1
 from me_rest_api_v1 import APIResponse
 from me_rest_api_v1.exceptions import *
 from database import DatabaseSession
 from database import APIClientToken
+from database import APIClientPermission
 from database import APIPermission
+from sqlalchemy import and_
 #---------------------------------------------------------------------------------------------------
 @MeRESTAPIv1.register_group(name = 'api_clients', description = 'API Client management')
 class APIAPIClients:
@@ -82,7 +85,8 @@ class APIAPIClients:
         name = 'permissions',
         description = 'Retrieve the permissions for a specific API client',
         permissions = {
-            'GET': 'api_clients.retrieve_client_permissions'
+            'GET': 'api_clients.retrieve_client_permissions',
+            'PATCH': 'api_clients.update_client_permissions'
         },
         user_token_needed = True
     )
@@ -114,7 +118,7 @@ class APIAPIClients:
 
                 # If we didn't get a token we raise an error
                 if client_token_object is None:
-                    raise MeRESTAPIv1APIClientsClientPermissionsTokenNotFoundError(f'Client token "{client_token}" can not be found')
+                    raise MeRESTAPIv1APIClientsPermissionsTokenNotFoundError(f'Client token "{client_token}" can not be found')
 
                 # Get the permissions objects from the client token object
                 token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in client_token_object.client_permissions ]
@@ -145,6 +149,68 @@ class APIAPIClients:
             # Set the sorted return data
             return_list.sort(key = lambda x: x['section'] + '.' + x['subject'])
             response.data = return_list
+
+            # Return the object
+            return response
+        
+        if request.method == 'PATCH':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+
+            # Verify that we have all the needed options in the request data
+            if not 'permission' in json_data.keys() or not 'granted' in json_data.keys():
+                raise MeRESTAPIv1APIClientsPermissionsNotAllFieldsError('Not all fields are specified. Fields "permission" and "granted" should be given')
+            
+            if not type(json_data['permission']) is str or not type(json_data['granted']) is bool:
+                raise MeRESTAPIv1APIClientsPermissionsNotAllFieldsError('Field "permission" should be a string and "granted" a boolean')
+
+            if not re.match('[a-z0-9_]+\.[a-z0-9_]+', json_data['permission']):
+                raise MeRESTAPIv1APIClientsPermissionsNotAllFieldsError('Field "permission" should be a in form "<section>.<subject>')
+            
+            # Get all permissions from the database
+            with DatabaseSession(commit_on_end = True) as session:
+                # Get the token object
+                client_token_object = session.query(APIClientToken).filter(APIClientToken.token == client_token).first()
+
+                # If we didn't get a token, either because it doesn't exists or is not for the
+                # current user, we raise an error
+                if client_token_object is None:
+                    raise MeRESTAPIv1APIClientsPermissionsTokenNotFoundError(f'Client token "{client_token}" can not be found')
+                
+                # Find the permissions
+                section, subject = re.findall('^([a-z0-9_]+)\.([a-z0-9_]+)$', json_data['permission'])[0]
+                permission_objects = session.query(APIPermission).filter(and_(
+                    APIPermission.section == section,
+                    APIPermission.subject == subject
+                ))
+
+                # Give an error if we don't have one permissions
+                if permission_objects.count() != 1:
+                    raise MeRESTAPIv1APIClientsPermissionsPermissionNotFoundError(f'Permission "{section}.{subject}" can not be found')
+                
+                # Get the object
+                permission_object = permission_objects.first()
+
+                # Find the APIClientPermission object
+                api_client_permission_object = session.query(APIClientPermission).filter(and_(
+                    APIClientPermission.client_token == client_token_object.id,
+                    APIClientPermission.permission == permission_object.id
+                )).first()
+
+                # Check if we have any
+                if not api_client_permission_object is None:
+                    api_client_permission_object.granted = json_data['granted']
+                else:
+                    # Permission didn't exist. Let's create it
+                    api_client_permission_object = APIClientPermission(
+                        client_token = client_token_object.id,
+                        permission = permission_object.id,
+                        granted = json_data['granted']
+                    )
+                    session.add(api_client_permission_object)
+                
+            # Set the response data
+            response.data = True
 
             # Return the object
             return response
