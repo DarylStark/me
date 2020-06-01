@@ -224,37 +224,7 @@ class APIAAA:
         # Set the response to True and return it
         response.data = True
         return response
-    
-    @MeRESTAPIv1.register_endpoint(
-        group = 'aaa',
-        name = 'list_client_permissions',
-        description = 'Retrieve a clients permissions',
-        permissions = {
-            'GET': 'aaa.list_client_permissions'
-        },
-        user_token_needed = False
-    )
-    def list_client_permissions(*args, **kwargs):
-        """ Endpoint for clients to retrieve its permissions. This endpoint will list all
-            permissions that are enabled for this client """
-        
-        # Create an empty response object
-        response = APIResponse(APIResponse.TYPE_DATASET)
-        
-        # Get all permissions from the database
-        with DatabaseSession() as session:
-            # Find the client token
-            client_token = kwargs['client_token']
-            client_token_object = session.query(APIClientToken).filter(APIClientToken.token == client_token).first()
-            
-            # Get the permissions objects
-            permission_objects = [ permission.permission_object for permission in client_token_object.client_permissions if permission.granted ]
-        
-        # Set the return data
-        response.data = permission_objects
 
-        # Return the object
-        return response
     
     @MeRESTAPIv1.register_endpoint(
         group = 'aaa',

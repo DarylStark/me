@@ -111,6 +111,11 @@ class MeRESTAPIv1APIClientUpdateClientTokenNotFoundError(MeRESTAPIv1PageNotFound
     """ Error when a user tries to update a client token that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1APIClientsClientPermissionsTokenNotFoundError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to retrieve Client API permissions for a token that doesn't exist
+    """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):

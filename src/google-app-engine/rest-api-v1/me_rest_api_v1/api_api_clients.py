@@ -12,6 +12,7 @@ from me_rest_api_v1 import APIResponse
 from me_rest_api_v1.exceptions import *
 from database import DatabaseSession
 from database import APIClientToken
+from database import APIPermission
 #---------------------------------------------------------------------------------------------------
 @MeRESTAPIv1.register_group(name = 'api_clients', description = 'API Client management')
 class APIAPIClients:
@@ -74,5 +75,77 @@ class APIAPIClients:
             
             # Return the response
             response.data = True
+            return response
+    
+    @MeRESTAPIv1.register_endpoint(
+        group = 'api_clients',
+        name = 'permissions',
+        description = 'Retrieve the permissions for a specific API client',
+        permissions = {
+            'GET': 'api_clients.retrieve_client_permissions'
+        },
+        user_token_needed = True
+    )
+    def permissions(*args, **kwargs):
+        """ Endpoint to retrieve permissions for a specific API client """
+
+        # Get the token that the user wants to see the permissions from or edit from
+        client_token = None
+        if request.method == 'GET':
+            if not request.args.get('token') is None:
+                client_token = request.args.get('token')
+        elif request.method == 'PATCH':
+            json_data = request.json
+            if 'token' in json_data.keys():
+                client_token = json_data['token']
+        
+        if client_token is None:
+            client_token = kwargs['client_token']
+
+        # We got the correct token, let's execute the API endpoint
+        if request.method == 'GET':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DATASET)
+            
+            # Get all permissions from the database
+            with DatabaseSession() as session:
+                # Get the token object
+                client_token_object = session.query(APIClientToken).filter(APIClientToken.token == client_token).first()
+
+                # If we didn't get a token we raise an error
+                if client_token_object is None:
+                    raise MeRESTAPIv1APIClientsClientPermissionsTokenNotFoundError(f'Client token "{client_token}" can not be found')
+
+                # Get the permissions objects from the client token object
+                token_permission_objects = [ { 'permission': permission.permission_object, 'granted': permission.granted } for permission in client_token_object.client_permissions ]
+
+                # Get all IDs in the token_permission_objects
+                token_permission_objects_ids = [ permission['permission'].id for permission in token_permission_objects ]
+
+                # Get all available permissions
+                permission_objects = session.query(APIPermission).all()
+
+                # Get the missing permissions
+                missing_permissions = [ { 'permission': permission, 'granted': False } for permission in permission_objects if not permission.id in token_permission_objects_ids ]
+
+                # Create a list with all the permissions combined
+                return_list = list()
+                
+                # Add the permission objects from the token
+                combined = token_permission_objects + missing_permissions
+                for permission in  combined:
+                    return_list.append({
+                        'id': permission['permission'].id,
+                        'description': permission['permission'].description,
+                        'section': permission['permission'].section,
+                        'subject': permission['permission'].subject,
+                        'granted': permission['granted'],
+                    })
+            
+            # Set the sorted return data
+            return_list.sort(key = lambda x: x['section'] + '.' + x['subject'])
+            response.data = return_list
+
+            # Return the object
             return response
 #---------------------------------------------------------------------------------------------------
