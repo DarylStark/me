@@ -16,7 +16,17 @@
                 <span data-position='top right' data-tooltip='Enable user token' v-if='!client.enabled'>
                     <me-button class='green' icon='play' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='enable_token'></me-button>
                 </span>
+                <span data-position='top right' data-tooltip='Reveal token'>
+                    <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
+                </span>
             </div>
+        </me-flexline>
+        <me-flexline class='token_line' v-if='show_token'>
+            <div class='grower' ref='token'>{{ client.token }}</div>
+            <div class='ui icon button' data-position='top right' data-tooltip='Copy token' v-if='!copied' v-on:click='copy_token'>
+                <i class='copy icon'></i>
+            </div>
+            <div class='ui button' data-position='top right' data-tooltip='Copy token' v-if='copied' v-on:click='copy_token'>Copied to clipboard!</div>
         </me-flexline>
     </div>
 </template>
@@ -34,7 +44,9 @@ export default {
     data: function() {
         return {
             loading: false,
-            loading_disable: false
+            loading_disable: false,
+            show_token: false,
+            copied: false
         };
     },
     methods: {
@@ -112,6 +124,21 @@ export default {
                     enabled: false,
                     id: this.client.id
                 }
+            });
+        },
+        copy_token: function() {
+            // Copy the token code to the clipboard
+
+            // Local this
+            let vue_this = this;
+
+            // Copy the token the the clipboard
+            navigator.clipboard.writeText(this.client.token).then(function() {
+                vue_this.copied = true;
+
+                setTimeout(function() {
+                    vue_this.copied = false;
+                }, 2000);
             });
         }
     },
