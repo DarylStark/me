@@ -155,6 +155,7 @@ export default {
         },
         show_permissions: function() {
             this.permissions_available = true;
+            this.show_token = false;
         },
         hide_permissions: function() {
             this.permissions_available = false;
