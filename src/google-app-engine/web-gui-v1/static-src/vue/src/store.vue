@@ -1016,6 +1016,47 @@ export default new Vuex.Store({
                         api_options.failed(error);
                     }
                 });
+        },
+        add_api_client: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    name: null,
+                    version: null,
+                    publisher: null
+                }
+            };
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                    api_options[key] = options[key];
+                }
+            }
+
+            // Send the API call to add the client
+            // Send the request
+            me_api_call({
+                group: 'api_clients',
+                endpoint: 'client',
+                method: 'POST',
+                data: api_options.fields
+            })
+                .then(function(data) {
+                    // TODO: Add to local clients
+
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         }
     }
 });

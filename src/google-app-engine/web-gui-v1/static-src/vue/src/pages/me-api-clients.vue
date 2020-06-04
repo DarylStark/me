@@ -1,9 +1,10 @@
 <template>
     <div id='me-content-api-clients'>
+        <me-modal-new-api-client></me-modal-new-api-client>
         <me-page-title icon='desktop'>
             API clients
             <template v-slot:actions>
-                <me-button primary v-bind:disabled='loading'>Add client</me-button>
+                <me-button primary v-bind:disabled='loading' v-on:click='show_add_client'>Add client</me-button>
             </template>
         </me-page-title>
         <me-grid>
@@ -28,6 +29,8 @@ import me_cell from '../components/me-cell';
 import me_h1 from '../components/me-h1';
 import me_card from '../components/me-card';
 import me_api_client from '../components/me-api-client';
+import me_modal_new_api_client from '../modals/me-modal-new-api-client';
+import eventbus from '../eventbus';
 
 export default {
     name: 'me-content-api-clients',
@@ -38,7 +41,8 @@ export default {
         'me-cell': me_cell,
         'me-h1': me_h1,
         'me-card': me_card,
-        'me-api-client': me_api_client
+        'me-api-client': me_api_client,
+        'me-modal-new-api-client': me_modal_new_api_client
     },
     created: function() {
         // We don't need a sidebar on this page. Disable it.
@@ -79,6 +83,10 @@ export default {
                 },
                 force: force
             });
+        },
+        show_add_client: function() {
+            // Show the 'new API client' modal
+            eventbus.$emit('show_modal', 'modal_new_api_client');
         }
     }
 };
