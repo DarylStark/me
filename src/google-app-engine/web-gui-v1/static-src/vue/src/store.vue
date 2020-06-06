@@ -1045,7 +1045,12 @@ export default new Vuex.Store({
                 data: api_options.fields
             })
                 .then(function(data) {
-                    // TODO: Add to local clients
+                    // Add to local clients
+                    Vue.set(
+                        state.api_data.api_clients.clients,
+                        state.api_data.api_clients.clients.length,
+                        data.data.object
+                    );
 
                     // Execute the callback
                     if (api_options.success) {

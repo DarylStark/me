@@ -93,7 +93,7 @@ export default {
             if (this.is_valid()) {
                 this.$store.commit('add_api_client', {
                     success: function() {
-                        // TODO: Close the dialog
+                        vue_this.close();
                         $('body').toast({
                             position: 'bottom center',
                             message: 'Added client',
@@ -103,16 +103,29 @@ export default {
                             class: 'success'
                         });
                     },
-                    failed: function() {
+                    failed: function(error) {
                         vue_this.saving = false;
-                        $('body').toast({
-                            position: 'bottom center',
-                            message: "Couldn't add client",
-                            closeIcon: true,
-                            displayTime: 'auto',
-                            showIcon: 'user',
-                            class: 'error'
-                        });
+
+                        if (error == 'duplicate') {
+                            $('body').toast({
+                                position: 'bottom center',
+                                message:
+                                    'There is already a API client with that name',
+                                closeIcon: true,
+                                displayTime: 'auto',
+                                showIcon: 'user',
+                                class: 'error'
+                            });
+                        } else {
+                            $('body').toast({
+                                position: 'bottom center',
+                                message: "Couldn't add client",
+                                closeIcon: true,
+                                displayTime: 'auto',
+                                showIcon: 'user',
+                                class: 'error'
+                            });
+                        }
                     },
                     fields: this.fields
                 });
