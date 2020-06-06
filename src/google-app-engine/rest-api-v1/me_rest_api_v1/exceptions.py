@@ -141,6 +141,10 @@ class MeRESTAPIv1APIClientsPermissionsPermissionNotFoundError(MeRESTAPIv1PageNot
         exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1APIClientsCreateClientTokenMissingFieldsError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a user tries to create a API client without specifing all the fields """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):

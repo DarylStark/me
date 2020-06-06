@@ -26,6 +26,7 @@ class APIAPIClients:
         name = 'client',
         description = 'Create, retrieve, update or delete API Client tokens',
         permissions = {
+            'POST': 'api_clients.create_client_token',
             'GET': 'api_clients.retrieve_client_token',
             'PATCH': 'api_clients.update_client_token'
         },
@@ -33,6 +34,39 @@ class APIAPIClients:
     )
     def client(*args, **kwargs):
         """ Endpoint for users to create, retrieve, update or delete API client tokens """
+
+        if request.method.upper() == 'POST':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_RECORD)
+
+            # Get the given data
+            json_data = request.json
+
+            # Check if we got the correct fields in the reqest
+            if not 'name' in json_data.keys() or not 'version' in json_data.keys() or not 'publisher' in json_data.keys():
+                raise MeRESTAPIv1APIClientsCreateClientTokenMissingFieldsError(f'Not all fields are specified; missing "name", "version" or "publisher"')
+
+            # Start a database session
+            with DatabaseSession(commit_on_end = True, expire_on_commit = False) as session:
+                # Create a new APIClientToken
+                new_client_token = APIClientToken(
+                    expiration = None,
+                    app_name = json_data['name'],
+                    app_version = json_data['version'],
+                    app_publisher = json_data['publisher'],
+                )
+
+                # Generate a random token
+                new_client_token.generate_random_token()
+
+                # Add the token
+                session.add(new_client_token)
+
+                # Set the token in the response
+                response.data = new_client_token
+
+            # Return the response
+            return response
 
         if request.method.upper() == 'GET':
             # Create an empty response object

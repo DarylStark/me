@@ -13,6 +13,8 @@ from sqlalchemy import Column, Integer, DateTime, String, Boolean, UniqueConstra
 from sqlalchemy.orm import relationship
 from database import Database
 import datetime
+import string
+import random
 #---------------------------------------------------------------------------------------------------
 class APIClientToken(Database.base_class):
     """ Table for API client tokens """
@@ -42,4 +44,13 @@ class APIClientToken(Database.base_class):
     # One-to-many relationship mappings
     user_api_tokens = relationship("APIUserToken")
     client_permissions = relationship("APIClientPermission")
+
+    def generate_random_token(self):
+        """ Method to generate a random client token """
+
+        # Characters for the random key
+        characters = string.ascii_lowercase + string.digits
+
+        # Create the token and set it
+        self.token = ''.join(random.choice(characters) for x in range(32))
 #---------------------------------------------------------------------------------------------------
