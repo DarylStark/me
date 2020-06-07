@@ -28,7 +28,8 @@ class APIAPIClients:
         permissions = {
             'POST': 'api_clients.create_client_token',
             'GET': 'api_clients.retrieve_client_token',
-            'PATCH': 'api_clients.update_client_token'
+            'PATCH': 'api_clients.update_client_token',
+            'DELETE': 'api_clients.delete_client_token'
         },
         user_token_needed = True
     )
@@ -109,6 +110,49 @@ class APIAPIClients:
                 # Update the 'enabled' field
                 if 'enabled' in json_data.keys():
                     token_object.enabled = json_data['enabled']
+            
+            # Return the response
+            response.data = True
+            return response
+        
+        if request.method.upper() == 'DELETE':
+            # Create an empty response object
+            response = APIResponse(APIResponse.TYPE_DONE)
+
+            # Get the given data
+            json_data = request.json
+
+            # Check if we got an 'id'
+            if not 'id' in json_data.keys():
+                raise MeRESTAPIv1APIClientDeleteClientTokenMissingIDError('Missing "id" in data')
+            
+            # Start a database session
+            with DatabaseSession(commit_on_end = True) as session:
+                # Find the given token
+                client_tokens = session.query(APIClientToken).filter(APIClientToken.id == json_data['id'])
+
+                # Check if we got a user token
+                if client_tokens.count() != 1:
+                    raise MeRESTAPIv1APIClientDeleteClientTokenMissingNotFoundError(f'Client-token with id {json_data["id"]} can not be found')
+
+                # Get the token to update
+                token_object = client_tokens.first()
+
+                # Delete all permission connected to this ClientToken
+                for permission in token_object.client_permissions:
+                    session.delete(permission)
+                
+                # Delete all user tokens connected to this ClientToken
+                for user_token in token_object.user_api_tokens:
+                    # Remove all permissions connected to this token
+                    for permission in user_token.user_permissions:
+                        session.delete(permission)
+                    
+                    # Delete the user token
+                    session.delete(user_token)
+
+                # Delete the token
+                session.delete(token_object)
             
             # Return the response
             response.data = True
