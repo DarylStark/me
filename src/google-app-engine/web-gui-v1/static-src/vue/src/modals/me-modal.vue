@@ -22,6 +22,11 @@ export default {
         content: { type: Boolean, default: true },
         centered: { type: Boolean, default: true }
     },
+    data: function() {
+        return {
+            event: null
+        };
+    },
     computed: {
         show_actions: function() {
             // Return 'true' if action slot is set
@@ -59,7 +64,16 @@ export default {
 
         // Listen for 'show_dialog' events
         eventbus.$on('show_modal', function(modal_id) {
-            if (vue_this.id == modal_id) {
+            let show_modal_id = modal_id;
+            vue_this.event = modal_id;
+
+            // Check if we got an object
+            if (modal_id === Object(modal_id)) {
+                show_modal_id = modal_id.id;
+            }
+
+            // Show the modal
+            if (vue_this.id == show_modal_id) {
                 vue_this.show();
             }
         });

@@ -22,6 +22,9 @@
                 <span data-position='top right' data-tooltip='Reveal token'>
                     <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
                 </span>
+                <span data-position='top center' data-tooltip='Edit token'>
+                    <me-button icon='edit' v-on:click='edit_token'></me-button>
+                </span>
                 <span data-position='top right' data-tooltip='Remove token'>
                     <me-button class='red' icon='trash' v-bind:disabled='loading_delete' v-bind:loading='loading_delete' v-on:click='delete_token'></me-button>
                 </span>
@@ -47,6 +50,7 @@
 import me_flexline from './me-flexline';
 import me_button from './me-button';
 import me_token_permissions from './me-token-permissions';
+import eventbus from '../eventbus';
 
 export default {
     name: 'me-api-client',
@@ -224,6 +228,14 @@ export default {
                         }
                     }
                 ]
+            });
+        },
+        edit_token: function() {
+            // Show the 'new API client' modal. We use a object as identifier so the modal knows it
+            // has to go to 'edit' mode
+            eventbus.$emit('show_modal', {
+                id: 'modal_new_api_client',
+                client: this.client
             });
         }
     },

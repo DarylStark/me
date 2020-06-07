@@ -964,6 +964,9 @@ export default new Vuex.Store({
                 failed: null,
                 fields: {
                     id: null,
+                    name: null,
+                    version: null,
+                    publisher: null,
                     enabled: null
                 }
             };
@@ -1004,6 +1007,22 @@ export default new Vuex.Store({
                     // Update the disabled state
                     if (api_options.fields.enabled != null) {
                         client_token.enabled = api_options.fields.enabled;
+                    }
+
+                    // Update the name
+                    if (api_options.fields.name != null) {
+                        client_token.app_name = api_options.fields.name;
+                    }
+
+                    // Update the version
+                    if (api_options.fields.version != null) {
+                        client_token.app_version = api_options.fields.version;
+                    }
+
+                    // Update the publisher
+                    if (api_options.fields.publisher != null) {
+                        client_token.app_publisher =
+                            api_options.fields.publisher;
                     }
 
                     // Execute the callback

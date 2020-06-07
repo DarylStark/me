@@ -110,6 +110,18 @@ class APIAPIClients:
                 # Update the 'enabled' field
                 if 'enabled' in json_data.keys():
                     token_object.enabled = json_data['enabled']
+                
+                # Update the 'name' field
+                if 'name' in json_data.keys():
+                    token_object.app_name = json_data['name']
+                
+                # Update the 'version' field
+                if 'version' in json_data.keys():
+                    token_object.app_version = json_data['version']
+                
+                # Update the 'publisher' field
+                if 'publisher' in json_data.keys():
+                    token_object.app_publisher = json_data['publisher']
             
             # Return the response
             response.data = True
