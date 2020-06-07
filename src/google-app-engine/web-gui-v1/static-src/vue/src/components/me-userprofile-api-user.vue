@@ -328,7 +328,6 @@ export default {
                                 {
                                     success: function() {
                                         vue_this.loading_delete = false;
-                                        vue_this.renaming = false;
                                         $('body').toast({
                                             position: 'bottom center',
                                             message: 'Deleted token',
@@ -351,7 +350,6 @@ export default {
                                         });
                                     },
                                     fields: {
-                                        enabled: true,
                                         id: vue_this.user_token.id
                                     }
                                 }

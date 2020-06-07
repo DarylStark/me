@@ -22,6 +22,9 @@
                 <span data-position='top right' data-tooltip='Reveal token'>
                     <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
                 </span>
+                <span data-position='top right' data-tooltip='Remove token'>
+                    <me-button class='red' icon='trash' v-bind:disabled='loading_delete' v-bind:loading='loading_delete' v-on:click='delete_token'></me-button>
+                </span>
             </div>
             <div class='actions' v-show='permissions_available'>
                 <span data-position='top right' data-tooltip='Close permission view'>
@@ -56,6 +59,7 @@ export default {
         return {
             loading: false,
             loading_disable: false,
+            loading_delete: false,
             show_token: false,
             copied: false,
             permissions_available: false
@@ -159,6 +163,68 @@ export default {
         },
         hide_permissions: function() {
             this.permissions_available = false;
+        },
+        delete_token: function() {
+            // Local this
+            let vue_this = this;
+
+            this.loading_delete = true;
+
+            // Ask the user if he is sure to remove this token
+            $('body').toast({
+                message: 'Do you really want to remove this client?',
+                displayTime: 0,
+                class: 'white',
+                position: 'top center',
+                actions: [
+                    {
+                        text: 'Yes',
+                        icon: 'check',
+                        class: 'green',
+                        click: function() {
+                            vue_this.$store.commit(
+                                'api_update_api_delete_client_token',
+                                {
+                                    success: function() {
+                                        vue_this.loading_delete = false;
+                                        $('body').toast({
+                                            position: 'bottom center',
+                                            message: 'Deleted token',
+                                            closeIcon: true,
+                                            displayTime: 'auto',
+                                            showIcon: 'user',
+                                            class: 'success'
+                                        });
+                                    },
+                                    failed: function() {
+                                        vue_this.loading_disable = false;
+                                        $('body').toast({
+                                            position: 'bottom center',
+                                            message:
+                                                'Something went wrong while deleting the token',
+                                            closeIcon: true,
+                                            displayTime: 'auto',
+                                            showIcon: 'user',
+                                            class: 'error'
+                                        });
+                                    },
+                                    fields: {
+                                        id: vue_this.client.id
+                                    }
+                                }
+                            );
+                        }
+                    },
+                    {
+                        icon: 'ban',
+                        text: 'No',
+                        class: 'red',
+                        click: function() {
+                            vue_this.loading_delete = false;
+                        }
+                    }
+                ]
+            });
         }
     },
     props: {

@@ -1062,6 +1062,76 @@ export default new Vuex.Store({
                         api_options.failed(error);
                     }
                 });
+        },
+        api_update_api_delete_client_token: function(state, options) {
+            // Set the object
+            let api_options = {
+                success: null,
+                failed: null,
+                fields: {
+                    id: null
+                }
+            };
+
+            // Loop through the given object and set the values to the local object
+            if (options) {
+                for (let key of Object.keys(options)) {
+                    api_options[key] = options[key];
+                }
+            }
+
+            // Check if a 'id' is given
+            if (api_options.fields.id == null) {
+                if (api_options.failed) {
+                    api_options.failed('No ID given');
+                }
+                return;
+            }
+
+            // Find the token in the local cache
+            let client_token = null;
+            let client_index = null;
+            client_token = state.api_data.api_clients.clients.find(function(
+                client,
+                index
+            ) {
+                client_index = index;
+                return client.id == api_options.fields.id;
+            });
+            if (client_token == null) {
+                if (api_options.failed) {
+                    api_options.failed('No valid client token given');
+                }
+                return;
+            }
+
+            // Local this
+            let vue_this = this;
+
+            // Send the request
+            me_api_call({
+                group: 'api_clients',
+                endpoint: 'client',
+                method: 'DELETE',
+                data: api_options.fields
+            })
+                .then(function(data) {
+                    // Remove the element from the state
+                    Vue.delete(
+                        state.api_data.api_clients.clients,
+                        client_index
+                    );
+
+                    // Execute the callback
+                    if (api_options.success) {
+                        api_options.success(data);
+                    }
+                })
+                .catch(function(error) {
+                    if (api_options.failed) {
+                        api_options.failed(error);
+                    }
+                });
         }
     }
 });
