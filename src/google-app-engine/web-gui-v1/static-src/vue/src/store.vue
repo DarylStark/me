@@ -1046,10 +1046,12 @@ export default new Vuex.Store({
             })
                 .then(function(data) {
                     // Add to local clients
+                    let client_object = data.data.object;
+                    client_object.user_tokens = new Array();
                     Vue.set(
                         state.api_data.api_clients.clients,
                         state.api_data.api_clients.clients.length,
-                        data.data.object
+                        client_object
                     );
 
                     // Execute the callback

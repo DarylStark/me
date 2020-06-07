@@ -56,12 +56,13 @@ export default {
                         class: 'success'
                     });
                 },
-                failed: function() {
+                failed: function(error) {
                     vue_this.loading = false;
                     $('body').toast({
                         position: 'bottom center',
                         message:
-                            'Something went wrong while adding the user token',
+                            'Something went wrong while adding the user token: ' +
+                            error,
                         closeIcon: true,
                         displayTime: 'auto',
                         showIcon: 'user',
