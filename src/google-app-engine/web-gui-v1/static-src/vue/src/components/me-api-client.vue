@@ -70,7 +70,6 @@ export default {
     },
     computed: {
         expire: function() {
-            console.log(this.client);
             let format = this.$store.state.app.user_config.config
                 .datetime_formats.datetime_format;
             if (format) {
