@@ -7,6 +7,11 @@
                     <span class='publisher'>({{ client.app_publisher }})</span>
                 </p>
                 <p class='version'>Version: {{ client.app_version }}</p>
+                <p v-if='client.expiration'>
+                    Will expire on: {{ expire }}
+                    <span class='expired' v-if='expired'>(expired)</span>
+                </p>
+                <p v-if='!client.expiration'>This token will not expire</p>
             </div>
             <div class='spacer'></div>
             <div class='actions' v-show='!permissions_available'>
@@ -24,6 +29,9 @@
                 </span>
                 <span data-position='top center' data-tooltip='Edit token'>
                     <me-button icon='edit' v-on:click='edit_token'></me-button>
+                </span>
+                <span data-position='top right' data-tooltip='Set to not expire'>
+                    <me-button icon='infinity' v-bind:disabled='loading_infinity || !client.expiration' v-bind:loading='loading_infinity' v-on:click='set_token_infinite'></me-button>
                 </span>
                 <span data-position='top right' data-tooltip='Remove token'>
                     <me-button class='red' icon='trash' v-bind:disabled='loading_delete' v-bind:loading='loading_delete' v-on:click='delete_token'></me-button>
@@ -51,6 +59,7 @@ import me_flexline from './me-flexline';
 import me_button from './me-button';
 import me_token_permissions from './me-token-permissions';
 import eventbus from '../eventbus';
+import strftime from 'strftime';
 
 export default {
     name: 'me-api-client',
@@ -59,11 +68,27 @@ export default {
         'me-button': me_button,
         'me-token-permissions': me_token_permissions
     },
+    computed: {
+        expire: function() {
+            console.log(this.client);
+            let format = this.$store.state.app.user_config.config
+                .datetime_formats.datetime_format;
+            if (format) {
+                return strftime(format, this.client.expiration);
+            }
+            return undefined;
+        },
+        expired: function() {
+            let today = new Date();
+            return this.client.expiration < today;
+        }
+    },
     data: function() {
         return {
             loading: false,
             loading_disable: false,
             loading_delete: false,
+            loading_infinity: false,
             show_token: false,
             copied: false,
             permissions_available: false
@@ -236,6 +261,45 @@ export default {
             eventbus.$emit('show_modal', {
                 id: 'modal_new_api_client',
                 client: this.client
+            });
+        },
+        set_token_infinite: function() {
+            // Method that sets the token to infinite
+            this.loading_infinity = true;
+
+            // Local this
+            let vue_this = this;
+
+            // We have the time, let's update the user token
+            this.$store.commit('api_update_api_client_token', {
+                success: function() {
+                    vue_this.loading_infinity = false;
+                    vue_this.renaming = false;
+                    $('body').toast({
+                        position: 'bottom center',
+                        message: 'Set token to not expire',
+                        closeIcon: true,
+                        displayTime: 'auto',
+                        showIcon: 'user',
+                        class: 'success'
+                    });
+                },
+                failed: function() {
+                    vue_this.loading_infinity = false;
+                    $('body').toast({
+                        position: 'bottom center',
+                        message:
+                            'Something went wrong while setting the token to not expire',
+                        closeIcon: true,
+                        displayTime: 'auto',
+                        showIcon: 'user',
+                        class: 'error'
+                    });
+                },
+                fields: {
+                    expire: null,
+                    id: this.client.id
+                }
             });
         }
     },

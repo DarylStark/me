@@ -445,6 +445,12 @@ export default new Vuex.Store({
 
                         // Add the new data to the current list
                         data.data.dataset.data.forEach(function(element) {
+                            if (element.expiration) {
+                                element.expiration = new Date(
+                                    element.expiration + ' UTC'
+                                );
+                            }
+
                             // Add a 'user tokens' property to the element
                             element.user_tokens = [];
 
@@ -1023,6 +1029,11 @@ export default new Vuex.Store({
                     if (api_options.fields.publisher != null) {
                         client_token.app_publisher =
                             api_options.fields.publisher;
+                    }
+
+                    // Update the expiration
+                    if ('expire' in api_options.fields) {
+                        client_token.expiration = api_options.fields.expire;
                     }
 
                     // Execute the callback

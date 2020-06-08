@@ -122,6 +122,10 @@ class APIAPIClients:
                 # Update the 'publisher' field
                 if 'publisher' in json_data.keys():
                     token_object.app_publisher = json_data['publisher']
+                
+                # Update the 'expiration' field
+                if 'expire' in json_data.keys():
+                    token_object.expiration = json_data['expire']
             
             # Return the response
             response.data = True
