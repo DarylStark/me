@@ -25,6 +25,18 @@
                 padding: 12px 16px 12px 16px;
                 border-bottom: 1px solid @user-profile-client-border;
 
+                @media screen and (max-width: @max-size-mobile) {
+                    .client_title {
+                        width: 100%;
+                    }
+
+                    .actions {
+                        padding-top: 12px;
+                        width: 100%;
+                        text-align: right;
+                    }
+                }
+
                 &.client_title {
                     background-color: @user-profile-client-title-bg;
                 }
