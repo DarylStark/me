@@ -4,6 +4,7 @@
         <me-page-title icon='desktop'>
             API clients
             <template v-slot:actions>
+                <me-button v-bind:disabled='loading' v-on:click='reload'>Reload</me-button>
                 <me-button primary v-bind:disabled='loading' v-on:click='show_add_client'>Add client</me-button>
             </template>
         </me-page-title>
@@ -87,6 +88,10 @@ export default {
         show_add_client: function() {
             // Show the 'new API client' modal
             eventbus.$emit('show_modal', 'modal_new_api_client');
+        },
+        reload: function() {
+            this.loading = true;
+            this.set_clients(true);
         }
     }
 };
