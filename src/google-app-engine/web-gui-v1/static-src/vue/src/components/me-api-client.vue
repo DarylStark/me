@@ -30,6 +30,13 @@
                 <span data-position='top center' data-tooltip='Edit token'>
                     <me-button icon='edit' v-on:click='edit_token'></me-button>
                 </span>
+                <div class='inline'>
+                    <div class='ui calendar' ref='expire_date_button'>
+                        <span data-position='top right' data-tooltip='Set expire date and time'>
+                            <me-button class='calendar' icon='clock outline' v-bind:disabled='loading_date' v-bind:loading='loading_date'></me-button>
+                        </span>
+                    </div>
+                </div>
                 <span data-position='top right' data-tooltip='Set to not expire'>
                     <me-button icon='infinity' v-bind:disabled='loading_infinity || !client.expiration' v-bind:loading='loading_infinity' v-on:click='set_token_infinite'></me-button>
                 </span>
@@ -88,6 +95,7 @@ export default {
             loading_disable: false,
             loading_delete: false,
             loading_infinity: false,
+            loading_date: false,
             show_token: false,
             copied: false,
             permissions_available: false
@@ -300,10 +308,65 @@ export default {
                     id: this.client.id
                 }
             });
+        },
+        expire_date_set: function(date, mode) {
+            if (mode == 'minute') {
+                this.loading_date = true;
+
+                // Local this
+                let vue_this = this;
+
+                // We have the time, let's update the user token
+                this.$store.commit('api_update_api_client_token', {
+                    success: function() {
+                        vue_this.loading_date = false;
+                        $('body').toast({
+                            position: 'bottom center',
+                            message: 'Updated expiration date and time',
+                            closeIcon: true,
+                            displayTime: 'auto',
+                            showIcon: 'user',
+                            class: 'success'
+                        });
+                    },
+                    failed: function() {
+                        vue_this.loading_date = false;
+                        $('body').toast({
+                            position: 'bottom center',
+                            message:
+                                'Something went wrong while updating the expiration date and time',
+                            closeIcon: true,
+                            displayTime: 'auto',
+                            showIcon: 'user',
+                            class: 'error'
+                        });
+                    },
+                    fields: {
+                        expire: date,
+                        id: this.client.id
+                    }
+                });
+            }
+        },
+        init_calendar: function() {
+            // Create the calendar object
+            $(this.$refs.expire_date_button).calendar({
+                firstDayOfWeek: 1,
+                onSelect: this.expire_date_set,
+                selectAdjacentDays: true,
+                minTimeGap: 15,
+                ampm: !this.$store.state.app.user_config.config.datetime_formats
+                    .show_24h,
+                initialDate: this.client.expiration
+            });
         }
     },
     props: {
         client: { mandatory: true }
+    },
+    mounted: function() {
+        // Initiate the calendar
+        this.init_calendar();
     }
 };
 </script>
