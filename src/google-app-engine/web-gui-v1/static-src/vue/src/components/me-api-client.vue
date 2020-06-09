@@ -15,16 +15,16 @@
             </div>
             <div class='spacer'></div>
             <div class='actions' v-show='!permissions_available'>
-                <span data-position='top right' data-tooltip='Disable user token' v-if='client.enabled'>
+                <span data-position='top left' data-tooltip='Disable user token' v-if='client.enabled'>
                     <me-button class='red' icon='power off' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='disable_token'></me-button>
                 </span>
-                <span data-position='top right' data-tooltip='Enable user token' v-if='!client.enabled'>
+                <span data-position='top left' data-tooltip='Enable user token' v-if='!client.enabled'>
                     <me-button class='green' icon='play' v-bind:disabled='loading_disable' v-bind:loading='loading_disable' v-on:click='enable_token'></me-button>
                 </span>
-                <span data-position='top right' data-tooltip='Token permissions'>
+                <span data-position='top left' data-tooltip='Token permissions'>
                     <me-button icon='list' v-on:click='show_permissions'></me-button>
                 </span>
-                <span data-position='top right' data-tooltip='Reveal token'>
+                <span data-position='top left' data-tooltip='Reveal token'>
                     <me-button icon='key' v-bind:class='{ "green": show_token }' v-on:click='show_token = !show_token'></me-button>
                 </span>
                 <span data-position='top center' data-tooltip='Edit token'>
