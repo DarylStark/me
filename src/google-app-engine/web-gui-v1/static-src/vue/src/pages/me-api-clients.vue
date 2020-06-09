@@ -46,6 +46,33 @@ export default {
         'me-modal-new-api-client': me_modal_new_api_client
     },
     created: function() {
+        // Local this
+        var vue_this = this;
+
+        // Add the local actions for this page. These actions will be visible in the command palette
+        this.$store.commit('add_local_actions', [
+            {
+                id: 'reload-client-tokens',
+                icon: 'redo',
+                title: 'Reload client tokens',
+                type: 'action',
+                action: function(vue_instance) {
+                    vue_this.set_clients_forced();
+                },
+                show: true
+            },
+            {
+                id: 'add-client-token',
+                icon: 'redo',
+                title: 'Add client token',
+                type: 'action',
+                action: function(vue_instance) {
+                    vue_this.show_add_client();
+                },
+                show: true
+            }
+        ]);
+
         // We don't need a sidebar on this page. Disable it.
         this.$store.commit('set_sidebar_availability', false);
 
@@ -89,10 +116,17 @@ export default {
             // Show the 'new API client' modal
             eventbus.$emit('show_modal', 'modal_new_api_client');
         },
-        reload: function() {
+        set_clients_forced: function() {
             this.loading = true;
             this.set_clients(true);
+        },
+        reload: function() {
+            this.set_clients_forced();
         }
+    },
+    beforeRouteLeave: function(to, from, next) {
+        this.$store.commit('remove_local_actions');
+        next(true);
     }
 };
 </script>
