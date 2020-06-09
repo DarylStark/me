@@ -139,6 +139,22 @@ export default new Vuex.Store({
                         location.reload();
                     },
                     show: true
+                },
+                {
+                    icon: 'desktop',
+                    title: 'API clients',
+                    type: 'link',
+                    dst: '/api_clients',
+                    show: true
+                },
+                {
+                    icon: 'key',
+                    title: 'Change password',
+                    type: 'action',
+                    action: function(vue_instance) {
+                        eventbus.$emit('show_modal', 'modal_change_password');
+                    },
+                    show: true
                 }
             ],
             local_actions: new Array()
