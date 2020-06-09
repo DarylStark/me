@@ -499,7 +499,6 @@ export default {
         let vue_this = this;
 
         // Add the local actions for this page. These actions will be visible in the command palette
-        // TODO: Make sure these are only visible when there was a change
         this.$store.commit('add_local_actions', [
             {
                 id: 'save-account',
