@@ -24,7 +24,10 @@ class APISystem:
         permissions = {
             'GET': 'system.retrieve_info'
         },
-        user_token_needed = False
+        user_token_needed = False,
+        documentation = {
+            'GET': 'Returns system information'
+        }
     )
     def retrieve_info(*args, **kwargs):
         """ Endpoint for clients to retrieve system information """

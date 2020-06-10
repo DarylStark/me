@@ -308,7 +308,7 @@ class MeRESTAPIv1:
         return decorator
 
     @classmethod
-    def register_endpoint(cls, group, name, description, permissions = None, user_token_needed = True):
+    def register_endpoint(cls, group, name, description, permissions = None, user_token_needed = True, documentation = None):
         """ Decorator for API endpoints to register themselves for the application. The endpoint can
             specify what permissions are needed for the specific HTTP methods for this response. The
             permissions attribute is a dict. The keys are the specific HTTP methods that can be used
@@ -673,7 +673,11 @@ class MeRESTAPIv1:
             # Add the endpoint to the group
             cls.registered_groups[group]['endpoints'][name] = {
                 'method': endpoint,
-                'description': description
+                'description': description,
+                'method_docstring': method.__doc__,
+                'permissions': permissions,
+                'user_token_needed': user_token_needed,
+                'documentation': documentation
             }
 
             # We return the method so it can be used
