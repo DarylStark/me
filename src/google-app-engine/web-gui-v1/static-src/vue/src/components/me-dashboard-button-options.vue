@@ -14,6 +14,10 @@
                     <i class='desktop icon'></i>
                     API clients
                 </div>
+                <div class='item' v-on:click='api_help'>
+                    <i class='question circle outline icon'></i>
+                    API help
+                </div>
                 <div class='divider'></div>
                 <div class='item' v-on:click='command_palette'>
                     <i class='terminal icon'></i>
@@ -56,6 +60,10 @@ export default {
         api_clients: function() {
             // Go to the API clients page
             this.$router.push('/api_clients');
+        },
+        api_help: function() {
+            // Go to the API help page
+            this.$router.push('/api_help');
         }
     }
 };

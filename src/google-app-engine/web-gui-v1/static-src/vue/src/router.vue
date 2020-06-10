@@ -9,6 +9,7 @@ import me_feed from './pages/me-feed';
 import me_notes from './pages/me-notes';
 import me_userprofile from './pages/me-userprofile';
 import me_api_clients from './pages/me-api-clients';
+import me_api_help from './pages/me-api-help';
 
 // Make sure Vue knows to use VueRouter
 Vue.use(VueRouter);
@@ -23,7 +24,8 @@ export default new VueRouter({
         { path: '/feed', component: me_feed },
         { path: '/notes', component: me_notes },
         { path: '/userprofile', component: me_userprofile },
-        { path: '/api_clients', component: me_api_clients }
+        { path: '/api_clients', component: me_api_clients },
+        { path: '/api_help', component: me_api_help }
     ]
 });
 </script>

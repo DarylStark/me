@@ -1,0 +1,35 @@
+#me-content-api-help {
+    code {
+        font-family: @code-block-font;
+        display: block;
+        margin-bottom: 14px;
+        background-color: @code-block-bg;
+        color: @code-block-fg;
+        padding: 14px;
+    }
+
+    #groups {
+        .group {
+            padding: 12px 16px 12px 16px;
+            border-bottom: 1px solid @user-profile-client-border;
+            background-color: @user-profile-client-title-bg;
+
+            .name {
+                font-family: @code-block-font;
+            }
+        }
+
+        .endpoint {
+            padding: 12px 16px 12px 16px;
+            border-bottom: 1px solid @user-profile-client-border;
+
+            .name {
+                font-family: @code-block-font;
+            }
+        }
+
+        .group:last-child {
+            border-bottom: 0px;
+        }
+    }
+}
