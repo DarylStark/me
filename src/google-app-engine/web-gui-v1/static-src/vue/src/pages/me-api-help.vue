@@ -28,22 +28,16 @@
             </me-cell>
         </me-grid>
         <me-page-title icon='question circle outline'>Groups and endpoints</me-page-title>
+
         <me-grid>
             <me-cell padding v-bind:span='12'>
                 <me-card id='groups' raised wide>
-                    <template v-for='group in endpoints'>
-                        <me-flexline class='group' v-bind:key='group.name'>
-                            <div class='grower'>{{ group.description }}</div>
-                            <div class='name'>{{ group.name }}</div>
-                        </me-flexline>
-                        <template v-for='endpoint in group.endpoints'>
-                            <me-flexline class='endpoint' v-bind:key='endpoint.name'>
-                                <div class='grower'>{{ endpoint.description }}</div>
-                                <div class='name'>{{ endpoint.name }}</div>
-                            </me-flexline>
-                            <p>Hier komt, per method, een stuk uitleg</p>
-                        </template>
-                    </template>
+                    <div class='loading_text' v-if='loading'>
+                        <div class='ui active inline loader'></div>Loading the API endpoints
+                    </div>
+                    <div v-if='!loading'>
+                        <me-api-help-group v-bind:group='group' v-bind:key='group.name' v-for='group in endpoints'></me-api-help-group>
+                    </div>
                 </me-card>
             </me-cell>
         </me-grid>
@@ -57,6 +51,7 @@ import me_grid from '../components/me-grid';
 import me_cell from '../components/me-cell';
 import me_api_call from '../me/api_call';
 import me_flexline from '../components/me-flexline';
+import me_api_help_group from '../components/me-api-help-group';
 
 export default {
     name: 'me-content-api-help',
@@ -65,10 +60,12 @@ export default {
         'me-card': me_card,
         'me-grid': me_grid,
         'me-cell': me_cell,
-        'me-flexline': me_flexline
+        'me-flexline': me_flexline,
+        'me-api-help-group': me_api_help_group
     },
     data: function() {
         return {
+            loading: true,
             endpoints: null
         };
     },
@@ -86,9 +83,33 @@ export default {
             method: 'GET'
         })
             .then(function(data) {
-                vue_this.endpoints = data.data.dataset.data;
+                // We have the data
+                let endpoints = data.data.dataset.data;
+
+                // Sort the groups
+                endpoints.sort((a, b) => {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    return -1;
+                });
+
+                // Sort the endpoints in the groups
+                endpoints.forEach(function(group) {
+                    group.endpoints.sort((a, b) => {
+                        if (a.name > b.name) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                });
+
+                // Set the data
+                vue_this.endpoints = endpoints;
+                vue_this.loading = false;
             })
             .catch(function(data) {
+                vue_this.loading = false;
                 $('body').toast({
                     position: 'bottom center',
                     message: "Couldn't retrieve endpoints",

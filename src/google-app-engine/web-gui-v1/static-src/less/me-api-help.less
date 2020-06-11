@@ -9,22 +9,99 @@
     }
 
     #groups {
+        .loading_text {
+            text-align: center;
+            margin: 24px 0px 24px 0px;
+
+            .loader {
+                margin-right: 12px;
+            }
+        }
+
         .group {
-            padding: 12px 16px 12px 16px;
-            border-bottom: 1px solid @user-profile-client-border;
+            border-bottom: 1px solid @user-profile-client-border !important;
             background-color: @user-profile-client-title-bg;
+
+            .collapse {
+                font-family: @code-block-font;
+                width: 48px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+
+                i {
+                    cursor: pointer;
+                }
+            }
 
             .name {
                 font-family: @code-block-font;
+                width: 350px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+            }
+
+            .description {
+                padding: 12px 16px 12px 16px;
             }
         }
 
         .endpoint {
-            padding: 12px 16px 12px 16px;
             border-bottom: 1px solid @user-profile-client-border;
+
+            .collapse {
+                font-family: @code-block-font;
+                width: 48px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+
+                i {
+                    cursor: pointer;
+                }
+            }
 
             .name {
                 font-family: @code-block-font;
+                width: 350px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+            }
+
+            .description {
+                padding: 12px 16px 12px 16px;
+            }
+        }
+
+        .method {
+            border-bottom: 1px solid @user-profile-client-border;
+
+            .collapse {
+                font-family: @code-block-font;
+                min-width: 48px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+
+                i {
+                    cursor: pointer;
+                }
+            }
+
+            .name {
+                font-family: @code-block-font;
+                min-width: 350px;
+                border-right: 1px solid @user-profile-client-border;
+                padding: 12px 16px 12px 16px;
+            }
+
+            .description {
+                padding: 12px 16px 12px 16px;
+
+                p.permission {
+                    margin-bottom: 8px;
+
+                    .title {
+                        font-weight: bold;
+                    }
+                }
             }
         }
 
