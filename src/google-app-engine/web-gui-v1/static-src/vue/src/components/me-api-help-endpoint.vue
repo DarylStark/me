@@ -5,13 +5,13 @@
                 <i class='plus square outline icon' v-if='!show_methods'></i>
                 <i class='minus square outline icon' v-if='show_methods'></i>
             </div>
-            <div class='name'>{{ endpoint.name }}</div>
+            <div class='name grower'>{{ endpoint.name }}</div>
             <div class='grower description'>{{ endpoint.description }}</div>
         </me-flexline>
         <template v-if='show_methods'>
-            <me-flexline class='method' v-bind:key='method.method' v-bind:nowrap='true' v-for='method in methods'>
+            <me-flexline class='method' v-bind:key='method.method' v-for='method in methods'>
                 <div class='collapse'></div>
-                <div class='name'>{{ method.method }}</div>
+                <div class='name grower'>{{ method.method }}</div>
                 <div class='grower description'>
                     <p class='permission'>
                         <span class='title'>Requied permission:</span>

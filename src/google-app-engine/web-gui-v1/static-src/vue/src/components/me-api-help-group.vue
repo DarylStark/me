@@ -5,7 +5,7 @@
                 <i class='plus square outline icon' v-if='!show_endpoints'></i>
                 <i class='minus square outline icon' v-if='show_endpoints'></i>
             </div>
-            <div class='name'>{{ group.name }}</div>
+            <div class='name grower'>{{ group.name }}</div>
             <div class='grower description'>{{ group.description }}</div>
         </me-flexline>
         <template v-if='show_endpoints'>

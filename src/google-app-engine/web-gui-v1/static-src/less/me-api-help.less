@@ -35,13 +35,25 @@
 
             .name {
                 font-family: @code-block-font;
-                width: 350px;
+                max-width: 350px;
                 border-right: 1px solid @user-profile-client-border;
                 padding: 12px 16px 12px 16px;
             }
 
             .description {
                 padding: 12px 16px 12px 16px;
+            }
+
+            @media screen and (max-width: @max-size-tablet) {
+                .name {
+                    max-width: none;
+                }
+
+                .description {
+                    padding: 12px 16px 12px 16px;
+                    width: 100%;
+                    border-top: 1px solid @user-profile-client-border;
+                }
             }
         }
 
@@ -61,13 +73,25 @@
 
             .name {
                 font-family: @code-block-font;
-                width: 350px;
+                max-width: 350px;
                 border-right: 1px solid @user-profile-client-border;
                 padding: 12px 16px 12px 16px;
             }
 
             .description {
                 padding: 12px 16px 12px 16px;
+            }
+
+            @media screen and (max-width: @max-size-tablet) {
+                .name {
+                    max-width: none;
+                }
+
+                .description {
+                    padding: 12px 16px 12px 16px;
+                    width: 100%;
+                    border-top: 1px solid @user-profile-client-border;
+                }
             }
         }
 
@@ -88,6 +112,7 @@
             .name {
                 font-family: @code-block-font;
                 min-width: 350px;
+                max-width: 350px;
                 border-right: 1px solid @user-profile-client-border;
                 padding: 12px 16px 12px 16px;
             }
@@ -101,6 +126,23 @@
                     .title {
                         font-weight: bold;
                     }
+                }
+            }
+
+            @media screen and (max-width: @max-size-tablet) {
+                .collapse {
+                    display: none;
+                }
+
+                .name {
+                    width: 100%;
+                    max-width: 100%;
+                }
+
+                .description {
+                    padding: 12px 16px 12px 16px;
+                    width: 100%;
+                    border-top: 1px solid @user-profile-client-border;
                 }
             }
         }
