@@ -19,17 +19,19 @@
                         <span v-if='endpoint.user_token_needed'>(user)</span>
                         <span v-if='!endpoint.user_token_needed'>(client)</span>
                     </p>
-                    <template v-if='method.documentation.description'>
-                        <p class='title'>Description:</p>
-                        <p>{{ method.documentation.description }}</p>
-                    </template>
-                    <template v-if='method.documentation.data'>
-                        <p class='title'>Description:</p>
-                        <p>{{ method.documentation.data }}</p>
-                    </template>
-                    <template v-if='method.documentation.return'>
-                        <p class='title'>Description:</p>
-                        <p>{{ method.documentation.return }}</p>
+                    <template v-if='method.documentation'>
+                        <template v-if='method.documentation.description'>
+                            <p class='title'>Description:</p>
+                            <p>{{ method.documentation.description }}</p>
+                        </template>
+                        <template v-if='method.documentation.data'>
+                            <p class='title'>Required data:</p>
+                            <p>{{ method.documentation.data }}</p>
+                        </template>
+                        <template v-if='method.documentation.return'>
+                            <p class='title'>Return value:</p>
+                            <p>{{ method.documentation.return }}</p>
+                        </template>
                     </template>
                 </div>
             </me-flexline>
