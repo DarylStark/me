@@ -13,14 +13,24 @@
                 <div class='collapse'></div>
                 <div class='name grower'>{{ method.method }}</div>
                 <div class='grower description'>
-                    <p class='permission'>
-                        <span class='title'>Requied permission:</span>
+                    <p class='title'>Requied permission:</p>
+                    <p>
                         <span>{{ method.permission }}</span>
                         <span v-if='endpoint.user_token_needed'>(user)</span>
                         <span v-if='!endpoint.user_token_needed'>(client)</span>
                     </p>
-                    <p v-if='method.documentation'>{{ method.documentation }}</p>
-                    <p v-if='!method.documentation'>This API endpoint isn't documented (yet)</p>
+                    <template v-if='method.documentation.description'>
+                        <p class='title'>Description:</p>
+                        <p>{{ method.documentation.description }}</p>
+                    </template>
+                    <template v-if='method.documentation.data'>
+                        <p class='title'>Description:</p>
+                        <p>{{ method.documentation.data }}</p>
+                    </template>
+                    <template v-if='method.documentation.return'>
+                        <p class='title'>Description:</p>
+                        <p>{{ method.documentation.return }}</p>
+                    </template>
                 </div>
             </me-flexline>
         </template>
