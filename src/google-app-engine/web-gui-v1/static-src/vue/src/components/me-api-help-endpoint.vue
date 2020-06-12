@@ -1,7 +1,7 @@
 <template>
     <div>
-        <me-flexline class='endpoint'>
-            <div class='collapse' v-on:click='show_methods = !show_methods'>
+        <me-flexline class='endpoint' v-on:click='show_methods = !show_methods'>
+            <div class='collapse'>
                 <i class='plus square outline icon' v-if='!show_methods'></i>
                 <i class='minus square outline icon' v-if='show_methods'></i>
             </div>
