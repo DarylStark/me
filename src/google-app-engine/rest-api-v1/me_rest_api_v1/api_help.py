@@ -24,7 +24,11 @@ class APIHelp:
         },
         user_token_needed = True,
         documentation = {
-            'GET': 'Returns the API groups and their endpoints, including a description, needed permissions per method and documentation'
+            'GET': {
+                'description': 'Returns the API groups and their endpoints, including a description, needed permissions per method and documentation',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a list of API groups. Each group contains a list of associated API endpoints which contain a list of supported methods'
+            }
         }
     )
     def retrieve_endpoints(*args, **kwargs):

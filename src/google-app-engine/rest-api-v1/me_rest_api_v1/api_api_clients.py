@@ -31,7 +31,29 @@ class APIAPIClients:
             'PATCH': 'api_clients.update_client_token',
             'DELETE': 'api_clients.delete_client_token'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'POST': {
+                'description': 'Create a new API client',
+                'data': 'A JSON object with the fields "name", "version" and "publisher"',
+                'return': 'The newly created record'
+            },
+            'GET': {
+                'description': 'Returns the API clients in the system',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'List with API clients'
+            },
+            'PATCH': {
+                'description': 'Update a API client',
+                'data': 'A JSON object with one of the the following fields "enabled", "name", "version", "publisher" or "expire"',
+                'return': 'Returns a "done" object when the API client is updated'
+            },
+            'DELETE': {
+                'description': 'Delete a API client',
+                'data': 'A JSON object with the field "id"',
+                'return': 'Returns a "done" object when the API client is deleted'
+            }
+        }
     )
     def client(*args, **kwargs):
         """ Endpoint for users to create, retrieve, update or delete API client tokens """
@@ -182,7 +204,19 @@ class APIAPIClients:
             'GET': 'api_clients.retrieve_client_permissions',
             'PATCH': 'api_clients.update_client_permissions'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'GET': {
+                'description': 'Returns the API permissions for the current token, or a given token',
+                'data': 'If no variables are given, the permissions for the current token are returned. If the field "token" is given, the API permissions for that specific token are returned',
+                'return': 'List with API permissions'
+            },
+            'PATCH': {
+                'description': 'Set a permission for a token',
+                'data': 'A JSON object with the following fields: "permission" and "granted". Optionally, a "token" can be given',
+                'return': 'Returns a "done" object when the API client is updated'
+            }
+        }
     )
     def permissions(*args, **kwargs):
         """ Endpoint to retrieve permissions for a specific API client """

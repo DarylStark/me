@@ -32,7 +32,14 @@ class APIAAA:
         permissions = {
             'POST': 'aaa.retrieve_user_token_with_credentials'
         },
-        user_token_needed = False
+        user_token_needed = False,
+        documentation = {
+            'POST': {
+                'description': 'Create a new API user token for the user specified with the credentials. Can be used by clients that want to log in using the users credentials instead of a API token',
+                'data': 'A JSON object with the fields "username", "password" and optionally a "2nd_factor"',
+                'return': 'Returns a record with the user token or with a field that indicates a 2nd factor is required'
+            }
+        }
     )
     def retrieve_user_token_with_credentials(*args, **kwargs):
         """ Endpoint for clients to retrieve a user token using the users credentials. This can be
@@ -142,7 +149,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.refresh_user_token'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Refreshes the expire-date for a user token. Can be used by clients to make sure the user token doesn\'t expire',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns the updated user token object'
+            }
+        }
     )
     def refresh_user_token(*args, **kwargs):
         """ Endpoint for users to refresh their user token. This can be used by (web-) clients to
@@ -196,7 +210,14 @@ class APIAAA:
         permissions = {
             'DELETE': 'aaa.remove_user_token'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'DELETE': {
+                'description': 'Removes the current API user token',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a "done" object when the API user token is deleted'
+            }
+        }
     )
     def remove_user_token(*args, **kwargs):
         """ Endpoint for users to reomove their user token. Can be used by clients to 'logoff' a
@@ -234,7 +255,19 @@ class APIAAA:
             'GET': 'aaa.retrieve_user_permissions',
             'PATCH': 'aaa.update_user_permissions'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'GET': {
+                'description': 'Returns the API permissions for the current token, or a given token',
+                'data': 'If no variables are given, the permissions for the current token are returned. If the field "user_token" is given, the API permissions for that specific token are returned',
+                'return': 'List with API permissions'
+            },
+            'PATCH': {
+                'description': 'Set a permission for a token',
+                'data': 'A JSON object with the following fields: "permission" and "granted". Optionally, a "user_token" can be given',
+                'return': 'Returns a "done" object when the API user permission is updated'
+            }
+        }
     )
     def user_permissions(*args, **kwargs):
         """ Endpoint for users to retrieve and update its permissions. This endpoint will list all
@@ -377,7 +410,14 @@ class APIAAA:
         permissions = {
             'GET': 'aaa.verify_user_token'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'GET': {
+                'description': 'Verifies if a user token is still valid',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'The user token object'
+            }
+        }
     )
     def verify_user_token(*args, **kwargs):
         """ Endpoint for users to verify if they are using a valid User Token. this endpoints
@@ -405,7 +445,19 @@ class APIAAA:
             'GET': 'aaa.get_user_object',
             'PATCH': 'aaa.update_user_object'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'GET': {
+                'description': 'Returns the user object for the current user',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'The user object'
+            },
+            'PATCH': {
+                'description': 'Updates the user object for the current user',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'The user object'
+            }
+        }
     )
     def user_object(*args, **kwargs):
         """ Endpoint for users to retrieve and update their user object """
@@ -490,7 +542,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.change_password'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Updates the password of the current user',
+                'data': 'A JSON object with "current_pw" and "new_pw"',
+                'return': 'Returns a "done" object when the password is changed'
+            }
+        }
     )
     def change_password(*args, **kwargs):
         """ Endpoint for users to change their password """
@@ -542,7 +601,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.disable_two_factor'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Disables two factor authentication for a user',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a "done" object when 2nd factor is disabled'
+            }
+        }
     )
     def disable_two_factor(*args, **kwargs):
         """ Endpoint for users to disable two-factor authentication """
@@ -569,7 +635,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.enable_two_factor'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Performs the first step to enable two factor authentication for a user',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a object containing the secret key'
+            }
+        }
     )
     def enable_two_factor(*args, **kwargs):
         """ Endpoint for users to enable two-factor authentication """
@@ -601,7 +674,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.verify_two_factor'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Performs the second step to enable two factor authentication for a user and actually enables the two factor authentication',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a "done" object when the 2nd factor is enabled'
+            }
+        }
     )
     def verify_two_factor(*args, **kwargs):
         """ Endpoint for users to verify their two-factor authentication """
@@ -651,6 +731,30 @@ class APIAAA:
             'DELETE': 'aaa.delete_user_token'
         },
         user_token_needed = True
+        ,
+        documentation = {
+            'POST': {
+                'description': 'Creates a new API user token for the current user, for a specified API client',
+                'data': 'A JSON object with a "client_id"',
+                'return': 'Returns the newly created object'
+            },
+            'GET': {
+                'description': 'Returns API user tokens for the current user',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a list of API user tokens'
+            },
+            'PATCH': {
+                'description': 'Updates a API user token',
+                'data': 'A JSON object containing at least one of the following fields: "expire", "description", "enabled"',
+                'return': 'Returns a "done" object when the API user token is updated'
+            }
+            ,
+            'DELETE': {
+                'description': 'Delets a API user token',
+                'data': 'A JSON object containing the "id" field',
+                'return': 'Returns a "done" object when the API user token is deleted'
+            }
+        }
     )
     def user_token(*args, **kwargs):
         """ Endpoint for users to create, retrieve, update or delete API user tokens """
@@ -821,7 +925,14 @@ class APIAAA:
         permissions = {
             'PATCH': 'aaa.set_token_description'
         },
-        user_token_needed = True
+        user_token_needed = True,
+        documentation = {
+            'PATCH': {
+                'description': 'Update the current API user token description',
+                'data': 'A JSON object containing a "description" field',
+                'return': 'Returns a "done" object when the API user token is updated'
+            }
+        }
     )
     def set_token_description(*args, **kwargs):
         """ Endpoint for users to set a description to their current token """

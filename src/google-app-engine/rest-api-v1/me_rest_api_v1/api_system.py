@@ -26,7 +26,11 @@ class APISystem:
         },
         user_token_needed = False,
         documentation = {
-            'GET': 'Returns system information'
+            'GET': {
+                'description': 'Returns information about the API system',
+                'data': 'This endpoint doesn\'t require any data',
+                'return': 'Returns a JSON object with system information: process information, application information and database'
+            }
         }
     )
     def retrieve_info(*args, **kwargs):
