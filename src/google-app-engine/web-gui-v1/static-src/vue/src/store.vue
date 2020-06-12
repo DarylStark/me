@@ -148,6 +148,13 @@ export default new Vuex.Store({
                     show: true
                 },
                 {
+                    icon: 'question circle outline',
+                    title: 'API help',
+                    type: 'link',
+                    dst: '/api_help',
+                    show: true
+                },
+                {
                     icon: 'key',
                     title: 'Change password',
                     type: 'action',
