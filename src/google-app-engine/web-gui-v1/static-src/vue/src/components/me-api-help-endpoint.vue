@@ -9,7 +9,7 @@
             <div class='grower description'>{{ endpoint.description }}</div>
         </me-flexline>
         <template v-if='show_methods'>
-            <me-flexline class='method' v-bind:key='method.method' v-bind:nowrap='$store.state.app.media_type == "desktop"' v-for='method in methods'>
+            <me-flexline class='method' v-bind:key='method.method' v-bind:nowrap='$store.state.ui.media_type == "desktop"' v-for='method in methods'>
                 <div class='collapse'></div>
                 <div class='name grower'>{{ method.method }}</div>
                 <div class='grower description'>
