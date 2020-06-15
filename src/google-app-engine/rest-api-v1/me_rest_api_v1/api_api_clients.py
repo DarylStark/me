@@ -340,6 +340,9 @@ class APIAPIClients:
             # Set the response data
             response.data = True
 
+            # Remove the token from the permission cache
+            MeRESTAPIv1.clear_token_permissions('client', client_token)
+
             # Return the object
             return response
 #---------------------------------------------------------------------------------------------------

@@ -242,6 +242,9 @@ class APIAAA:
             # Delete the UserToken
             session.delete(user_token_object)
         
+        # Remove the token from the permission cache
+        MeRESTAPIv1.clear_token_permissions('user', kwargs['user_token'])
+        
         # Set the response to True and return it
         response.data = True
         return response
@@ -399,6 +402,9 @@ class APIAAA:
                 
             # Set the response data
             response.data = True
+
+            # Remove the token from the permission cache
+            MeRESTAPIv1.clear_token_permissions('user', kwargs['user_token'])
 
             # Return the object
             return response
