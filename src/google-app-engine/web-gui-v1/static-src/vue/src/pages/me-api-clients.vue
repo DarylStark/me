@@ -1,6 +1,5 @@
 <template>
     <div id='me-content-api-clients'>
-        <me-modal-new-api-client></me-modal-new-api-client>
         <me-page-title icon='desktop'>
             API clients
             <template v-slot:actions>
@@ -19,6 +18,7 @@
                 </me-card>
             </me-cell>
         </me-grid>
+        <me-modal-new-api-client></me-modal-new-api-client>
     </div>
 </template>
 

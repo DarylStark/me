@@ -45,6 +45,7 @@ body {
         z-index: 20;
         height: 60px;
         min-height: 60px;
+        border-bottom: 1px solid @header-border-color;
 
         > div {
             padding: 20px 20px 0 20px;
@@ -109,6 +110,7 @@ body {
             height: auto;
             transition-property: margin-left;
             transition-duration: 0.2s;
+            border-right: 1px solid @menu-border-color;
 
             &.hidden {
                 margin-left: -@menu-width;
@@ -189,6 +191,7 @@ body {
             background-color: @sidebar-bg;
             transition-property: margin-right;
             transition-duration: 0.2s;
+            border-left: 1px solid @sidebar-border-color;
             
             &.hidden {
                 margin-right: -@sidebar-width;
