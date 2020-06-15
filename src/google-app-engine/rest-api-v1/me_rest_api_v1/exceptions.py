@@ -259,6 +259,10 @@ class MeRESTAPIv1AARefreshUserTokenNotExpiringYetTokenError(MeRESTAPIv1Permissio
     """ Error for when a user tries to refresh a user token that is not about to expire """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1SearchNoQuerySpecifiedError(MeRESTAPIv1PermissionDeniedError):
+    """ Error for when a user tries to use the search endpoint with a query """
+    pass
+#---------------------------------------------------------------------------------------------------
 # ServerErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointRegistrationError(MeRESTAPIv1ServerError):

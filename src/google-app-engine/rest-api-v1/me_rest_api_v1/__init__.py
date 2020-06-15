@@ -22,5 +22,6 @@ from me_rest_api_v1.exceptions import *
 from me_rest_api_v1.api_aaa import APIAAA
 from me_rest_api_v1.api_api_clients import APIAPIClients
 from me_rest_api_v1.api_help import APIHelp
+from me_rest_api_v1.api_search import APISearch
 from me_rest_api_v1.api_system import APISystem
 #---------------------------------------------------------------------------------------------------
