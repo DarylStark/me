@@ -130,6 +130,9 @@ class APIResponse:
                 self.all_item_count = len(self.data)
                 self.last_page = int(math.ceil(self.all_item_count / self.items_per_page))
 
+                if self.last_page == 0:
+                    self.last_page = 1
+
                 # Sanatize the page
                 if self.page > self.last_page or self.page < 1:
                     raise MeRESTAPIv1EndpointInvalidPageError('The page {page} should be between 1 and {max_page}'.format(
