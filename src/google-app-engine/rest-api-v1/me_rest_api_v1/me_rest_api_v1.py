@@ -337,7 +337,7 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1GetTokenPermissionsInvalidUserTokenError(f'The token "{token}" is not a valid user token"')
 
                     # Get the permissions
-                    cls.user_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}.{x.granted}' for x in token_object.first().user_permissions if x.granted ]
+                    cls.user_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}' for x in token_object.first().user_permissions if x.granted ]
 
             # Return the permissions
             return cls.user_token_permissions[token]
@@ -356,7 +356,7 @@ class MeRESTAPIv1:
                         raise MeRESTAPIv1GetTokenPermissionsInvalidClientTokenError(f'The token "{token}" is not a valid client token"')
 
                     # Get the permissions
-                    cls.client_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}.{x.granted}' for x in token_object.first().user_permissions if x.granted ]
+                    cls.client_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}' for x in token_object.first().client_permissions if x.granted ]
 
             # Return the permissions
             return cls.client_token_permissions[token]
