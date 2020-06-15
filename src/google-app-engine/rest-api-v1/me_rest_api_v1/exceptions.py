@@ -153,6 +153,14 @@ class MeRESTAPIv1APIClientDeleteClientTokenMissingNotFoundError(MeRESTAPIv1PageN
     """ Error when a user tries to delete a API client that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1GetTokenPermissionsInvalidUserTokenError(MeRESTAPIv1PageNotFoundError):
+    """ Error when the user passes a invalid user token to the GetTokenPermissions method """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1GetTokenPermissionsInvalidClientTokenError(MeRESTAPIv1PageNotFoundError):
+    """ Error when the user passes a invalid client token to the GetTokenPermissions method """
+    pass
+#---------------------------------------------------------------------------------------------------
 # PermissionDeniedErrors: errors that happen on the server and that are not the users fault
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointMethodNotAllowedError(MeRESTAPIv1PermissionDeniedError):
@@ -275,5 +283,13 @@ class MeRESTAPIv1EndpointDataNotAListError(MeRESTAPIv1ServerError):
 #---------------------------------------------------------------------------------------------------
 class MeRESTAPIv1EndpointDataNotABoolError(MeRESTAPIv1ServerError):
     """ Error when a endpoint returns data that isn't a boolean """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1GetTokenPermissionsInvalidTokenTypeError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a method tries to receive permissions for a token-type that doesn't exist """
+    pass
+#---------------------------------------------------------------------------------------------------
+class MeRESTAPIv1ClearTokenPermissionsInvalidTokenTypeError(MeRESTAPIv1PageNotFoundError):
+    """ Error when a method tries to receive permissions for a token-type that doesn't exist """
     pass
 #---------------------------------------------------------------------------------------------------

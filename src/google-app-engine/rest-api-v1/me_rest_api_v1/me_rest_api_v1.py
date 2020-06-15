@@ -49,11 +49,17 @@ class MeRESTAPIv1:
     #   JSON key configuration file
     # - The 'starttime' is the starttime of the application (in UTC). This is set so we can see when
     #   the instance was started. The user can retrieve this using the REST API.
+    # - The 'client_token_permissions' is a dict with a cache of client-token-permissions. We use
+    #   these to speed up the API requests
+    # - The 'user_token_permissions' is a dict with a cache of user-token-permissions. We use these
+    #   to speed up the API requests
 
     configfile = 'apiv1-configuration.json'
     config = None
     environment = None
     starttime = datetime.datetime.utcnow()
+    client_token_permissions = dict()
+    user_token_permissions = dict()
 
     # We create a logger for application-level logging. This logger is meant to log application
     # events, not accounting details for API clients.
@@ -246,7 +252,7 @@ class MeRESTAPIv1:
                                 group = group
                             ))
                     except KeyError as e:
-                        raise MeRESTAPIv1EndpointRegistrationError(e)
+                        raise MeRESTAPIv1EndpointRegistrationError(f'KeyError {e}')
                 else:
                     # Didn't exist. Give an error
                     raise MeRESTAPIv1APIGroupNotFoundError('The API group "{group}" is not a valid group'.format(
@@ -306,6 +312,72 @@ class MeRESTAPIv1:
         
         # Return the decorator
         return decorator
+    
+    @classmethod
+    def get_token_permissions(cls, token_type, token):
+        """ Method that returns a list of granted permissions for either a 'user' token or a
+            'client' token. The permissions will be cached in the local class to speed up the API
+            process """
+        
+        # Check if a valid token_type is given
+        if not token_type in ('user', 'client'):
+            raise MeRESTAPIv1GetTokenPermissionsInvalidTokenTypeError(f'The token-type "{token_type}" is not a valid token type"')
+
+        # Get the user permissions
+        if token_type == 'user':
+            # Check if the token is already in the local cache
+            if not token in cls.user_token_permissions.keys():
+                # Not in the cache, retrieve them
+                with DatabaseSession() as session:
+                    # Get the token object
+                    token_object = session.query(APIUserToken).filter(APIUserToken.token == token)
+
+                    # Check the count
+                    if token_object.count() != 1:
+                        raise MeRESTAPIv1GetTokenPermissionsInvalidUserTokenError(f'The token "{token}" is not a valid user token"')
+
+                    # Get the permissions
+                    cls.user_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}.{x.granted}' for x in token_object.first().user_permissions if x.granted ]
+
+            # Return the permissions
+            return cls.user_token_permissions[token]
+        
+        # Get the client permissions
+        if token_type == 'client':
+            # Check if the token is already in the local cache
+            if not token in cls.client_token_permissions.keys():
+                # Not in the cache, retrieve them
+                with DatabaseSession() as session:
+                    # Get the token object
+                    token_object = session.query(APIClientToken).filter(APIClientToken.token == token)
+
+                    # Check the count
+                    if token_object.count() != 1:
+                        raise MeRESTAPIv1GetTokenPermissionsInvalidClientTokenError(f'The token "{token}" is not a valid client token"')
+
+                    # Get the permissions
+                    cls.client_token_permissions[token] = [ f'{x.permission_object.section}.{x.permission_object.subject}.{x.granted}' for x in token_object.first().user_permissions if x.granted ]
+
+            # Return the permissions
+            return cls.client_token_permissions[token]
+    
+    @classmethod
+    def clear_token_permissions(cls, token_type, token):
+        """ Method to clear the cached permissions for a specific token """
+
+        # Check if a valid token_type is given
+        if not token_type in ('user', 'client'):
+            raise MeRESTAPIv1ClearTokenPermissionsInvalidTokenTypeError(f'The token-type "{token_type}" is not a valid token type"')
+
+        # Clear the user permissions
+        if token_type == 'user':
+            if token in cls.user_token_permissions.keys():
+                cls.user_token_permissions.pop(token)
+        
+        # Clear the client permissions
+        if token_type == 'client':
+            if token in cls.client_token_permissions.keys():
+                cls.client_token_permissions.pop(token)
 
     @classmethod
     def register_endpoint(cls, group, name, description, permissions = None, user_token_needed = True, documentation = None):
