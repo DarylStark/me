@@ -1,0 +1,33 @@
+#me-content-search {
+    div.loading {
+        padding-top: 30px;
+        text-align: center;
+
+        p {
+            padding-top: 30px;
+        }
+    }
+
+    div.results {
+        div.results_api_user_token,
+        div.results_api_client_token {
+            div.me-flexline {
+                border-bottom: 1px solid @search-border-color;
+
+                div {
+                    padding: 12px;
+                }
+
+                div.icon {
+                    text-align: center;
+                    border-right: 1px solid @search-border-color;
+                    width: 44px;
+                }
+            }
+
+            div.me-flexline:last-child {
+                border-bottom: 0px;
+            }
+        }
+    }
+}

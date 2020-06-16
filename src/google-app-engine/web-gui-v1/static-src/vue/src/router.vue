@@ -10,6 +10,7 @@ import me_notes from './pages/me-notes';
 import me_userprofile from './pages/me-userprofile';
 import me_api_clients from './pages/me-api-clients';
 import me_api_help from './pages/me-api-help';
+import me_search from './pages/me-search';
 
 // Make sure Vue knows to use VueRouter
 Vue.use(VueRouter);
@@ -25,7 +26,8 @@ export default new VueRouter({
         { path: '/notes', component: me_notes },
         { path: '/userprofile', component: me_userprofile },
         { path: '/api_clients', component: me_api_clients },
-        { path: '/api_help', component: me_api_help }
+        { path: '/api_help', component: me_api_help },
+        { path: '/search/:query', component: me_search }
     ]
 });
 </script>
