@@ -9,9 +9,29 @@
     }
 
     div.results {
+        div.no_results {
+            color: @search-no-results-fg;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding-top: 30px;
+        }
+
         div.results_api_user_token,
         div.results_api_client_token {
+            p {
+                padding: 12px;
+                text-align: center;
+                margin: 0px;
+                border-bottom: 1px solid @search-border-color;
+            }
+
+            p.actions {
+                text-align: right;
+            }
+
             div.me-flexline {
+                border-top: 0px;
                 border-bottom: 1px solid @search-border-color;
 
                 div {
@@ -23,10 +43,6 @@
                     border-right: 1px solid @search-border-color;
                     width: 44px;
                 }
-            }
-
-            div.me-flexline:last-child {
-                border-bottom: 0px;
             }
         }
     }

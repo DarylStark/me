@@ -6,26 +6,50 @@
             <p>Loading search results</p>
         </div>
         <me-grid class='results' v-if='!this.loading && this.results'>
+            <me-cell class='no_results' v-bind:span='12' v-if='results.length == 0'>
+                <i class='times icon'></i>
+                No results
+            </me-cell>
             <me-cell padding v-bind:span='12'>
                 <me-card class='results_api_user_token' raised v-if='results_api_user_token.length > 0' wide>
                     <me-h1 inverted>User tokens</me-h1>
+                    <p>
+                        Found
+                        <b>{{ results_api_user_token.length }}</b>
+                        user
+                        <template v-if='results_api_user_token.length > 1'>tokens</template>
+                        <template v-if='results_api_user_token.length == 1'>token</template>
+                    </p>
                     <me-flexline v-bind:key='result._type' v-for='result in results_api_user_token'>
                         <div class='icon'>
                             <i class='key icon'></i>
                         </div>
                         <div class='grower'>{{ result.description }}</div>
                     </me-flexline>
+                    <p class='actions'>
+                        <me-button v-on:click='go_to_user_profile'>Go to user profile</me-button>
+                    </p>
                 </me-card>
             </me-cell>
             <me-cell padding v-bind:span='12'>
                 <me-card class='results_api_client_token' raised v-if='results_api_client_token.length > 0' wide>
                     <me-h1 inverted>API clients</me-h1>
+                    <p>
+                        Found
+                        <b>{{ results_api_client_token.length }}</b>
+                        client
+                        <template v-if='results_api_client_token.length > 1'>tokens</template>
+                        <template v-if='results_api_client_token.length == 1'>token</template>
+                    </p>
                     <me-flexline v-bind:key='result._type' v-for='result in results_api_client_token'>
                         <div class='icon'>
                             <i class='key icon'></i>
                         </div>
                         <div class='grower'>{{ result.app_name }}</div>
                     </me-flexline>
+                    <p class='actions'>
+                        <me-button v-on:click='go_to_api_clients'>Go to API clients</me-button>
+                    </p>
                 </me-card>
             </me-cell>
         </me-grid>
@@ -41,6 +65,7 @@ import me_grid from '../components/me-grid';
 import me_cell from '../components/me-cell';
 import me_h1 from '../components/me-h1';
 import me_flexline from '../components/me-flexline';
+import me_button from '../components/me-button';
 
 export default {
     name: 'me-content-search',
@@ -51,7 +76,8 @@ export default {
         'me-grid': me_grid,
         'me-cell': me_cell,
         'me-h1': me_h1,
-        'me-flexline': me_flexline
+        'me-flexline': me_flexline,
+        'me-button': me_button
     },
     data: function() {
         return {
@@ -117,6 +143,12 @@ export default {
                         class: 'error'
                     });
                 });
+        },
+        go_to_api_clients: function() {
+            this.$router.push('/api_clients');
+        },
+        go_to_user_profile: function() {
+            this.$router.push('/userprofile');
         }
     }
 };
