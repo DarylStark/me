@@ -11,6 +11,7 @@ import me_userprofile from './pages/me-userprofile';
 import me_api_clients from './pages/me-api-clients';
 import me_api_help from './pages/me-api-help';
 import me_search from './pages/me-search';
+import me_sidebar_search from './sidebars/me-sidebar-search';
 
 // Make sure Vue knows to use VueRouter
 Vue.use(VueRouter);
@@ -21,13 +22,16 @@ export default new VueRouter({
     mode: 'history',
     linkExactActiveClass: 'active',
     routes: [
-        { path: '/home', component: me_dashboard },
-        { path: '/feed', component: me_feed },
-        { path: '/notes', component: me_notes },
-        { path: '/userprofile', component: me_userprofile },
-        { path: '/api_clients', component: me_api_clients },
-        { path: '/api_help', component: me_api_help },
-        { path: '/search/:query', component: me_search }
+        { path: '/home', components: { default: me_dashboard } },
+        { path: '/feed', components: { default: me_feed } },
+        { path: '/notes', components: { default: me_notes } },
+        { path: '/userprofile', components: { default: me_userprofile } },
+        { path: '/api_clients', components: { default: me_api_clients } },
+        { path: '/api_help', components: { default: me_api_help } },
+        {
+            path: '/search/:query',
+            components: { default: me_search, sidebar: me_sidebar_search }
+        }
     ]
 });
 </script>

@@ -20,7 +20,7 @@
                         <template v-if='results_api_user_token.length > 1'>tokens</template>
                         <template v-if='results_api_user_token.length == 1'>token</template>
                     </p>
-                    <me-flexline v-bind:key='result._type' v-for='result in results_api_user_token'>
+                    <me-flexline v-bind:key='result.id' v-for='result in results_api_user_token'>
                         <div class='icon'>
                             <i class='key icon'></i>
                         </div>
@@ -41,7 +41,7 @@
                         <template v-if='results_api_client_token.length > 1'>tokens</template>
                         <template v-if='results_api_client_token.length == 1'>token</template>
                     </p>
-                    <me-flexline v-bind:key='result._type' v-for='result in results_api_client_token'>
+                    <me-flexline v-bind:key='result.id' v-for='result in results_api_client_token'>
                         <div class='icon'>
                             <i class='key icon'></i>
                         </div>
@@ -98,8 +98,8 @@ export default {
         }
     },
     created: function() {
-        // We don't need a sidebar on this page. Disable it.
-        this.$store.commit('set_sidebar_availability', false);
+        // We do need a sidebar on this page. Enable it.
+        this.$store.commit('set_sidebar_availability', true);
 
         // Get the results
         this.get_results();
