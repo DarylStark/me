@@ -447,15 +447,19 @@ class MeWebGUIv1:
             retrieved from the Google Firestore. When used as 'POST', new settings are written to
             Google Firestore. """
 
-        def set_defaults(source, destination):
+        def set_defaults(source, destination, skip_keys = None):
             """ Method to merge two dicts with each other. We define this method within the scope of
                 the 'client_user_settings' method because we only need it here """
+
+            # Check if keys are given that should be skipped
+            if skip_keys is None:
+                skip_keys = list()
 
             # Loop through the items in the source dict recursively and update the vlues of the
             # destination dict
             for key, value in source.items():
                 if type(value) is dict:
-                    if key in destination.keys():
+                    if key in destination.keys() and not key in skip_keys:
                         set_defaults(value, destination[key])
                     else:
                         destination[key] = value
@@ -500,7 +504,8 @@ class MeWebGUIv1:
             'datetime_formats': {
                 'show_24h': True,
                 'datetime_format': '%b %e, %Y at %H:%M:%S'
-            }
+            },
+            'search_profiles': list()
         }
 
         # Set the defaults in the config dict. If we have a config dict, we sync it with the
@@ -514,16 +519,37 @@ class MeWebGUIv1:
             except AttributeError:
                 config = config_defaults
         
+        # Get the search profiles
+        profiles = document.collection('search_profiles').stream()
+        config['search_profiles'] = [ profile.to_dict() for profile in profiles if 'name' in profile.to_dict().keys() ]
+
+        # Loop through the search profiles and set the defaults
+        defaults = {
+            'search_in_all': True,
+            'search_in_user_tokens': True,
+            'search_in_client_tokens': True
+        }
+        for profile in config['search_profiles']:
+            set_defaults(defaults, profile)
+        
         # If the user did a GET request, he wants to retrieve the client settings
         if request.method == 'GET':
             # Return the settings for the user
             return Response(json.dumps(config), mimetype = 'application/json')
         
         if request.method == 'POST':
-            # Merge the old-config with the new-config
+            # Get the config that was given by the user
             new_config = request.json
+
+            # Strip off the 'search_profiles'
+            search_profiles = list()
+            if 'search_profiles' in new_config.keys():
+                search_profiles = new_config['search_profiles']
+                del new_config['search_profiles']
+            
+            # Set the defaults
             try:
-                set_defaults(config, new_config)
+                set_defaults(config, new_config, skip_keys = [ 'search_profiles'] )
             except AttributeError:
                 raise MeWebGUIv1ClientUserSettingsInvalidConfigError('The config is not correct')
 
