@@ -10,17 +10,23 @@
                 <div class='item' v-bind:data-value='profile.name' v-bind:key='profile.name' v-for='profile in search_profiles'>{{ profile.name }}</div>
             </div>
         </div>
-        <div class='ui slider checkbox'>
-            <input name='search_in_all' type='checkbox' v-bind:checked='active_options.search_in_all' />
-            <label>Search all</label>
-        </div>
-        <div class='ui slider checkbox'>
-            <input name='search_in_all' type='checkbox' v-bind:checked='active_options.search_in_user_tokens' />
-            <label>Search user tokens</label>
-        </div>
-        <div class='ui slider checkbox'>
-            <input name='search_in_all' type='checkbox' v-bind:checked='active_options.search_in_client_tokens' />
-            <label>Search client tokens</label>
+        <div class='checkboxes'>
+            <div class='all'>
+                <div class='ui slider checkbox'>
+                    <input name='search_in_all' type='checkbox' v-model='active_options.search_in_all' />
+                    <label>Search all</label>
+                </div>
+            </div>
+            <div class='options' v-if='!active_options.search_in_all'>
+                <div class='ui slider checkbox'>
+                    <input name='search_in_all' type='checkbox' v-model='active_options.search_in_user_tokens' />
+                    <label>Search user tokens</label>
+                </div>
+                <div class='ui slider checkbox'>
+                    <input name='search_in_all' type='checkbox' v-model='active_options.search_in_client_tokens' />
+                    <label>Search client tokens</label>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -42,7 +48,8 @@ export default {
     },
     data: function() {
         return {
-            active_options: null
+            active_options: null,
+            changed: false
         };
     },
     computed: {
